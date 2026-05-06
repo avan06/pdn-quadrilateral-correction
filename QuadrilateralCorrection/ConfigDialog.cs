@@ -202,6 +202,12 @@ namespace QuadrilateralCorrectionEffect
         {
             FinishTokenUpdate();
         }
+
+        private void CropOutsideCheckBox_CheckedChanged(object sender, System.EventArgs e)
+        {
+            FinishTokenUpdate();
+
+        }
         #endregion
 
         private void numericUpDown_Enter(object sender, EventArgs e)
@@ -240,6 +246,7 @@ namespace QuadrilateralCorrectionEffect
                 numericUpDown2.Text = "-";
             }
             checkBoxCenter.Checked = effectTokenCopy.Center;
+            cropOutsideCheckBox.Checked = effectTokenCopy.CropOutsideQuadrilateral;
         }
 
         protected override void LoadIntoTokenFromDialog(QuadrilateralCorrectionConfigToken writeValuesHere)
@@ -253,6 +260,7 @@ namespace QuadrilateralCorrectionEffect
             writeValuesHere.Width = (int)numericUpDown1.Value;
             writeValuesHere.Height = (int)numericUpDown2.Value;
             writeValuesHere.Center = checkBoxCenter.Checked;
+            writeValuesHere.CropOutsideQuadrilateral = cropOutsideCheckBox.Checked;
         }
         #endregion
 

@@ -55,6 +55,7 @@
             this.checkBoxCenter = new System.Windows.Forms.CheckBox();
             this.panelDivider = new System.Windows.Forms.Panel();
             this.resetAllButton = new System.Windows.Forms.Button();
+            this.cropOutsideCheckBox = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTopLeftX)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTopLeftY)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTopRightX)).BeginInit();
@@ -399,6 +400,19 @@
             this.resetAllButton.Text = "Reset All";
             this.resetAllButton.UseVisualStyleBackColor = true;
             this.resetAllButton.Click += new System.EventHandler(this.resetAllButton_Click);
+            //
+            // cropOutsideCheckBox
+            //
+            this.cropOutsideCheckBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.cropOutsideCheckBox.AutoSize = true;
+            this.cropOutsideCheckBox.Location = new System.Drawing.Point(562, 451);
+            this.cropOutsideCheckBox.Name = "cropOutsideCheckBox";
+            this.cropOutsideCheckBox.Size = new System.Drawing.Size(150, 19);
+            this.cropOutsideCheckBox.TabIndex = 27;
+            this.cropOutsideCheckBox.Text = "Crop outside quadrilateral";
+            this.cropOutsideCheckBox.Checked = true;
+            this.cropOutsideCheckBox.UseVisualStyleBackColor = true;
+            this.cropOutsideCheckBox.CheckedChanged += new System.EventHandler(this.CropOutsideCheckBox_CheckedChanged);
             // 
             // QuadrilateralCorrectionConfigDialog
             // 
@@ -434,6 +448,7 @@
             this.Controls.Add(this.numericUpDownTopRightX);
             this.Controls.Add(this.numericUpDownTopLeftY);
             this.Controls.Add(this.numericUpDownTopLeftX);
+            this.Controls.Add(this.cropOutsideCheckBox);
             this.DoubleBuffered = true;
             this.HelpButton = true;
             this.KeyPreview = true;
@@ -484,5 +499,6 @@
         private System.Windows.Forms.CheckBox checkBoxCenter;
         private System.Windows.Forms.Panel panelDivider;
         private System.Windows.Forms.Button resetAllButton;
+        private System.Windows.Forms.CheckBox cropOutsideCheckBox;
     }
 }

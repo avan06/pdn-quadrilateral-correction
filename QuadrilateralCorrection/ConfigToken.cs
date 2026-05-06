@@ -15,6 +15,10 @@ namespace QuadrilateralCorrectionEffect
             Width = int.MaxValue;
             Height = int.MaxValue;
             Center = true;
+
+            // Remove content outside the quadrilateral by default
+            CropOutsideQuadrilateral = true;
+
         }
 
         private QuadrilateralCorrectionConfigToken(QuadrilateralCorrectionConfigToken copyMe)
@@ -27,6 +31,7 @@ namespace QuadrilateralCorrectionEffect
             Width = copyMe.Width;
             Height = copyMe.Height;
             Center = copyMe.Center;
+            CropOutsideQuadrilateral = copyMe.CropOutsideQuadrilateral;
         }
 
         public override object Clone()
@@ -42,5 +47,6 @@ namespace QuadrilateralCorrectionEffect
         internal int Width { get; set; }
         internal int Height { get; set; }
         internal bool Center { get; set; }
+        internal bool CropOutsideQuadrilateral { get; set; }
     }
 }
