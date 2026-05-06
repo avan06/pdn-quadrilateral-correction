@@ -33,6 +33,7 @@ namespace QuadrilateralCorrectionEffect
         #region Properties
         // four publicly accessible get/sets which map the internal location variables
         [Category("Data")]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public Point NubTL
         {
             get => nubTL.Location;
@@ -45,6 +46,7 @@ namespace QuadrilateralCorrectionEffect
         }
 
         [Category("Data")]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public Point NubTR
         {
             get => nubTR.Location;
@@ -57,6 +59,7 @@ namespace QuadrilateralCorrectionEffect
         }
 
         [Category("Data")]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public Point NubBR
         {
             get => nubBR.Location;
@@ -69,6 +72,7 @@ namespace QuadrilateralCorrectionEffect
         }
 
         [Category("Data")]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public Point NubBL
         {
             get => nubBL.Location;
