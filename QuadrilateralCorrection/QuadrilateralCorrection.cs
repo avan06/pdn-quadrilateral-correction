@@ -24,6 +24,7 @@ namespace QuadrilateralCorrectionEffect
     {
         private static readonly Image StaticIcon = new Bitmap(typeof(QuadrilateralCorrectionEffectPlugin), "Icon.png");
 
+        [Obsolete("The classic effect system has been deprecated. Please move over to the modern replacements: BitmapEffect for CPU rendering, and GpuEffect for GPU rendering via Direct2D.", false)]
         public QuadrilateralCorrectionEffectPlugin()
             : base("Quadrilateral Correction", StaticIcon, "Tools", new EffectOptions { Flags = EffectFlags.Configurable })
         {

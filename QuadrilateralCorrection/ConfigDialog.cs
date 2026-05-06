@@ -14,6 +14,7 @@ namespace QuadrilateralCorrectionEffect
         private Rectangle selection;
         private Bitmap srcImage;
 
+        [Obsolete("The classic effect system has been deprecated. Please move over to the modern replacements: BitmapEffect for CPU rendering, and GpuEffect for GPU rendering via Direct2D.", false)]
         public QuadrilateralCorrectionConfigDialog()
         {
             InitializeComponent();

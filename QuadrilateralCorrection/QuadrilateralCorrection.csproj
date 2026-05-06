@@ -16,27 +16,24 @@
     <Reference Include="AForge.Imaging">
       <HintPath>References\AForge.Imaging.dll</HintPath>
     </Reference>
-    <Reference Include="PaintDotNet.Base">
-      <HintPath>$(PaintDotNetDir)\PaintDotNet.Base.dll</HintPath>
-    </Reference>
-    <Reference Include="PaintDotNet.ComponentModel">
-      <HintPath>$(PaintDotNetDir)\PaintDotNet.ComponentModel.dll</HintPath>
-    </Reference>
-    <Reference Include="PaintDotNet.Core">
-      <HintPath>$(PaintDotNetDir)\PaintDotNet.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="PaintDotNet.Effects">
-      <HintPath>$(PaintDotNetDir)\PaintDotNet.Effects.dll</HintPath>
-    </Reference>
-    <Reference Include="PaintDotNet.Effects.Core">
-      <HintPath>$(PaintDotNetDir)\PaintDotNet.Effects.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="PaintDotNet.Primitives">
-      <HintPath>$(PaintDotNetDir)\PaintDotNet.Primitives.dll</HintPath>
-    </Reference>
-    <Reference Include="PaintDotNet.Windows">
-      <HintPath>$(PaintDotNetDir)\PaintDotNet.Windows.dll</HintPath>
-    </Reference>
+			<Reference Include="PaintDotNet.ComponentModel">
+					<HintPath>$(PaintDotNetDir)\PaintDotNet.ComponentModel.dll</HintPath>
+			</Reference>
+			<Reference Include="PaintDotNet.Core">
+					<HintPath>$(PaintDotNetDir)\PaintDotNet.Core.dll</HintPath>
+			</Reference>
+			<Reference Include="PaintDotNet.Effects">
+					<HintPath>$(PaintDotNetDir)\PaintDotNet.Effects.dll</HintPath>
+			</Reference>
+			<Reference Include="PaintDotNet.Effects.Core">
+					<HintPath>$(PaintDotNetDir)\PaintDotNet.Effects.Core.dll</HintPath>
+			</Reference>
+			<Reference Include="PaintDotNet.Primitives">
+					<HintPath>$(PaintDotNetDir)\PaintDotNet.Primitives.dll</HintPath>
+			</Reference>
+			<Reference Include="PaintDotNet.Windows">
+					<HintPath>$(PaintDotNetDir)\PaintDotNet.Windows.dll</HintPath>
+			</Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Update="QuadControl.cs">
@@ -54,6 +51,10 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="ILRepack" Version="2.0.18" />
+    <PackageReference Include="System.Runtime.Serialization.Formatters"
+											Version="9.*"
+                      PrivateAssets="all"
+                      ExcludeAssets="runtime;native;contentfiles;analyzers;buildtransitive" />
   </ItemGroup>
   <PropertyGroup />
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
