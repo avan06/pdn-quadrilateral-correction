@@ -1,24 +1,29 @@
-﻿using PaintDotNet.Effects;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using PaintDotNet.Effects;
+using PaintDotNet.Imaging;
+using PaintDotNet;
+using PaintDotNet.Rendering;
 
 namespace QuadrilateralCorrectionEffect
 {
-    internal partial class QuadrilateralCorrectionConfigDialog : EffectConfigDialog<QuadrilateralCorrectionEffectPlugin, QuadrilateralCorrectionConfigToken>
+    internal partial class QuadrilateralCorrectionConfigDialog : EffectConfigForm<QuadrilateralCorrectionEffectPlugin, QuadrilateralCorrectionConfigToken>
     {
         private Rectangle uiImgBounds;
         private Rectangle selection;
         private Bitmap srcImage;
+        private Point quadControl11BaseLocation;
 
-        [Obsolete("The classic effect system has been deprecated. Please move over to the modern replacements: BitmapEffect for CPU rendering, and GpuEffect for GPU rendering via Direct2D.", false)]
         public QuadrilateralCorrectionConfigDialog()
         {
             InitializeComponent();
             this.UseAppThemeColors = true;
+
+            quadControl11BaseLocation = quadControl11.Location;
 
             foreach (Control control in this.Controls.OfType<NumericUpDown>())
             {
@@ -27,9 +32,9 @@ namespace QuadrilateralCorrectionEffect
             }
         }
 
-        protected override void OnLoad(EventArgs e)
+        protected override void OnLoading()
         {
-            base.OnLoad(e);
+            base.OnLoading();
 
             quadControl11.Width = uiImgBounds.Width + 2;
             quadControl11.Height = uiImgBounds.Height + 2;
@@ -39,9 +44,15 @@ namespace QuadrilateralCorrectionEffect
             checkBoxCenter.Left = label10.Left;
         }
 
+        private bool initialized;
         private void Initializers()
         {
-            selection = EnvironmentParameters.SelectionBounds;
+            if (initialized) return;
+
+            initialized = true;
+
+            // Read global information from this.Environment
+            selection = new Rectangle(this.Environment.Selection.RenderBounds.X, this.Environment.Selection.RenderBounds.Y, this.Environment.Selection.RenderBounds.Width, this.Environment.Selection.RenderBounds.Height);
 
             numericUpDownTopLeftX.Maximum = selection.Width - 1;
             numericUpDownTopLeftY.Maximum = selection.Height - 1;
@@ -55,7 +66,17 @@ namespace QuadrilateralCorrectionEffect
             numericUpDown1.Maximum = selection.Width;
             numericUpDown2.Maximum = selection.Height;
 
-            srcImage = EnvironmentParameters.SourceSurface.CreateAliasedBitmap(selection);
+            // Read the current layer as the UI image
+            IEffectInputBitmap<ColorBgra32> sourceBitmap = this.Environment.GetSourceBitmapBgra32();
+            using (IBitmapLock<ColorBgra32> sourceLock = sourceBitmap.Lock(new RectInt32(0, 0, sourceBitmap.Size)))
+            {
+                RegionPtr<ColorBgra32> sourceRegion = sourceLock.AsRegionPtr();
+
+                using (Bitmap tempBmp = BitmapRegionUtil.CreateBitmapFromSourceRegion(sourceRegion, sourceBitmap.Size.Width, sourceBitmap.Size.Height))
+                {
+                    srcImage = new Bitmap(tempBmp);
+                }
+            }
 
             quadControl11.Image = srcImage;
 
@@ -68,65 +89,76 @@ namespace QuadrilateralCorrectionEffect
             uiImgBounds.Y = (int)Math.Max(0, (quadBaseSize - uiImgBounds.Height) / 2f);
         }
 
+        private void ApplyQuadControlImageBounds()
+        {
+            if (uiImgBounds.Width <= 0 || uiImgBounds.Height <= 0)
+            {
+                return;
+            }
+
+            quadControl11.Width = uiImgBounds.Width + 2;
+            quadControl11.Height = uiImgBounds.Height + 2;
+
+            quadControl11.Location = new Point(
+                quadControl11BaseLocation.X + uiImgBounds.X,
+                quadControl11BaseLocation.Y + uiImgBounds.Y);
+
+            quadControl11.Visible = true;
+            quadControl11.Invalidate();
+        }
+
         #region Values-Changed events
+        private Point ScalePointToUi(decimal x, decimal y)
+        {
+            return new Point
+            {
+                X = (int)Math.Round(x * (uiImgBounds.Width - 1) / (selection.Width - 1)),
+                Y = (int)Math.Round(y * (uiImgBounds.Height - 1) / (selection.Height - 1))
+            };
+        }
+
         private void numericUpDownTopLeft_ValueChanged(object sender, EventArgs e)
         {
             quadControl11.ValueChanged -= quadControl11_ValueChanged;
 
-            quadControl11.NubTL = new Point
-            {
-                X = (int)Math.Round(numericUpDownTopLeftX.Value * (uiImgBounds.Width - 1) / (selection.Width - 1)),
-                Y = (int)Math.Round(numericUpDownTopLeftY.Value * (uiImgBounds.Height - 1) / (selection.Height - 1))
-            };
+            quadControl11.NubTL = ScalePointToUi(numericUpDownTopLeftX.Value, numericUpDownTopLeftY.Value);
 
             quadControl11.ValueChanged += quadControl11_ValueChanged;
 
-            FinishTokenUpdate();
+            UpdateTokenFromDialog();
         }
 
         private void numericUpDownTopRight_ValueChanged(object sender, EventArgs e)
         {
             quadControl11.ValueChanged -= quadControl11_ValueChanged;
 
-            quadControl11.NubTR = new Point
-            {
-                X = (int)Math.Round(numericUpDownTopRightX.Value * (uiImgBounds.Width - 1) / (selection.Width - 1)),
-                Y = (int)Math.Round(numericUpDownTopRightY.Value * (uiImgBounds.Height - 1) / (selection.Height - 1))
-            };
+            quadControl11.NubTR = ScalePointToUi(numericUpDownTopRightX.Value, numericUpDownTopRightY.Value);
 
             quadControl11.ValueChanged += quadControl11_ValueChanged;
 
-            FinishTokenUpdate();
+            UpdateTokenFromDialog();
         }
 
         private void numericUpDownBottomRight_ValueChanged(object sender, EventArgs e)
         {
             quadControl11.ValueChanged -= quadControl11_ValueChanged;
 
-            quadControl11.NubBR = new Point
-            {
-                X = (int)Math.Round(numericUpDownBottomRightX.Value * (uiImgBounds.Width - 1) / (selection.Width - 1)),
-                Y = (int)Math.Round(numericUpDownBottomRightY.Value * (uiImgBounds.Height - 1) / (selection.Height - 1))
-            };
+            quadControl11.NubBR = ScalePointToUi(numericUpDownBottomRightX.Value, numericUpDownBottomRightY.Value);
 
             quadControl11.ValueChanged += quadControl11_ValueChanged;
 
-            FinishTokenUpdate();
+            UpdateTokenFromDialog();
         }
 
         private void numericUpDownBottomLeft_ValueChanged(object sender, EventArgs e)
         {
             quadControl11.ValueChanged -= quadControl11_ValueChanged;
 
-            quadControl11.NubBL = new Point
-            {
-                X = (int)Math.Round(numericUpDownBottomLeftX.Value * (uiImgBounds.Width - 1) / (selection.Width - 1)),
-                Y = (int)Math.Round(numericUpDownBottomLeftY.Value * (uiImgBounds.Height - 1) / (selection.Height - 1))
-            };
+            quadControl11.NubBL = ScalePointToUi(numericUpDownBottomLeftX.Value, numericUpDownBottomLeftY.Value);
 
             quadControl11.ValueChanged += quadControl11_ValueChanged;
 
-            FinishTokenUpdate();
+            UpdateTokenFromDialog();
         }
 
         private void quadControl11_ValueChanged(object sender, EventArgs e)
@@ -161,7 +193,7 @@ namespace QuadrilateralCorrectionEffect
             numericUpDownBottomLeftX.ValueChanged += numericUpDownBottomLeft_ValueChanged;
             numericUpDownBottomLeftY.ValueChanged += numericUpDownBottomLeft_ValueChanged;
 
-            FinishTokenUpdate();
+            UpdateTokenFromDialog();
         }
 
         private void checkBox1_CheckedChanged(object sender, EventArgs e)
@@ -185,27 +217,27 @@ namespace QuadrilateralCorrectionEffect
                 SetDimensionValues();
             }
 
-            FinishTokenUpdate();
+            UpdateTokenFromDialog();
         }
 
         private void numericUpDown1_ValueChanged(object sender, EventArgs e)
         {
-            FinishTokenUpdate();
+            UpdateTokenFromDialog();
         }
 
         private void numericUpDown2_ValueChanged(object sender, EventArgs e)
         {
-            FinishTokenUpdate();
+            UpdateTokenFromDialog();
         }
 
         private void checkBoxCenter_CheckedChanged(object sender, EventArgs e)
         {
-            FinishTokenUpdate();
+            UpdateTokenFromDialog();
         }
 
         private void CropOutsideCheckBox_CheckedChanged(object sender, System.EventArgs e)
         {
-            FinishTokenUpdate();
+            UpdateTokenFromDialog();
 
         }
         #endregion
@@ -219,14 +251,15 @@ namespace QuadrilateralCorrectionEffect
         }
 
         #region Token Stuff
-        protected override QuadrilateralCorrectionConfigToken CreateInitialToken()
+        protected override QuadrilateralCorrectionConfigToken OnCreateInitialToken()
         {
             return new QuadrilateralCorrectionConfigToken();
         }
 
-        protected override void InitDialogFromToken(QuadrilateralCorrectionConfigToken effectTokenCopy)
+        protected override void OnUpdateDialogFromToken(QuadrilateralCorrectionConfigToken effectTokenCopy)
         {
             Initializers();
+            ApplyQuadControlImageBounds();
 
             numericUpDownTopLeftX.Value = Clamp(effectTokenCopy.TopLeft.X, numericUpDownTopLeftX.Minimum, numericUpDownTopLeftX.Maximum);
             numericUpDownTopLeftY.Value = Clamp(effectTokenCopy.TopLeft.Y, numericUpDownTopLeftY.Minimum, numericUpDownTopLeftY.Maximum);
@@ -247,9 +280,11 @@ namespace QuadrilateralCorrectionEffect
             }
             checkBoxCenter.Checked = effectTokenCopy.Center;
             cropOutsideCheckBox.Checked = effectTokenCopy.CropOutsideQuadrilateral;
+
+            quadControl11.Invalidate();
         }
 
-        protected override void LoadIntoTokenFromDialog(QuadrilateralCorrectionConfigToken writeValuesHere)
+        protected override void OnUpdateTokenFromDialog(QuadrilateralCorrectionConfigToken writeValuesHere)
         {
             writeValuesHere.TopLeft = new Point((int)numericUpDownTopLeftX.Value, (int)numericUpDownTopLeftY.Value);
             writeValuesHere.TopRight = new Point((int)numericUpDownTopRightX.Value, (int)numericUpDownTopRightY.Value);
@@ -285,7 +320,8 @@ namespace QuadrilateralCorrectionEffect
             Size quadTransOutput;
             try
             {
-                quadTransOutput = quadTrans.Apply(srcImage).Size;
+                using Bitmap outputBitmap = quadTrans.Apply(srcImage);
+                quadTransOutput = outputBitmap.Size;
             }
             catch
             {

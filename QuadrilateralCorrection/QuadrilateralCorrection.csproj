@@ -1,63 +1,82 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <TargetFramework>net9.0-windows</TargetFramework>
-    <OutputType>Library</OutputType>
-    <RootNamespace>QuadrilateralCorrectionEffect</RootNamespace>
-    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-    <UseWindowsForms>true</UseWindowsForms>
-    <UseWPF>true</UseWPF>
-    <ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
-    <PaintDotNetDir>C:\Program Files\paint.net</PaintDotNetDir>
-  </PropertyGroup>
-  <ItemGroup>
-    <Reference Include="AForge">
-      <HintPath>References\AForge.dll</HintPath>
-    </Reference>
-    <Reference Include="AForge.Imaging">
-      <HintPath>References\AForge.Imaging.dll</HintPath>
-    </Reference>
-			<Reference Include="PaintDotNet.ComponentModel">
-					<HintPath>$(PaintDotNetDir)\PaintDotNet.ComponentModel.dll</HintPath>
-			</Reference>
-			<Reference Include="PaintDotNet.Core">
-					<HintPath>$(PaintDotNetDir)\PaintDotNet.Core.dll</HintPath>
-			</Reference>
-			<Reference Include="PaintDotNet.Effects">
-					<HintPath>$(PaintDotNetDir)\PaintDotNet.Effects.dll</HintPath>
-			</Reference>
-			<Reference Include="PaintDotNet.Effects.Core">
-					<HintPath>$(PaintDotNetDir)\PaintDotNet.Effects.Core.dll</HintPath>
-			</Reference>
-			<Reference Include="PaintDotNet.Primitives">
-					<HintPath>$(PaintDotNetDir)\PaintDotNet.Primitives.dll</HintPath>
-			</Reference>
-			<Reference Include="PaintDotNet.Windows">
-					<HintPath>$(PaintDotNetDir)\PaintDotNet.Windows.dll</HintPath>
-			</Reference>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Update="QuadControl.cs">
-      <SubType>Component</SubType>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Icon.png" />
-    <EmbeddedResource Include="Resources\CheckerBoard.png" />
-    <EmbeddedResource Include="Resources\HandGrab.cur" />
-    <EmbeddedResource Include="Resources\HandOpen.cur" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="..\.editorconfig" Link=".editorconfig" />
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="ILRepack" Version="2.0.18" />
-    <PackageReference Include="System.Runtime.Serialization.Formatters"
-											Version="9.*"
-                      PrivateAssets="all"
-                      ExcludeAssets="runtime;native;contentfiles;analyzers;buildtransitive" />
-  </ItemGroup>
-  <PropertyGroup />
-  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="if $(ConfigurationName)==FastDebug goto end&#xD;&#xA;&#xD;&#xA;if not exist &quot;$(TargetDir)AllAssemblies\&quot; mkdir &quot;$(TargetDir)AllAssemblies\&quot;&#xD;&#xA;if not exist &quot;$(TargetDir)AllAssemblies\Merged\&quot; mkdir &quot;$(TargetDir)AllAssemblies\Merged&quot;&#xD;&#xA;&#xD;&#xA;copy $(ILRepack) &quot;$(TargetDir)AllAssemblies&quot;&#xD;&#xA;robocopy $(TargetDir) &quot;$(TargetDir)AllAssemblies&quot;&#xD;&#xA;robocopy &quot;C:\Program Files\dotnet\packs\Microsoft.NETCore.App.Ref\6.0.0\ref\net6.0&quot; &quot;$(TargetDir)AllAssemblies&quot;&#xD;&#xA;robocopy &quot;C:\Program Files\dotnet\packs\Microsoft.WindowsDesktop.App.Ref\6.0.0\ref\net6.0&quot; &quot;$(TargetDir)AllAssemblies&quot;&#xD;&#xA;&#xD;&#xA;set deps=AForge.dll AForge.Imaging.dll&#xD;&#xA;&#xD;&#xA;cd $(TargetDir)AllAssemblies&#xD;&#xA;&#xD;&#xA;if $(ConfigurationName)==Release (&#xD;&#xA;    ILRepack.exe /ndebug /out:Merged\$(TargetFileName) $(TargetFileName) %25deps%25&#xD;&#xA;    cmd /c explorer &quot;$(TargetDir)AllAssemblies\Merged&quot;&#xD;&#xA;) else if $(ConfigurationName)==Debug (&#xD;&#xA;    ILRepack.exe /out:Merged\$(TargetFileName) $(TargetFileName) %25deps%25&#xD;&#xA;    copy &quot;$(TargetDir)AllAssemblies\Merged\$(TargetFileName)&quot; &quot;C:\Program Files\Paint.NET\Effects\&quot;&#xD;&#xA;)&#xD;&#xA;&#xD;&#xA;:end&#xD;&#xA;exit 0" />
-  </Target>
+    <PropertyGroup>
+        <TargetFramework>net9.0-windows</TargetFramework>
+        <OutputType>Library</OutputType>
+        <RootNamespace>QuadrilateralCorrectionEffect</RootNamespace>
+        <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+        <UseWindowsForms>true</UseWindowsForms>
+        <UseWPF>true</UseWPF>
+        <ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
+        <PaintDotNetDir>C:\Program Files\paint.net</PaintDotNetDir>
+    </PropertyGroup>
+    <ItemGroup>
+        <Reference Include="AForge">
+            <HintPath>References\AForge.dll</HintPath>
+            <Private>true</Private>
+        </Reference>
+        <Reference Include="AForge.Imaging">
+            <HintPath>References\AForge.Imaging.dll</HintPath>
+            <Private>true</Private>
+        </Reference>
+        <Reference Include="PaintDotNet.Base">
+            <HintPath>$(PaintDotNetDir)\PaintDotNet.Base.dll</HintPath>
+            <Private>false</Private>
+        </Reference>
+        <Reference Include="PaintDotNet.ComponentModel">
+            <HintPath>$(PaintDotNetDir)\PaintDotNet.ComponentModel.dll</HintPath>
+            <Private>false</Private>
+        </Reference>
+        <Reference Include="PaintDotNet.Core">
+            <HintPath>$(PaintDotNetDir)\PaintDotNet.Core.dll</HintPath>
+        </Reference>
+        <Reference Include="PaintDotNet.Effects">
+            <HintPath>$(PaintDotNetDir)\PaintDotNet.Effects.dll</HintPath>
+            <Private>false</Private>
+        </Reference>
+        <Reference Include="PaintDotNet.Effects.Core">
+            <HintPath>$(PaintDotNetDir)\PaintDotNet.Effects.Core.dll</HintPath>
+            <Private>false</Private>
+        </Reference>
+        <Reference Include="PaintDotNet.Primitives">
+            <HintPath>$(PaintDotNetDir)\PaintDotNet.Primitives.dll</HintPath>
+            <Private>false</Private>
+        </Reference>
+        <Reference Include="PaintDotNet.Windows">
+            <HintPath>$(PaintDotNetDir)\PaintDotNet.Windows.dll</HintPath>
+            <Private>false</Private>
+        </Reference>
+        <Reference Include="PaintDotNet.Windows.Core">
+            <HintPath>$(PaintDotNetDir)\PaintDotNet.Windows.Core.dll</HintPath>
+            <Private>false</Private>
+        </Reference>
+        <Reference Include="PaintDotNet.ObjectModel">
+            <HintPath>$(PaintDotNetDir)\PaintDotNet.ObjectModel.dll</HintPath>
+            <Private>false</Private>
+        </Reference>
+    </ItemGroup>
+    <ItemGroup>
+        <Compile Update="QuadControl.cs">
+            <SubType>Component</SubType>
+        </Compile>
+    </ItemGroup>
+    <ItemGroup>
+        <EmbeddedResource Include="Icon.png" />
+        <EmbeddedResource Include="Resources\CheckerBoard.png" />
+        <EmbeddedResource Include="Resources\HandGrab.cur" />
+        <EmbeddedResource Include="Resources\HandOpen.cur" />
+    </ItemGroup>
+    <ItemGroup>
+        <None Include="..\.editorconfig" Link=".editorconfig" />
+    </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="ILRepack" Version="2.0.18" />
+        <PackageReference Include="System.Runtime.Serialization.Formatters"
+                                                Version="9.*"
+                          PrivateAssets="all"
+                          ExcludeAssets="runtime;native;contentfiles;analyzers;buildtransitive" />
+    </ItemGroup>
+    <PropertyGroup />
+    <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+        <Exec Command="if $(ConfigurationName)==FastDebug goto end&#xD;&#xA;&#xD;&#xA;if not exist &quot;$(TargetDir)AllAssemblies\&quot; mkdir &quot;$(TargetDir)AllAssemblies\&quot;&#xD;&#xA;if not exist &quot;$(TargetDir)AllAssemblies\Merged\&quot; mkdir &quot;$(TargetDir)AllAssemblies\Merged&quot;&#xD;&#xA;&#xD;&#xA;copy $(ILRepack) &quot;$(TargetDir)AllAssemblies&quot;&#xD;&#xA;robocopy $(TargetDir) &quot;$(TargetDir)AllAssemblies&quot;&#xD;&#xA;robocopy &quot;C:\Program Files\dotnet\packs\Microsoft.NETCore.App.Ref\6.0.0\ref\net6.0&quot; &quot;$(TargetDir)AllAssemblies&quot;&#xD;&#xA;robocopy &quot;C:\Program Files\dotnet\packs\Microsoft.WindowsDesktop.App.Ref\6.0.0\ref\net6.0&quot; &quot;$(TargetDir)AllAssemblies&quot;&#xD;&#xA;&#xD;&#xA;set deps=AForge.dll AForge.Imaging.dll&#xD;&#xA;&#xD;&#xA;cd $(TargetDir)AllAssemblies&#xD;&#xA;&#xD;&#xA;if $(ConfigurationName)==Release (&#xD;&#xA;    ILRepack.exe /ndebug /out:Merged\$(TargetFileName) $(TargetFileName) %25deps%25&#xD;&#xA;    cmd /c explorer &quot;$(TargetDir)AllAssemblies\Merged&quot;&#xD;&#xA;) else if $(ConfigurationName)==Debug (&#xD;&#xA;    ILRepack.exe /out:Merged\$(TargetFileName) $(TargetFileName) %25deps%25&#xD;&#xA;    copy &quot;$(TargetDir)AllAssemblies\Merged\$(TargetFileName)&quot; &quot;C:\Program Files\Paint.NET\Effects\&quot;&#xD;&#xA;)&#xD;&#xA;&#xD;&#xA;:end&#xD;&#xA;exit 0" />
+    </Target>
 </Project>
