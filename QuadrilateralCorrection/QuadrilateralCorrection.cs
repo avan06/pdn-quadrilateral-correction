@@ -98,6 +98,7 @@ namespace QuadrilateralCorrectionEffect
             catch
             {
                 quadTransOutput = new Bitmap(1, 1);
+                preserveOutsideSize = quadTransOutput.Size;
             }
 
             int outputWidth = cropOutsideQuadrilateral ? quadTransOutput.Width : preserveOutsideSize.Width;
@@ -113,6 +114,11 @@ namespace QuadrilateralCorrectionEffect
             {
                 offSet.X += preserveOutsideOffset.X;
                 offSet.Y += preserveOutsideOffset.Y;
+
+                offSet = FitOffsetInsideCanvas(
+                    offSet,
+                    quadTransOutput.Size,
+                    srcArgs.Surface.Size);
             }
 
             Bitmap alignedImage = new Bitmap(srcArgs.Surface.Width, srcArgs.Surface.Height);
@@ -164,7 +170,7 @@ namespace QuadrilateralCorrectionEffect
             int outputWidth,
             int outputHeight,
             out Point preserveOutsideOffset,
-            out Size preserveOutsideSize)
+            out Size preserveOutsideQuadrilateralSize)
         {
             PointF[] src =
             {
@@ -185,7 +191,7 @@ namespace QuadrilateralCorrectionEffect
                 outputHeight = Math.Max(1, (int)Math.Ceiling(Math.Max(leftHeight, rightHeight)));
             }
 
-            preserveOutsideSize = new Size(outputWidth, outputHeight);
+            preserveOutsideQuadrilateralSize = new Size(outputWidth, outputHeight);
 
             PointF[] dst =
             {
@@ -549,6 +555,38 @@ namespace QuadrilateralCorrectionEffect
             }
 
             return b;
+        }
+
+        private static Point FitOffsetInsideCanvas(Point offSet, Size imageSize, Size canvasSize)
+        {
+            Rectangle canvasBounds = new Rectangle(0, 0, canvasSize.Width, canvasSize.Height);
+            Rectangle outputBounds = new Rectangle(offSet, imageSize);
+
+            if (outputBounds.Width <= canvasBounds.Width)
+            {
+                if (outputBounds.Left < canvasBounds.Left)
+                {
+                    offSet.X += canvasBounds.Left - outputBounds.Left;
+                }
+                else if (outputBounds.Right > canvasBounds.Right)
+                {
+                    offSet.X -= outputBounds.Right - canvasBounds.Right;
+                }
+            }
+
+            if (outputBounds.Height <= canvasBounds.Height)
+            {
+                if (outputBounds.Top < canvasBounds.Top)
+                {
+                    offSet.Y += canvasBounds.Top - outputBounds.Top;
+                }
+                else if (outputBounds.Bottom > canvasBounds.Bottom)
+                {
+                    offSet.Y -= outputBounds.Bottom - canvasBounds.Bottom;
+                }
+            }
+
+            return offSet;
         }
         #endregion
     }
