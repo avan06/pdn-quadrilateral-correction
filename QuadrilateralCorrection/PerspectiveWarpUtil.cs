@@ -8,7 +8,7 @@ namespace QuadrilateralCorrectionEffect
     internal static class PerspectiveWarpUtil
     {
         #region Perspective Warp Helpers
-        public static Bitmap PerspectiveWarpPreserveOutside(
+        public static Bitmap PerspectiveWarp(
             Bitmap source,
             Point topLeft,
             Point topRight,
@@ -17,6 +17,7 @@ namespace QuadrilateralCorrectionEffect
             bool autoDims,
             int outputWidth,
             int outputHeight,
+            bool cropOutsideQuadrilateral,
             out Point preserveOutsideOffset,
             out Size preserveOutsideQuadrilateralSize)
         {
@@ -49,28 +50,40 @@ namespace QuadrilateralCorrectionEffect
                 new PointF(0, outputHeight - 1)
             };
 
-            // source -> corrected rectangle
-            double[,] h = ComputeHomography(src, dst);
+            double minX = 0;
+            double minY = 0;
+            int destinationWidth = outputWidth;
+            int destinationHeight = outputHeight;
 
-            PointF corner1 = ApplyHomography(h, 0, 0);
-            PointF corner2 = ApplyHomography(h, source.Width - 1, 0);
-            PointF corner3 = ApplyHomography(h, source.Width - 1, source.Height - 1);
-            PointF corner4 = ApplyHomography(h, 0, source.Height - 1);
+            if (cropOutsideQuadrilateral)
+            {
+                preserveOutsideOffset = Point.Empty;
+            }
+            else
+            {
+                // source -> corrected rectangle
+                double[,] h = ComputeHomography(src, dst);
 
-            double minX = Math.Min(Math.Min(corner1.X, corner2.X), Math.Min(corner3.X, corner4.X));
-            double minY = Math.Min(Math.Min(corner1.Y, corner2.Y), Math.Min(corner3.Y, corner4.Y));
-            double maxX = Math.Max(Math.Max(corner1.X, corner2.X), Math.Max(corner3.X, corner4.X));
-            double maxY = Math.Max(Math.Max(corner1.Y, corner2.Y), Math.Max(corner3.Y, corner4.Y));
+                PointF corner1 = ApplyHomography(h, 0, 0);
+                PointF corner2 = ApplyHomography(h, source.Width - 1, 0);
+                PointF corner3 = ApplyHomography(h, source.Width - 1, source.Height - 1);
+                PointF corner4 = ApplyHomography(h, 0, source.Height - 1);
 
-            minX = Math.Floor(minX);
-            minY = Math.Floor(minY);
-            maxX = Math.Ceiling(maxX);
-            maxY = Math.Ceiling(maxY);
+                minX = Math.Min(Math.Min(corner1.X, corner2.X), Math.Min(corner3.X, corner4.X));
+                minY = Math.Min(Math.Min(corner1.Y, corner2.Y), Math.Min(corner3.Y, corner4.Y));
+                double maxX = Math.Max(Math.Max(corner1.X, corner2.X), Math.Max(corner3.X, corner4.X));
+                double maxY = Math.Max(Math.Max(corner1.Y, corner2.Y), Math.Max(corner3.Y, corner4.Y));
 
-            preserveOutsideOffset = new Point((int)minX, (int)minY);
+                minX = Math.Floor(minX);
+                minY = Math.Floor(minY);
+                maxX = Math.Ceiling(maxX);
+                maxY = Math.Ceiling(maxY);
 
-            int destinationWidth = Math.Max(1, (int)(maxX - minX + 1));
-            int destinationHeight = Math.Max(1, (int)(maxY - minY + 1));
+                preserveOutsideOffset = new Point((int)minX, (int)minY);
+
+                destinationWidth = Math.Max(1, (int)(maxX - minX + 1));
+                destinationHeight = Math.Max(1, (int)(maxY - minY + 1));
+            }
 
             Bitmap destination = new Bitmap(destinationWidth, destinationHeight, PixelFormat.Format32bppPArgb);
 

@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Drawing;
 using System.Reflection;
-using System.Collections.Generic;
-using AForge.Imaging.Filters;
 using PaintDotNet;
 using PaintDotNet.Effects;
 using PaintDotNet.Imaging;
@@ -55,14 +53,6 @@ namespace QuadrilateralCorrectionEffect
             center = newToken.Center;
             cropOutsideQuadrilateral = newToken.CropOutsideQuadrilateral;
 
-            var sourceQuadrilateral = new List<AForge.IntPoint>
-            {
-                new AForge.IntPoint(topLeft.X, topLeft.Y),
-                new AForge.IntPoint(topRight.X, topRight.Y),
-                new AForge.IntPoint(bottomRight.X, bottomRight.Y),
-                new AForge.IntPoint(bottomLeft.X, bottomLeft.Y)
-            };
-
             // Use Environment.Selection to get the selection bounds
             RectInt32 renderBounds = Environment.Selection.RenderBounds;
             Rectangle selection = new Rectangle(renderBounds.X, renderBounds.Y, renderBounds.Width, renderBounds.Height);
@@ -88,20 +78,8 @@ namespace QuadrilateralCorrectionEffect
 
                 if (cropOutsideQuadrilateral)
                 {
-                    // create filter: remove content outside the quadrilateral
-                    QuadrilateralTransformation quadTrans = new QuadrilateralTransformation
-                    {
-                        SourceQuadrilateral = sourceQuadrilateral,
-                        AutomaticSizeCalculaton = autoDims,
-                        NewWidth = width,
-                        NewHeight = height
-                    };
-                    quadTransOutput = quadTrans.Apply(srcImage);
-                }
-                else
-                {
-                    // Preserve content outside the quadrilateral and apply perspective warp to the entire image
-                    quadTransOutput = PerspectiveWarpUtil.PerspectiveWarpPreserveOutside(
+                    // remove content outside the quadrilateral
+                    quadTransOutput = PerspectiveWarpUtil.PerspectiveWarp(
                         srcImage,
                         topLeft,
                         topRight,
@@ -110,6 +88,23 @@ namespace QuadrilateralCorrectionEffect
                         autoDims,
                         width,
                         height,
+                        true,
+                        out preserveOutsideOffset,
+                        out preserveOutsideSize);
+                }
+                else
+                {
+                    // Preserve content outside the quadrilateral and apply perspective warp to the entire image
+                    quadTransOutput = PerspectiveWarpUtil.PerspectiveWarp(
+                        srcImage,
+                        topLeft,
+                        topRight,
+                        bottomRight,
+                        bottomLeft,
+                        autoDims,
+                        width,
+                        height,
+                        false,
                         out preserveOutsideOffset,
                         out preserveOutsideSize);
                 }

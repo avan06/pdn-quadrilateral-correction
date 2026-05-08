@@ -306,21 +306,21 @@ namespace QuadrilateralCorrectionEffect
 
         private void SetDimensionValues()
         {
-            AForge.Imaging.Filters.QuadrilateralTransformation quadTrans = new AForge.Imaging.Filters.QuadrilateralTransformation
-            {
-                SourceQuadrilateral = new List<AForge.IntPoint>
-                {
-                    new AForge.IntPoint((int)numericUpDownTopLeftX.Value, (int)numericUpDownTopLeftY.Value),
-                    new AForge.IntPoint((int)numericUpDownTopRightX.Value, (int)numericUpDownTopRightY.Value),
-                    new AForge.IntPoint((int)numericUpDownBottomRightX.Value, (int)numericUpDownBottomRightY.Value),
-                    new AForge.IntPoint((int)numericUpDownBottomLeftX.Value, (int)numericUpDownBottomLeftY.Value)
-                }
-            };
-
             Size quadTransOutput;
             try
             {
-                using Bitmap outputBitmap = quadTrans.Apply(srcImage);
+                using Bitmap outputBitmap = PerspectiveWarpUtil.PerspectiveWarp(
+                    srcImage,
+                    new Point((int)numericUpDownTopLeftX.Value, (int)numericUpDownTopLeftY.Value),
+                    new Point((int)numericUpDownTopRightX.Value, (int)numericUpDownTopRightY.Value),
+                    new Point((int)numericUpDownBottomRightX.Value, (int)numericUpDownBottomRightY.Value),
+                    new Point((int)numericUpDownBottomLeftX.Value, (int)numericUpDownBottomLeftY.Value),
+                    true,
+                    int.MaxValue,
+                    int.MaxValue,
+                    true,
+                    out _,
+                    out _);
                 quadTransOutput = outputBitmap.Size;
             }
             catch
