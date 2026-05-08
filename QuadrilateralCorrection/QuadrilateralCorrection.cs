@@ -57,24 +57,22 @@ namespace QuadrilateralCorrectionEffect
             RectInt32 renderBounds = Environment.Selection.RenderBounds;
             Rectangle selection = new Rectangle(renderBounds.X, renderBounds.Y, renderBounds.Width, renderBounds.Height);
 
-            Bitmap quadTransOutput;
+            BitmapRegionUtil.BitmapBgra32Data quadTransOutput;
             Point preserveOutsideOffset = Point.Empty;
             Size preserveOutsideSize = Size.Empty;
 
             try
             {
-                // Read the image using the PDNv5 API and convert it to a GDI+ Bitmap for the existing logic
-                IEffectInputBitmap<ColorBgra32> sourceBitmap = Environment.GetSourceBitmapBgra32();
+                // Read the image using the PDNv5 API and keep it as a BGRA buffer for the warp logic
+                using IEffectInputBitmap<ColorBgra32> sourceBitmap = Environment.GetSourceBitmapBgra32();
                 using IBitmapLock<ColorBgra32> sourceLock = sourceBitmap.Lock(new RectInt32(0, 0, sourceBitmap.Size));
                 RegionPtr<ColorBgra32> sourceRegion = sourceLock.AsRegionPtr();
 
-                using Bitmap tempBmp =
-                    BitmapRegionUtil.CreateBitmapFromSourceRegion(
+                BitmapRegionUtil.BitmapBgra32Data srcImage =
+                    BitmapRegionUtil.CreateBgra32DataFromSourceRegion(
                         sourceRegion,
                         sourceBitmap.Size.Width,
                         sourceBitmap.Size.Height);
-
-                using Bitmap srcImage = new Bitmap(tempBmp);
 
                 if (cropOutsideQuadrilateral)
                 {
@@ -111,8 +109,8 @@ namespace QuadrilateralCorrectionEffect
             }
             catch
             {
-                quadTransOutput = new Bitmap(1, 1);
-                preserveOutsideSize = quadTransOutput.Size;
+                quadTransOutput = BitmapRegionUtil.CreateBgra32Data(1, 1);
+                preserveOutsideSize = new Size(quadTransOutput.Width, quadTransOutput.Height);
             }
 
             int outputWidth = cropOutsideQuadrilateral ? quadTransOutput.Width : preserveOutsideSize.Width;
@@ -132,31 +130,21 @@ namespace QuadrilateralCorrectionEffect
                 // Use Environment.Document.Size for the canvas size
                 offSet = PerspectiveWarpUtil.FitOffsetInsideCanvas(
                     offSet,
-                    quadTransOutput.Size,
+                    new Size(quadTransOutput.Width, quadTransOutput.Height),
                     new Size(Environment.Document.Size.Width, Environment.Document.Size.Height));
             }
 
-            Bitmap alignedImage = new Bitmap(Environment.Document.Size.Width, Environment.Document.Size.Height);
-            using (Graphics graphics = Graphics.FromImage(alignedImage))
-            {
-                graphics.DrawImage(quadTransOutput, offSet);
-            }
-            quadTransOutput.Dispose();
+            BitmapRegionUtil.BitmapBgra32Data alignedImage =
+                BitmapRegionUtil.CreateBgra32Data(Environment.Document.Size.Width, Environment.Document.Size.Height);
+            BitmapRegionUtil.DrawBgra32Data(quadTransOutput, alignedImage, offSet);
 
-            Bitmap newQuadrilateralSurface = new Bitmap(alignedImage);
-            BitmapRegionUtil.BitmapBgra32Data newQuadrilateralSurfaceData =
-                BitmapRegionUtil.CreateBgra32DataFromBitmap(newQuadrilateralSurface);
+            BitmapRegionUtil.BitmapBgra32Data newQuadrilateralSurface = alignedImage;
+            BitmapRegionUtil.BitmapBgra32Data newQuadrilateralSurfaceData = newQuadrilateralSurface;
+
 
             // Update the preprocessed full-size image
-            if (quadrilateralSurface != null)
-            {
-                quadrilateralSurface.Dispose();
-            }
-
             quadrilateralSurface = newQuadrilateralSurface;
             quadrilateralSurfaceData = newQuadrilateralSurfaceData;
-
-            alignedImage.Dispose();
         }
 
         // In PDNv5, OnRender uses concurrent tile rendering, so only the corresponding slice from the precomputed quadrilateralSurface needs to be copied
@@ -219,12 +207,7 @@ namespace QuadrilateralCorrectionEffect
         {
             if (disposing)
             {
-                if (quadrilateralSurface != null)
-                {
-                    quadrilateralSurface.Dispose();
-                    quadrilateralSurface = null;
-                }
-
+                quadrilateralSurface = null;
                 quadrilateralSurfaceData = null;
             }
 
@@ -241,9 +224,8 @@ namespace QuadrilateralCorrectionEffect
         private bool center;
         private bool cropOutsideQuadrilateral;
 
-        // In PDNv5, Surface has been replaced with Bitmap
-        private Bitmap quadrilateralSurface;
-
+        // In PDNv5, the preprocessed surface is stored as a BGRA buffer
+        private BitmapRegionUtil.BitmapBgra32Data quadrilateralSurface;
         private BitmapRegionUtil.BitmapBgra32Data quadrilateralSurfaceData;
     }
 }

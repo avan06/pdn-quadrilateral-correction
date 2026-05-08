@@ -11,7 +11,7 @@ namespace QuadrilateralCorrectionEffect
     {
         internal sealed class BitmapBgra32Data
         {
-            public readonly byte[] Buffer;
+            public readonly byte[] Buffer;   // BGRA, packed
             public readonly int Width;
             public readonly int Height;
             public readonly int StrideAbs;
@@ -32,33 +32,79 @@ namespace QuadrilateralCorrectionEffect
             }
         }
 
-        public static BitmapBgra32Data CreateBgra32DataFromBitmap(Bitmap bitmap)
+        public static BitmapBgra32Data CreateBgra32Data(int width, int height)
         {
-            Rectangle rect = new Rectangle(0, 0, bitmap.Width, bitmap.Height);
+            int stride = checked(width * 4);
+            return new BitmapBgra32Data(new byte[checked(stride * height)], width, height, stride, true);
+        }
 
-            BitmapData bitmapData = bitmap.LockBits(
-                rect,
-                ImageLockMode.ReadOnly,
-                System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+        public static BitmapBgra32Data CreateBgra32DataFromSourceRegion(
+            RegionPtr<ColorBgra32> sourceRegion,
+            int width,
+            int height)
+        {
+            return CreateBgra32DataFromSourceRegion(sourceRegion, 0, 0, width, height);
+        }
 
-            try
+        public static BitmapBgra32Data CreateBgra32DataFromSourceRegion(
+            RegionPtr<ColorBgra32> sourceRegion,
+            int sourceLeft,
+            int sourceTop,
+            int width,
+            int height)
+        {
+            int stride = checked(width * 4);
+            byte[] buffer = new byte[checked(stride * height)];
+
+            for (int y = 0; y < height; y++)
             {
-                int stride = bitmapData.Stride;
-                int strideAbs = Math.Abs(stride);
-                byte[] buffer = new byte[strideAbs * bitmap.Height];
+                int rowOffset = y * stride;
 
-                Marshal.Copy(bitmapData.Scan0, buffer, 0, buffer.Length);
+                for (int x = 0; x < width; x++)
+                {
+                    ColorBgra32 pixel = sourceRegion[sourceLeft + x, sourceTop + y];
+                    int offset = rowOffset + (x * 4);
 
-                return new BitmapBgra32Data(
-                    buffer,
-                    bitmap.Width,
-                    bitmap.Height,
-                    strideAbs,
-                    stride > 0);
+                    buffer[offset + 0] = pixel.B;
+                    buffer[offset + 1] = pixel.G;
+                    buffer[offset + 2] = pixel.R;
+                    buffer[offset + 3] = pixel.A;
+                }
             }
-            finally
+
+            return new BitmapBgra32Data(buffer, width, height, stride, true);
+        }
+
+        public static void DrawBgra32Data(
+            BitmapBgra32Data source,
+            BitmapBgra32Data destination,
+            Point offSet)
+        {
+            int startX = Math.Max(0, offSet.X);
+            int startY = Math.Max(0, offSet.Y);
+            int endX = Math.Min(destination.Width, offSet.X + source.Width);
+            int endY = Math.Min(destination.Height, offSet.Y + source.Height);
+
+            for (int y = startY; y < endY; y++)
             {
-                bitmap.UnlockBits(bitmapData);
+                int sourceY = y - offSet.Y;
+                int sourceBufferY = source.StridePositive ? sourceY : source.Height - 1 - sourceY;
+                int destinationBufferY = destination.StridePositive ? y : destination.Height - 1 - y;
+
+                int sourceRowOffset = sourceBufferY * source.StrideAbs;
+                int destinationRowOffset = destinationBufferY * destination.StrideAbs;
+
+                for (int x = startX; x < endX; x++)
+                {
+                    int sourceX = x - offSet.X;
+                    int sourceOffset = sourceRowOffset + (sourceX * 4);
+                    int destinationOffset = destinationRowOffset + (x * 4);
+
+                    destination.Buffer[destinationOffset + 0] = source.Buffer[sourceOffset + 0];
+                    destination.Buffer[destinationOffset + 1] = source.Buffer[sourceOffset + 1];
+                    destination.Buffer[destinationOffset + 2] = source.Buffer[sourceOffset + 2];
+                    destination.Buffer[destinationOffset + 3] = source.Buffer[sourceOffset + 3];
+                }
             }
         }
 

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
@@ -15,7 +14,8 @@ namespace QuadrilateralCorrectionEffect
     {
         private Rectangle uiImgBounds;
         private Rectangle selection;
-        private Bitmap srcImage;
+        private Bitmap srcImage; // Used for UI preview (PictureBox / QuadControl)
+        private BitmapRegionUtil.BitmapBgra32Data srcImageData; // Used for perspective warp and pixel-level computations
         private Point quadControl11BaseLocation;
 
         public QuadrilateralCorrectionConfigDialog()
@@ -67,15 +67,15 @@ namespace QuadrilateralCorrectionEffect
             numericUpDown2.Maximum = selection.Height;
 
             // Read the current layer as the UI image
-            IEffectInputBitmap<ColorBgra32> sourceBitmap = this.Environment.GetSourceBitmapBgra32();
+            using IEffectInputBitmap<ColorBgra32> sourceBitmap = this.Environment.GetSourceBitmapBgra32();
             using (IBitmapLock<ColorBgra32> sourceLock = sourceBitmap.Lock(new RectInt32(0, 0, sourceBitmap.Size)))
             {
                 RegionPtr<ColorBgra32> sourceRegion = sourceLock.AsRegionPtr();
 
-                using (Bitmap tempBmp = BitmapRegionUtil.CreateBitmapFromSourceRegion(sourceRegion, sourceBitmap.Size.Width, sourceBitmap.Size.Height))
-                {
-                    srcImage = new Bitmap(tempBmp);
-                }
+                srcImageData = BitmapRegionUtil.CreateBgra32DataFromSourceRegion(sourceRegion, sourceBitmap.Size.Width, sourceBitmap.Size.Height);
+
+                using Bitmap tempBmp = BitmapRegionUtil.CreateBitmapFromSourceRegion(sourceRegion, sourceBitmap.Size.Width, sourceBitmap.Size.Height);
+                srcImage = new Bitmap(tempBmp);
             }
 
             quadControl11.Image = srcImage;
@@ -309,8 +309,8 @@ namespace QuadrilateralCorrectionEffect
             Size quadTransOutput;
             try
             {
-                using Bitmap outputBitmap = PerspectiveWarpUtil.PerspectiveWarp(
-                    srcImage,
+                BitmapRegionUtil.BitmapBgra32Data outputBitmap = PerspectiveWarpUtil.PerspectiveWarp(
+                    srcImageData,
                     new Point((int)numericUpDownTopLeftX.Value, (int)numericUpDownTopLeftY.Value),
                     new Point((int)numericUpDownTopRightX.Value, (int)numericUpDownTopRightY.Value),
                     new Point((int)numericUpDownBottomRightX.Value, (int)numericUpDownBottomRightY.Value),
@@ -321,7 +321,7 @@ namespace QuadrilateralCorrectionEffect
                     true,
                     out _,
                     out _);
-                quadTransOutput = outputBitmap.Size;
+                quadTransOutput = new Size(outputBitmap.Width, outputBitmap.Height);
             }
             catch
             {

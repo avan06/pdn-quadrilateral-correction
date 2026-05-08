@@ -1,15 +1,13 @@
 ﻿using System;
 using System.Drawing;
-using System.Drawing.Imaging;
-using System.Runtime.InteropServices;
 
 namespace QuadrilateralCorrectionEffect
 {
     internal static class PerspectiveWarpUtil
     {
         #region Perspective Warp Helpers
-        public static Bitmap PerspectiveWarp(
-            Bitmap source,
+        public static BitmapRegionUtil.BitmapBgra32Data PerspectiveWarp(
+            BitmapRegionUtil.BitmapBgra32Data source,
             Point topLeft,
             Point topRight,
             Point bottomRight,
@@ -85,113 +83,68 @@ namespace QuadrilateralCorrectionEffect
                 destinationHeight = Math.Max(1, (int)(maxY - minY + 1));
             }
 
-            Bitmap destination = new Bitmap(destinationWidth, destinationHeight, PixelFormat.Format32bppPArgb);
+            BitmapRegionUtil.BitmapBgra32Data destination = BitmapRegionUtil.CreateBgra32Data(destinationWidth, destinationHeight);
 
             // corrected rectangle -> source
             double[,] hInverse = ComputeHomography(dst, src);
+            byte[] sourceBuffer = source.Buffer;
+            byte[] destinationBuffer = destination.Buffer;
 
-            Bitmap source32 = source;
+            int sourceStride = source.StrideAbs;
+            int destinationStride = destination.StrideAbs;
+            int sourceWidth = source.Width;
+            int sourceHeight = source.Height;
+            int destinationWidthLocal = destinationWidth;
+            int destinationHeightLocal = destinationHeight;
 
-            if (source.PixelFormat != PixelFormat.Format32bppPArgb &&
-                source.PixelFormat != PixelFormat.Format32bppArgb)
+            double h00 = hInverse[0, 0];
+            double h01 = hInverse[0, 1];
+            double h02 = hInverse[0, 2];
+            double h10 = hInverse[1, 0];
+            double h11 = hInverse[1, 1];
+            double h12 = hInverse[1, 2];
+            double h20 = hInverse[2, 0];
+            double h21 = hInverse[2, 1];
+            double h22 = hInverse[2, 2];
+
+            System.Threading.Tasks.Parallel.For(0, destinationHeightLocal, y =>
             {
-                source32 = source.Clone(
-                    new Rectangle(0, 0, source.Width, source.Height),
-                    PixelFormat.Format32bppPArgb);
-            }
+                double correctedY = y + minY;
 
-            BitmapData sourceData = null;
-            BitmapData destinationData = null;
-
-            try
-            {
-                Rectangle sourceRect = new Rectangle(0, 0, source32.Width, source32.Height);
-                Rectangle destinationRect = new Rectangle(0, 0, destination.Width, destination.Height);
-
-                sourceData = source32.LockBits(sourceRect, ImageLockMode.ReadOnly, source32.PixelFormat);
-                destinationData = destination.LockBits(destinationRect, ImageLockMode.WriteOnly, PixelFormat.Format32bppPArgb);
-
-                int sourceStride = Math.Abs(sourceData.Stride);
-                int destinationStride = Math.Abs(destinationData.Stride);
-
-                byte[] sourceBuffer = new byte[sourceStride * source32.Height];
-                byte[] destinationBuffer = new byte[destinationStride * destination.Height];
-
-                Marshal.Copy(sourceData.Scan0, sourceBuffer, 0, sourceBuffer.Length);
-
-                int sourceWidth = source32.Width;
-                int sourceHeight = source32.Height;
-                int destinationWidthLocal = destinationWidth;
-                int destinationHeightLocal = destinationHeight;
-
-                double h00 = hInverse[0, 0];
-                double h01 = hInverse[0, 1];
-                double h02 = hInverse[0, 2];
-                double h10 = hInverse[1, 0];
-                double h11 = hInverse[1, 1];
-                double h12 = hInverse[1, 2];
-                double h20 = hInverse[2, 0];
-                double h21 = hInverse[2, 1];
-                double h22 = hInverse[2, 2];
-
-                System.Threading.Tasks.Parallel.For(0, destinationHeightLocal, y =>
+                for (int x = 0; x < destinationWidthLocal; x++)
                 {
-                    double correctedY = y + minY;
+                    double correctedX = x + minX;
 
-                    for (int x = 0; x < destinationWidthLocal; x++)
+                    double denominator = h20 * correctedX + h21 * correctedY + h22;
+
+                    if (Math.Abs(denominator) < 1e-12)
                     {
-                        double correctedX = x + minX;
-
-                        double denominator = h20 * correctedX + h21 * correctedY + h22;
-
-                        if (Math.Abs(denominator) < 1e-12)
-                        {
-                            continue;
-                        }
-
-                        double sourceX = (h00 * correctedX + h01 * correctedY + h02) / denominator;
-                        double sourceY = (h10 * correctedX + h11 * correctedY + h12) / denominator;
-
-                        SampleBilinear(
-                            sourceBuffer,
-                            sourceStride,
-                            sourceWidth,
-                            sourceHeight,
-                            sourceX,
-                            sourceY,
-                            out byte a,
-                            out byte r,
-                            out byte g,
-                            out byte b);
-
-                        int destinationIndex = y * destinationStride + x * 4;
-
-                        destinationBuffer[destinationIndex] = b;
-                        destinationBuffer[destinationIndex + 1] = g;
-                        destinationBuffer[destinationIndex + 2] = r;
-                        destinationBuffer[destinationIndex + 3] = a;
+                        continue;
                     }
-                });
 
-                Marshal.Copy(destinationBuffer, 0, destinationData.Scan0, destinationBuffer.Length);
-            }
-            finally
-            {
-                if (destinationData != null)
-                {
-                    destination.UnlockBits(destinationData);
-                }
+                    double sourceX = (h00 * correctedX + h01 * correctedY + h02) / denominator;
+                    double sourceY = (h10 * correctedX + h11 * correctedY + h12) / denominator;
 
-                if (sourceData != null)
-                {
-                    source32.UnlockBits(sourceData);
-                }
+                    SampleBilinear(
+                        sourceBuffer,
+                        sourceStride,
+                        sourceWidth,
+                        sourceHeight,
+                        sourceX,
+                        sourceY,
+                        out byte a,
+                        out byte r,
+                        out byte g,
+                        out byte b);
 
-                if (!ReferenceEquals(source32, source))
-                {
-                    source32.Dispose();
+                    int destinationIndex = y * destinationStride + x * 4;
+
+                    destinationBuffer[destinationIndex] = b;
+                    destinationBuffer[destinationIndex + 1] = g;
+                    destinationBuffer[destinationIndex + 2] = r;
+                    destinationBuffer[destinationIndex + 3] = a;
                 }
-            }
+            });
 
             return destination;
         }
