@@ -12,39 +12,89 @@
     <ItemGroup>
         <Reference Include="PaintDotNet.Base">
             <HintPath>$(PaintDotNetDir)\PaintDotNet.Base.dll</HintPath>
-            <Private>false</Private>
         </Reference>
         <Reference Include="PaintDotNet.ComponentModel">
             <HintPath>$(PaintDotNetDir)\PaintDotNet.ComponentModel.dll</HintPath>
-            <Private>false</Private>
         </Reference>
         <Reference Include="PaintDotNet.Core">
             <HintPath>$(PaintDotNetDir)\PaintDotNet.Core.dll</HintPath>
         </Reference>
-        <Reference Include="PaintDotNet.Effects">
-            <HintPath>$(PaintDotNetDir)\PaintDotNet.Effects.dll</HintPath>
-            <Private>false</Private>
-        </Reference>
         <Reference Include="PaintDotNet.Effects.Core">
             <HintPath>$(PaintDotNetDir)\PaintDotNet.Effects.Core.dll</HintPath>
-            <Private>false</Private>
         </Reference>
         <Reference Include="PaintDotNet.Primitives">
             <HintPath>$(PaintDotNetDir)\PaintDotNet.Primitives.dll</HintPath>
-            <Private>false</Private>
         </Reference>
         <Reference Include="PaintDotNet.Windows">
             <HintPath>$(PaintDotNetDir)\PaintDotNet.Windows.dll</HintPath>
-            <Private>false</Private>
         </Reference>
         <Reference Include="PaintDotNet.Windows.Core">
             <HintPath>$(PaintDotNetDir)\PaintDotNet.Windows.Core.dll</HintPath>
-            <Private>false</Private>
         </Reference>
         <Reference Include="PaintDotNet.ObjectModel">
             <HintPath>$(PaintDotNetDir)\PaintDotNet.ObjectModel.dll</HintPath>
-            <Private>false</Private>
         </Reference>
+    </ItemGroup>
+    <ItemGroup>
+        <!--For view designer Start -->
+        <Reference Include="System.Runtime.Serialization.Formatters">
+            <HintPath>$(PaintDotNetDir)\System.Runtime.Serialization.Formatters.dll</HintPath>
+        </Reference>
+        <Reference Include="Microsoft.Windows.SDK.NET">
+            <HintPath>$(PaintDotNetDir)\Microsoft.Windows.SDK.NET.dll</HintPath>
+        </Reference>
+        <Reference Include="WinRT.Runtime">
+            <HintPath>$(PaintDotNetDir)\WinRT.Runtime.dll</HintPath>
+        </Reference>
+        <Reference Include="ComputeSharp.Core">
+            <HintPath>$(PaintDotNetDir)\ComputeSharp.Core.dll</HintPath>
+        </Reference>
+        <Reference Include="TerraFX.Interop.Windows">
+            <HintPath>$(PaintDotNetDir)\TerraFX.Interop.Windows.dll</HintPath>
+        </Reference>
+        <Reference Include="CommunityToolkit.HighPerformance">
+            <HintPath>$(PaintDotNetDir)\CommunityToolkit.HighPerformance.dll</HintPath>
+        </Reference>
+        <Reference Include="PointerToolkit">
+            <HintPath>$(PaintDotNetDir)\PointerToolkit.dll</HintPath>
+        </Reference>
+        <Reference Include="PaintDotNet.Framework">
+            <HintPath>$(PaintDotNetDir)\PaintDotNet.Framework.dll</HintPath>
+        </Reference>
+        <Reference Include="PaintDotNet.Fundamentals">
+            <HintPath>$(PaintDotNetDir)\PaintDotNet.Fundamentals.dll</HintPath>
+        </Reference>
+        <Reference Include="PaintDotNet.Collections">
+            <HintPath>$(PaintDotNetDir)\PaintDotNet.Collections.dll</HintPath>
+        </Reference>
+        <Reference Include="PaintDotNet.Data">
+            <HintPath>$(PaintDotNetDir)\PaintDotNet.Data.dll</HintPath>
+        </Reference>
+        <Reference Include="PaintDotNet.Systrace">
+            <HintPath>$(PaintDotNetDir)\PaintDotNet.Systrace.dll</HintPath>
+        </Reference>
+        <Reference Include="PaintDotNet.Runtime">
+            <HintPath>$(PaintDotNetDir)\PaintDotNet.Runtime.dll</HintPath>
+        </Reference>
+        <Reference Include="PaintDotNet.PropertySystem">
+            <HintPath>$(PaintDotNetDir)\PaintDotNet.PropertySystem.dll</HintPath>
+        </Reference>
+        <Reference Include="PaintDotNet.Windows.Framework">
+            <HintPath>$(PaintDotNetDir)\PaintDotNet.Windows.Framework.dll</HintPath>
+        </Reference>
+        <Reference Include="PaintDotNet.Resources">
+            <HintPath>$(PaintDotNetDir)\PaintDotNet.Resources.dll</HintPath>
+        </Reference>
+        <Reference Include="PaintDotNet.SystemLayer">
+            <HintPath>$(PaintDotNetDir)\PaintDotNet.SystemLayer.dll</HintPath>
+        </Reference>
+        <Reference Include="PaintDotNet.UI">
+            <HintPath>$(PaintDotNetDir)\PaintDotNet.UI.dll</HintPath>
+        </Reference>
+        <Reference Include="PaintDotNet.Plugins.Compatibility">
+            <HintPath>$(PaintDotNetDir)\PaintDotNet.Plugins.Compatibility.dll</HintPath>
+        </Reference>
+        <!--For view designer End -->
     </ItemGroup>
     <ItemGroup>
         <Compile Update="QuadControl.cs">
@@ -62,13 +112,9 @@
     </ItemGroup>
     <ItemGroup>
         <PackageReference Include="ILRepack" Version="2.0.18" />
-        <PackageReference Include="System.Runtime.Serialization.Formatters"
-                                                Version="9.*"
-                          PrivateAssets="all"
-                          ExcludeAssets="runtime;native;contentfiles;analyzers;buildtransitive" />
     </ItemGroup>
     <PropertyGroup />
     <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-				<Exec Command="if $(ConfigurationName)==FastDebug goto end&#xD;&#xA;&#xD;&#xA;if not exist &quot;$(TargetDir)AllAssemblies\&quot; mkdir &quot;$(TargetDir)AllAssemblies\&quot;&#xD;&#xA;if not exist &quot;$(TargetDir)AllAssemblies\Merged\&quot; mkdir &quot;$(TargetDir)AllAssemblies\Merged&quot;&#xD;&#xA;&#xD;&#xA;copy $(ILRepack) &quot;$(TargetDir)AllAssemblies&quot;&#xD;&#xA;robocopy $(TargetDir) &quot;$(TargetDir)AllAssemblies&quot;&#xD;&#xA;robocopy &quot;C:\Program Files\dotnet\packs\Microsoft.NETCore.App.Ref\6.0.0\ref\net6.0&quot; &quot;$(TargetDir)AllAssemblies&quot;&#xD;&#xA;robocopy &quot;C:\Program Files\dotnet\packs\Microsoft.WindowsDesktop.App.Ref\6.0.0\ref\net6.0&quot; &quot;$(TargetDir)AllAssemblies&quot;&#xD;&#xA;&#xD;&#xA;set deps=&#xD;&#xA;&#xD;&#xA;cd $(TargetDir)AllAssemblies&#xD;&#xA;&#xD;&#xA;if $(ConfigurationName)==Release (&#xD;&#xA;    ILRepack.exe /ndebug /out:Merged\$(TargetFileName) $(TargetFileName) %25deps%25&#xD;&#xA;    cmd /c explorer &quot;$(TargetDir)AllAssemblies\Merged&quot;&#xD;&#xA;) else if $(ConfigurationName)==Debug (&#xD;&#xA;    ILRepack.exe /out:Merged\$(TargetFileName) $(TargetFileName) %25deps%25&#xD;&#xA;    copy &quot;$(TargetDir)AllAssemblies\Merged\$(TargetFileName)&quot; &quot;C:\Program Files\Paint.NET\Effects\&quot;&#xD;&#xA;)&#xD;&#xA;&#xD;&#xA;:end&#xD;&#xA;exit 0" />
-		</Target>
+        <Exec Command="if $(ConfigurationName)==FastDebug goto end&#xD;&#xA;&#xD;&#xA;if not exist &quot;$(TargetDir)AllAssemblies\&quot; mkdir &quot;$(TargetDir)AllAssemblies\&quot;&#xD;&#xA;if not exist &quot;$(TargetDir)AllAssemblies\Merged\&quot; mkdir &quot;$(TargetDir)AllAssemblies\Merged&quot;&#xD;&#xA;&#xD;&#xA;copy $(ILRepack) &quot;$(TargetDir)AllAssemblies&quot;&#xD;&#xA;robocopy $(TargetDir) &quot;$(TargetDir)AllAssemblies&quot;&#xD;&#xA;robocopy &quot;C:\Program Files\dotnet\packs\Microsoft.NETCore.App.Ref\6.0.0\ref\net6.0&quot; &quot;$(TargetDir)AllAssemblies&quot;&#xD;&#xA;robocopy &quot;C:\Program Files\dotnet\packs\Microsoft.WindowsDesktop.App.Ref\6.0.0\ref\net6.0&quot; &quot;$(TargetDir)AllAssemblies&quot;&#xD;&#xA;&#xD;&#xA;set deps=&#xD;&#xA;&#xD;&#xA;cd $(TargetDir)AllAssemblies&#xD;&#xA;&#xD;&#xA;if $(ConfigurationName)==Release (&#xD;&#xA;    ILRepack.exe /ndebug /out:Merged\$(TargetFileName) $(TargetFileName) %25deps%25&#xD;&#xA;    cmd /c explorer &quot;$(TargetDir)AllAssemblies\Merged&quot;&#xD;&#xA;) else if $(ConfigurationName)==Debug (&#xD;&#xA;    ILRepack.exe /out:Merged\$(TargetFileName) $(TargetFileName) %25deps%25&#xD;&#xA;    copy &quot;$(TargetDir)AllAssemblies\Merged\$(TargetFileName)&quot; &quot;C:\Program Files\Paint.NET\Effects\&quot;&#xD;&#xA;)&#xD;&#xA;&#xD;&#xA;:end&#xD;&#xA;exit 0" />
+    </Target>
 </Project>

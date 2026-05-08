@@ -10,7 +10,7 @@ using PaintDotNet.Rendering;
 
 namespace QuadrilateralCorrectionEffect
 {
-    internal partial class QuadrilateralCorrectionConfigDialog : EffectConfigForm<QuadrilateralCorrectionEffectPlugin, QuadrilateralCorrectionConfigToken>
+    internal partial class QuadrilateralCorrectionConfigDialog : QuadrilateralCorrectionConfigDialogBase
     {
         private Rectangle uiImgBounds;
         private Rectangle selection;
@@ -417,5 +417,19 @@ namespace QuadrilateralCorrectionEffect
             numericUpDownBottomLeftX.Value = numericUpDownBottomLeftX.Minimum;
             numericUpDownBottomLeftY.Value = numericUpDownBottomLeftY.Maximum;
         }
+    }
+
+    /// <summary>
+    /// This non-generic intermediate base class allows the Visual Studio WinForms
+    /// Designer to load QuadrilateralCorrectionConfigDialog without directly
+    /// instantiating the generic Paint.NET EffectConfigForm base type.
+    /// OnCreateInitialToken() must be overridden here because EffectConfigForm
+    /// calls it from its base constructor.
+    /// </summary>
+    internal class QuadrilateralCorrectionConfigDialogBase : EffectConfigForm<QuadrilateralCorrectionEffectPlugin, QuadrilateralCorrectionConfigToken>
+    {
+        public QuadrilateralCorrectionConfigDialogBase() { }
+
+        protected override QuadrilateralCorrectionConfigToken OnCreateInitialToken() => new QuadrilateralCorrectionConfigToken();
     }
 }
