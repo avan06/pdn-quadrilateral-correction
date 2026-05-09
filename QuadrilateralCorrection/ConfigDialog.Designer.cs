@@ -208,10 +208,10 @@
             // 
             quadControl11.Anchor = System.Windows.Forms.AnchorStyles.None;
             quadControl11.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            quadControl11.Location = new System.Drawing.Point(-12, 35);
+            quadControl11.Location = new System.Drawing.Point(1, 35);
             quadControl11.Margin = new System.Windows.Forms.Padding(0);
             quadControl11.Name = "quadControl11";
-            quadControl11.Size = new System.Drawing.Size(532, 520);
+            quadControl11.Size = new System.Drawing.Size(506, 520);
             quadControl11.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             quadControl11.TabIndex = 14;
             quadControl11.TabStop = false;
@@ -367,6 +367,7 @@
             // 
             comboBoxResampling.Anchor = System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
             comboBoxResampling.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            comboBoxResampling.DropDownWidth = 150;
             comboBoxResampling.Items.AddRange(new object[] { "Nearest Neighbor", "Bilinear", "Bicubic", "Lanczos 3", "High Quality Supersampling" });
             comboBoxResampling.Location = new System.Drawing.Point(112, 397);
             comboBoxResampling.Name = "comboBoxResampling";
@@ -595,10 +596,10 @@
             ClientSize = new System.Drawing.Size(704, 591);
             Controls.Add(splitContainerMain);
             DoubleBuffered = true;
+            FormBorderStyle = System.Windows.Forms.FormBorderStyle.Sizable;
             HelpButton = true;
             KeyPreview = true;
             Location = new System.Drawing.Point(0, 0);
-            MaximizeBox = true;
             Name = "QuadrilateralCorrectionConfigDialog";
             SizeGripStyle = System.Windows.Forms.SizeGripStyle.Show;
             Text = "Quadrilateral Correction";
