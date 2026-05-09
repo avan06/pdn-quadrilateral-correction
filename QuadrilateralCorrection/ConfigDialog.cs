@@ -25,10 +25,23 @@ namespace QuadrilateralCorrectionEffect
 
             quadControl11BaseLocation = quadControl11.Location;
 
-            foreach (Control control in this.Controls.OfType<NumericUpDown>())
+            ApplyThemeColorsToNumericUpDowns(this);
+        }
+
+        private void ApplyThemeColorsToNumericUpDowns(Control parent)
+        {
+            foreach (Control control in parent.Controls)
             {
-                control.ForeColor = this.ForeColor;
-                control.BackColor = this.BackColor;
+                if (control is NumericUpDown numericUpDown)
+                {
+                    numericUpDown.ForeColor = this.ForeColor;
+                    numericUpDown.BackColor = this.BackColor;
+                }
+
+                if (control.HasChildren)
+                {
+                    ApplyThemeColorsToNumericUpDowns(control);
+                }
             }
         }
 
@@ -37,10 +50,6 @@ namespace QuadrilateralCorrectionEffect
             base.OnLoading();
 
             ApplyQuadControlImageBounds();
-
-            checkBoxAutoDims.Left = label10.Left;
-            checkBoxCenter.Left = label10.Left;
-            checkBoxMoveNearestNub.Left = label10.Left;
         }
 
         private bool initialized;
@@ -62,8 +71,8 @@ namespace QuadrilateralCorrectionEffect
             numericUpDownBottomLeftX.Maximum = selection.Width - 1;
             numericUpDownBottomLeftY.Maximum = selection.Height - 1;
 
-            numericUpDown1.Maximum = selection.Width;
-            numericUpDown2.Maximum = selection.Height;
+            numericUpDownWidth.Maximum = selection.Width;
+            numericUpDownHeight.Maximum = selection.Height;
 
             // Read the current layer as the UI image
             using IEffectInputBitmap<ColorBgra32> sourceBitmap = this.Environment.GetSourceBitmapBgra32();
@@ -90,17 +99,42 @@ namespace QuadrilateralCorrectionEffect
 
         private void ApplyQuadControlImageBounds()
         {
-            if (uiImgBounds.Width <= 0 || uiImgBounds.Height <= 0)
+            if (srcImage == null)
             {
                 return;
             }
 
+            Padding padding = splitContainerMain.Panel1.Padding;
+
+            int availableWidth =
+                splitContainerMain.Panel1.ClientSize.Width
+                - padding.Left
+                - padding.Right;
+
+            int availableHeight =
+                splitContainerMain.Panel1.ClientSize.Height
+                - padding.Top
+                - padding.Bottom;
+
+            if (availableWidth <= 0 || availableHeight <= 0)
+            {
+                return;
+            }
+
+            float divisor = Math.Max(
+                (float)srcImage.Width / availableWidth,
+                (float)srcImage.Height / availableHeight);
+
+            uiImgBounds.Width = Math.Max(1, (int)Math.Round(srcImage.Width / divisor));
+            uiImgBounds.Height = Math.Max(1, (int)Math.Round(srcImage.Height / divisor));
+
+            uiImgBounds.X = padding.Left + Math.Max(0, (availableWidth - uiImgBounds.Width) / 2);
+            uiImgBounds.Y = padding.Top + Math.Max(0, (availableHeight - uiImgBounds.Height) / 2);
+
+            quadControl11.Dock = DockStyle.None;
             quadControl11.Width = uiImgBounds.Width + 2;
             quadControl11.Height = uiImgBounds.Height + 2;
-
-            quadControl11.Location = new Point(
-                quadControl11BaseLocation.X + uiImgBounds.X,
-                quadControl11BaseLocation.Y + uiImgBounds.Y);
+            quadControl11.Location = new Point(uiImgBounds.X, uiImgBounds.Y);
 
             quadControl11.Visible = true;
             quadControl11.Invalidate();
@@ -109,10 +143,13 @@ namespace QuadrilateralCorrectionEffect
         #region Values-Changed events
         private Point ScalePointToUi(decimal x, decimal y)
         {
+            int uiWidth = Math.Max(1, quadControl11.ClientSize.Width - 1);
+            int uiHeight = Math.Max(1, quadControl11.ClientSize.Height - 1);
+
             return new Point
             {
-                X = (int)Math.Round(x * (uiImgBounds.Width - 1) / (selection.Width - 1)),
-                Y = (int)Math.Round(y * (uiImgBounds.Height - 1) / (selection.Height - 1))
+                X = (int)Math.Round(x * uiWidth / Math.Max(1, selection.Width - 1)),
+                Y = (int)Math.Round(y * uiHeight / Math.Max(1, selection.Height - 1))
             };
         }
 
@@ -160,6 +197,42 @@ namespace QuadrilateralCorrectionEffect
             UpdateTokenFromDialog();
         }
 
+        private void splitContainerMain_Panel1_Resize(object sender, EventArgs e)
+        {
+            ApplyQuadControlImageBounds();
+
+            quadControl11.ValueChanged -= quadControl11_ValueChanged;
+
+            quadControl11.NubTL = ScalePointToUi(numericUpDownTopLeftX.Value, numericUpDownTopLeftY.Value);
+            quadControl11.NubTR = ScalePointToUi(numericUpDownTopRightX.Value, numericUpDownTopRightY.Value);
+            quadControl11.NubBR = ScalePointToUi(numericUpDownBottomRightX.Value, numericUpDownBottomRightY.Value);
+            quadControl11.NubBL = ScalePointToUi(numericUpDownBottomLeftX.Value, numericUpDownBottomLeftY.Value);
+
+            quadControl11.ValueChanged += quadControl11_ValueChanged;
+
+            quadControl11.Invalidate();
+        }
+
+        private decimal ScaleXFromUi(int x)
+        {
+            int uiWidth = Math.Max(1, quadControl11.ClientSize.Width - 1);
+
+            return Clamp(
+                (decimal)x * (selection.Width - 1) / uiWidth,
+                numericUpDownTopLeftX.Minimum,
+                numericUpDownTopLeftX.Maximum);
+        }
+
+        private decimal ScaleYFromUi(int y)
+        {
+            int uiHeight = Math.Max(1, quadControl11.ClientSize.Height - 1);
+
+            return Clamp(
+                (decimal)y * (selection.Height - 1) / uiHeight,
+                numericUpDownTopLeftY.Minimum,
+                numericUpDownTopLeftY.Maximum);
+        }
+
         private void quadControl11_ValueChanged(object sender, EventArgs e)
         {
             numericUpDownTopLeftX.ValueChanged -= numericUpDownTopLeft_ValueChanged;
@@ -171,17 +244,17 @@ namespace QuadrilateralCorrectionEffect
             numericUpDownBottomLeftX.ValueChanged -= numericUpDownBottomLeft_ValueChanged;
             numericUpDownBottomLeftY.ValueChanged -= numericUpDownBottomLeft_ValueChanged;
 
-            numericUpDownTopLeftX.Value = quadControl11.NubTL.X * (selection.Width - 1) / (uiImgBounds.Width - 1);
-            numericUpDownTopLeftY.Value = quadControl11.NubTL.Y * (selection.Height - 1) / (uiImgBounds.Height - 1);
+            numericUpDownTopLeftX.Value = ScaleXFromUi(quadControl11.NubTL.X);
+            numericUpDownTopLeftY.Value = ScaleYFromUi(quadControl11.NubTL.Y);
 
-            numericUpDownTopRightX.Value = quadControl11.NubTR.X * (selection.Width - 1) / (uiImgBounds.Width - 1);
-            numericUpDownTopRightY.Value = quadControl11.NubTR.Y * (selection.Height - 1) / (uiImgBounds.Height - 1);
+            numericUpDownTopRightX.Value = ScaleXFromUi(quadControl11.NubTR.X);
+            numericUpDownTopRightY.Value = ScaleYFromUi(quadControl11.NubTR.Y);
 
-            numericUpDownBottomRightX.Value = quadControl11.NubBR.X * (selection.Width - 1) / (uiImgBounds.Width - 1);
-            numericUpDownBottomRightY.Value = quadControl11.NubBR.Y * (selection.Height - 1) / (uiImgBounds.Height - 1);
+            numericUpDownBottomRightX.Value = ScaleXFromUi(quadControl11.NubBR.X);
+            numericUpDownBottomRightY.Value = ScaleYFromUi(quadControl11.NubBR.Y);
 
-            numericUpDownBottomLeftX.Value = quadControl11.NubBL.X * (selection.Width - 1) / (uiImgBounds.Width - 1);
-            numericUpDownBottomLeftY.Value = quadControl11.NubBL.Y * (selection.Height - 1) / (uiImgBounds.Height - 1);
+            numericUpDownBottomLeftX.Value = ScaleXFromUi(quadControl11.NubBL.X);
+            numericUpDownBottomLeftY.Value = ScaleYFromUi(quadControl11.NubBL.Y);
 
             numericUpDownTopLeftX.ValueChanged += numericUpDownTopLeft_ValueChanged;
             numericUpDownTopLeftY.ValueChanged += numericUpDownTopLeft_ValueChanged;
@@ -199,20 +272,16 @@ namespace QuadrilateralCorrectionEffect
         {
             if (checkBoxAutoDims.Checked)
             {
-                numericUpDown1.Enabled = false;
-                numericUpDown2.Enabled = false;
-                //label9.Enabled = false;
-                //label10.Enabled = false;
+                numericUpDownWidth.Enabled = false;
+                numericUpDownHeight.Enabled = false;
 
-                numericUpDown1.Text = "-";
-                numericUpDown2.Text = "-";
+                numericUpDownWidth.Text = "-";
+                numericUpDownHeight.Text = "-";
             }
             else
             {
-                numericUpDown1.Enabled = true;
-                numericUpDown2.Enabled = true;
-                //label9.Enabled = true;
-                //label10.Enabled = true;
+                numericUpDownWidth.Enabled = true;
+                numericUpDownHeight.Enabled = true;
                 SetDimensionValues();
             }
 
@@ -275,15 +344,15 @@ namespace QuadrilateralCorrectionEffect
             numericUpDownBottomLeftY.Value = Clamp(effectTokenCopy.BottomLeft.Y, numericUpDownBottomLeftY.Minimum, numericUpDownBottomLeftY.Maximum);
 
             checkBoxAutoDims.Checked = effectTokenCopy.AutoDims;
-            numericUpDown1.Value = Clamp(effectTokenCopy.Width, numericUpDown1.Minimum, numericUpDown1.Maximum);
-            numericUpDown2.Value = Clamp(effectTokenCopy.Height, numericUpDown2.Minimum, numericUpDown2.Maximum);
+            numericUpDownWidth.Value = Clamp(effectTokenCopy.Width, numericUpDownWidth.Minimum, numericUpDownWidth.Maximum);
+            numericUpDownHeight.Value = Clamp(effectTokenCopy.Height, numericUpDownHeight.Minimum, numericUpDownHeight.Maximum);
             if (checkBoxAutoDims.Checked)
             {
-                numericUpDown1.Text = "-";
-                numericUpDown2.Text = "-";
+                numericUpDownWidth.Text = "-";
+                numericUpDownHeight.Text = "-";
             }
             checkBoxCenter.Checked = effectTokenCopy.Center;
-            cropOutsideCheckBox.Checked = effectTokenCopy.CropOutsideQuadrilateral;
+            checkBoxCropOutside.Checked = effectTokenCopy.CropOutsideQuadrilateral;
 
             quadControl11.Invalidate();
         }
@@ -296,10 +365,10 @@ namespace QuadrilateralCorrectionEffect
             writeValuesHere.BottomLeft = new Point((int)numericUpDownBottomLeftX.Value, (int)numericUpDownBottomLeftY.Value);
 
             writeValuesHere.AutoDims = checkBoxAutoDims.Checked;
-            writeValuesHere.Width = (int)numericUpDown1.Value;
-            writeValuesHere.Height = (int)numericUpDown2.Value;
+            writeValuesHere.Width = (int)numericUpDownWidth.Value;
+            writeValuesHere.Height = (int)numericUpDownHeight.Value;
             writeValuesHere.Center = checkBoxCenter.Checked;
-            writeValuesHere.CropOutsideQuadrilateral = cropOutsideCheckBox.Checked;
+            writeValuesHere.CropOutsideQuadrilateral = checkBoxCropOutside.Checked;
         }
         #endregion
 
@@ -331,10 +400,10 @@ namespace QuadrilateralCorrectionEffect
             {
                 quadTransOutput = Size.Empty;
             }
-            numericUpDown1.Value = Clamp(quadTransOutput.Width, numericUpDown1.Minimum, numericUpDown1.Maximum);
-            numericUpDown2.Value = Clamp(quadTransOutput.Height, numericUpDown2.Minimum, numericUpDown2.Maximum);
-            numericUpDown1.Text = numericUpDown1.Value.ToString();
-            numericUpDown2.Text = numericUpDown2.Value.ToString();
+            numericUpDownWidth.Value = Clamp(quadTransOutput.Width, numericUpDownWidth.Minimum, numericUpDownWidth.Maximum);
+            numericUpDownHeight.Value = Clamp(quadTransOutput.Height, numericUpDownHeight.Minimum, numericUpDownHeight.Maximum);
+            numericUpDownWidth.Text = numericUpDownWidth.Value.ToString();
+            numericUpDownHeight.Text = numericUpDownHeight.Value.ToString();
         }
 
         protected override void OnKeyDown(KeyEventArgs e)

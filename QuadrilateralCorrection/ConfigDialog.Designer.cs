@@ -28,7 +28,6 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(QuadrilateralCorrectionConfigDialog));
             numericUpDownTopLeftX = new System.Windows.Forms.NumericUpDown();
             numericUpDownTopLeftY = new System.Windows.Forms.NumericUpDown();
             numericUpDownTopRightX = new System.Windows.Forms.NumericUpDown();
@@ -40,24 +39,28 @@
             buttonOK = new System.Windows.Forms.Button();
             buttonCancel = new System.Windows.Forms.Button();
             quadControl11 = new QuadControl();
-            numericUpDown1 = new System.Windows.Forms.NumericUpDown();
-            numericUpDown2 = new System.Windows.Forms.NumericUpDown();
+            numericUpDownWidth = new System.Windows.Forms.NumericUpDown();
+            numericUpDownHeight = new System.Windows.Forms.NumericUpDown();
             checkBoxAutoDims = new System.Windows.Forms.CheckBox();
-            label1 = new System.Windows.Forms.Label();
-            label2 = new System.Windows.Forms.Label();
-            label3 = new System.Windows.Forms.Label();
-            label4 = new System.Windows.Forms.Label();
-            label5 = new System.Windows.Forms.Label();
-            label6 = new System.Windows.Forms.Label();
-            label7 = new System.Windows.Forms.Label();
-            label8 = new System.Windows.Forms.Label();
-            label9 = new System.Windows.Forms.Label();
-            label10 = new System.Windows.Forms.Label();
+            labelTopLeftX = new System.Windows.Forms.Label();
+            labelTopLeftY = new System.Windows.Forms.Label();
+            labelTopRightX = new System.Windows.Forms.Label();
+            labelTopRightY = new System.Windows.Forms.Label();
+            labelBottomRightX = new System.Windows.Forms.Label();
+            labelBottomRightY = new System.Windows.Forms.Label();
+            labelBottomLeftX = new System.Windows.Forms.Label();
+            labelBottomLeftY = new System.Windows.Forms.Label();
+            labelWidth = new System.Windows.Forms.Label();
+            labelHeight = new System.Windows.Forms.Label();
             checkBoxCenter = new System.Windows.Forms.CheckBox();
             panelDivider = new System.Windows.Forms.Panel();
             resetAllButton = new System.Windows.Forms.Button();
-            cropOutsideCheckBox = new System.Windows.Forms.CheckBox();
+            checkBoxCropOutside = new System.Windows.Forms.CheckBox();
             checkBoxMoveNearestNub = new System.Windows.Forms.CheckBox();
+            splitContainerMain = new System.Windows.Forms.SplitContainer();
+            rightRootTableLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
+            rightTableLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
+            tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             ((System.ComponentModel.ISupportInitialize)numericUpDownTopLeftX).BeginInit();
             ((System.ComponentModel.ISupportInitialize)numericUpDownTopLeftY).BeginInit();
             ((System.ComponentModel.ISupportInitialize)numericUpDownTopRightX).BeginInit();
@@ -67,17 +70,24 @@
             ((System.ComponentModel.ISupportInitialize)numericUpDownBottomLeftX).BeginInit();
             ((System.ComponentModel.ISupportInitialize)numericUpDownBottomLeftY).BeginInit();
             ((System.ComponentModel.ISupportInitialize)quadControl11).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)numericUpDown1).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)numericUpDown2).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)numericUpDownWidth).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)numericUpDownHeight).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)splitContainerMain).BeginInit();
+            splitContainerMain.Panel1.SuspendLayout();
+            splitContainerMain.Panel2.SuspendLayout();
+            splitContainerMain.SuspendLayout();
+            rightRootTableLayoutPanel.SuspendLayout();
+            rightTableLayoutPanel.SuspendLayout();
+            tableLayoutPanel1.SuspendLayout();
             SuspendLayout();
             // 
             // numericUpDownTopLeftX
             // 
-            numericUpDownTopLeftX.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
-            numericUpDownTopLeftX.Location = new System.Drawing.Point(632, 12);
+            numericUpDownTopLeftX.Anchor = System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+            numericUpDownTopLeftX.Location = new System.Drawing.Point(112, 3);
             numericUpDownTopLeftX.Maximum = new decimal(new int[] { int.MaxValue, 0, 0, 0 });
             numericUpDownTopLeftX.Name = "numericUpDownTopLeftX";
-            numericUpDownTopLeftX.Size = new System.Drawing.Size(60, 23);
+            numericUpDownTopLeftX.Size = new System.Drawing.Size(67, 23);
             numericUpDownTopLeftX.TabIndex = 0;
             numericUpDownTopLeftX.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             numericUpDownTopLeftX.ValueChanged += numericUpDownTopLeft_ValueChanged;
@@ -85,11 +95,11 @@
             // 
             // numericUpDownTopLeftY
             // 
-            numericUpDownTopLeftY.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
-            numericUpDownTopLeftY.Location = new System.Drawing.Point(632, 41);
+            numericUpDownTopLeftY.Anchor = System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+            numericUpDownTopLeftY.Location = new System.Drawing.Point(112, 32);
             numericUpDownTopLeftY.Maximum = new decimal(new int[] { int.MaxValue, 0, 0, 0 });
             numericUpDownTopLeftY.Name = "numericUpDownTopLeftY";
-            numericUpDownTopLeftY.Size = new System.Drawing.Size(60, 23);
+            numericUpDownTopLeftY.Size = new System.Drawing.Size(67, 23);
             numericUpDownTopLeftY.TabIndex = 1;
             numericUpDownTopLeftY.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             numericUpDownTopLeftY.ValueChanged += numericUpDownTopLeft_ValueChanged;
@@ -97,11 +107,11 @@
             // 
             // numericUpDownTopRightX
             // 
-            numericUpDownTopRightX.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
-            numericUpDownTopRightX.Location = new System.Drawing.Point(632, 84);
+            numericUpDownTopRightX.Anchor = System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+            numericUpDownTopRightX.Location = new System.Drawing.Point(112, 71);
             numericUpDownTopRightX.Maximum = new decimal(new int[] { int.MaxValue, 0, 0, 0 });
             numericUpDownTopRightX.Name = "numericUpDownTopRightX";
-            numericUpDownTopRightX.Size = new System.Drawing.Size(60, 23);
+            numericUpDownTopRightX.Size = new System.Drawing.Size(67, 23);
             numericUpDownTopRightX.TabIndex = 2;
             numericUpDownTopRightX.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             numericUpDownTopRightX.ValueChanged += numericUpDownTopRight_ValueChanged;
@@ -109,11 +119,11 @@
             // 
             // numericUpDownTopRightY
             // 
-            numericUpDownTopRightY.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
-            numericUpDownTopRightY.Location = new System.Drawing.Point(632, 113);
+            numericUpDownTopRightY.Anchor = System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+            numericUpDownTopRightY.Location = new System.Drawing.Point(112, 100);
             numericUpDownTopRightY.Maximum = new decimal(new int[] { int.MaxValue, 0, 0, 0 });
             numericUpDownTopRightY.Name = "numericUpDownTopRightY";
-            numericUpDownTopRightY.Size = new System.Drawing.Size(60, 23);
+            numericUpDownTopRightY.Size = new System.Drawing.Size(67, 23);
             numericUpDownTopRightY.TabIndex = 3;
             numericUpDownTopRightY.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             numericUpDownTopRightY.ValueChanged += numericUpDownTopRight_ValueChanged;
@@ -121,11 +131,11 @@
             // 
             // numericUpDownBottomRightX
             // 
-            numericUpDownBottomRightX.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
-            numericUpDownBottomRightX.Location = new System.Drawing.Point(632, 156);
+            numericUpDownBottomRightX.Anchor = System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+            numericUpDownBottomRightX.Location = new System.Drawing.Point(112, 139);
             numericUpDownBottomRightX.Maximum = new decimal(new int[] { int.MaxValue, 0, 0, 0 });
             numericUpDownBottomRightX.Name = "numericUpDownBottomRightX";
-            numericUpDownBottomRightX.Size = new System.Drawing.Size(60, 23);
+            numericUpDownBottomRightX.Size = new System.Drawing.Size(67, 23);
             numericUpDownBottomRightX.TabIndex = 4;
             numericUpDownBottomRightX.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             numericUpDownBottomRightX.ValueChanged += numericUpDownBottomRight_ValueChanged;
@@ -133,11 +143,11 @@
             // 
             // numericUpDownBottomRightY
             // 
-            numericUpDownBottomRightY.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
-            numericUpDownBottomRightY.Location = new System.Drawing.Point(632, 185);
+            numericUpDownBottomRightY.Anchor = System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+            numericUpDownBottomRightY.Location = new System.Drawing.Point(112, 168);
             numericUpDownBottomRightY.Maximum = new decimal(new int[] { int.MaxValue, 0, 0, 0 });
             numericUpDownBottomRightY.Name = "numericUpDownBottomRightY";
-            numericUpDownBottomRightY.Size = new System.Drawing.Size(60, 23);
+            numericUpDownBottomRightY.Size = new System.Drawing.Size(67, 23);
             numericUpDownBottomRightY.TabIndex = 5;
             numericUpDownBottomRightY.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             numericUpDownBottomRightY.ValueChanged += numericUpDownBottomRight_ValueChanged;
@@ -145,11 +155,11 @@
             // 
             // numericUpDownBottomLeftX
             // 
-            numericUpDownBottomLeftX.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
-            numericUpDownBottomLeftX.Location = new System.Drawing.Point(632, 228);
+            numericUpDownBottomLeftX.Anchor = System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+            numericUpDownBottomLeftX.Location = new System.Drawing.Point(112, 207);
             numericUpDownBottomLeftX.Maximum = new decimal(new int[] { int.MaxValue, 0, 0, 0 });
             numericUpDownBottomLeftX.Name = "numericUpDownBottomLeftX";
-            numericUpDownBottomLeftX.Size = new System.Drawing.Size(60, 23);
+            numericUpDownBottomLeftX.Size = new System.Drawing.Size(67, 23);
             numericUpDownBottomLeftX.TabIndex = 6;
             numericUpDownBottomLeftX.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             numericUpDownBottomLeftX.ValueChanged += numericUpDownBottomLeft_ValueChanged;
@@ -157,11 +167,11 @@
             // 
             // numericUpDownBottomLeftY
             // 
-            numericUpDownBottomLeftY.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
-            numericUpDownBottomLeftY.Location = new System.Drawing.Point(632, 257);
+            numericUpDownBottomLeftY.Anchor = System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+            numericUpDownBottomLeftY.Location = new System.Drawing.Point(112, 236);
             numericUpDownBottomLeftY.Maximum = new decimal(new int[] { int.MaxValue, 0, 0, 0 });
             numericUpDownBottomLeftY.Name = "numericUpDownBottomLeftY";
-            numericUpDownBottomLeftY.Size = new System.Drawing.Size(60, 23);
+            numericUpDownBottomLeftY.Size = new System.Drawing.Size(67, 23);
             numericUpDownBottomLeftY.TabIndex = 7;
             numericUpDownBottomLeftY.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             numericUpDownBottomLeftY.ValueChanged += numericUpDownBottomLeft_ValueChanged;
@@ -169,182 +179,186 @@
             // 
             // buttonOK
             // 
-            buttonOK.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
+            buttonOK.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
             buttonOK.DialogResult = System.Windows.Forms.DialogResult.OK;
             buttonOK.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            buttonOK.Location = new System.Drawing.Point(536, 491);
+            buttonOK.Location = new System.Drawing.Point(3, 20);
             buttonOK.Name = "buttonOK";
-            buttonOK.Size = new System.Drawing.Size(75, 23);
+            buttonOK.Size = new System.Drawing.Size(76, 23);
             buttonOK.TabIndex = 12;
             buttonOK.Text = "OK";
             buttonOK.UseVisualStyleBackColor = true;
             // 
             // buttonCancel
             // 
-            buttonCancel.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
+            buttonCancel.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
             buttonCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             buttonCancel.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            buttonCancel.Location = new System.Drawing.Point(617, 491);
+            buttonCancel.Location = new System.Drawing.Point(94, 20);
             buttonCancel.Name = "buttonCancel";
-            buttonCancel.Size = new System.Drawing.Size(75, 23);
+            buttonCancel.Size = new System.Drawing.Size(76, 23);
             buttonCancel.TabIndex = 13;
             buttonCancel.Text = "Cancel";
             buttonCancel.UseVisualStyleBackColor = true;
             // 
             // quadControl11
             // 
-            quadControl11.BackgroundImage = (System.Drawing.Image)resources.GetObject("quadControl11.BackgroundImage");
+            quadControl11.Anchor = System.Windows.Forms.AnchorStyles.None;
             quadControl11.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            quadControl11.Location = new System.Drawing.Point(12, 12);
+            quadControl11.Location = new System.Drawing.Point(-12, 3);
+            quadControl11.Margin = new System.Windows.Forms.Padding(0);
             quadControl11.Name = "quadControl11";
-            quadControl11.MoveNearestNubOnClick = true;
-            quadControl11.Size = new System.Drawing.Size(502, 502);
+            quadControl11.Size = new System.Drawing.Size(532, 520);
             quadControl11.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             quadControl11.TabIndex = 14;
             quadControl11.TabStop = false;
             quadControl11.ValueChanged += quadControl11_ValueChanged;
             // 
-            // numericUpDown1
+            // numericUpDownWidth
             // 
-            numericUpDown1.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
-            numericUpDown1.Location = new System.Drawing.Point(632, 348);
-            numericUpDown1.Name = "numericUpDown1";
-            numericUpDown1.Size = new System.Drawing.Size(60, 23);
-            numericUpDown1.TabIndex = 9;
-            numericUpDown1.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            numericUpDown1.ValueChanged += numericUpDown1_ValueChanged;
-            numericUpDown1.Enter += numericUpDown_Enter;
+            numericUpDownWidth.Anchor = System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+            numericUpDownWidth.Location = new System.Drawing.Point(112, 329);
+            numericUpDownWidth.Name = "numericUpDownWidth";
+            numericUpDownWidth.Size = new System.Drawing.Size(67, 23);
+            numericUpDownWidth.TabIndex = 9;
+            numericUpDownWidth.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            numericUpDownWidth.ValueChanged += numericUpDown1_ValueChanged;
+            numericUpDownWidth.Enter += numericUpDown_Enter;
             // 
-            // numericUpDown2
+            // numericUpDownHeight
             // 
-            numericUpDown2.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
-            numericUpDown2.Location = new System.Drawing.Point(632, 377);
-            numericUpDown2.Name = "numericUpDown2";
-            numericUpDown2.Size = new System.Drawing.Size(60, 23);
-            numericUpDown2.TabIndex = 10;
-            numericUpDown2.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            numericUpDown2.ValueChanged += numericUpDown2_ValueChanged;
-            numericUpDown2.Enter += numericUpDown_Enter;
+            numericUpDownHeight.Anchor = System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+            numericUpDownHeight.Location = new System.Drawing.Point(112, 358);
+            numericUpDownHeight.Name = "numericUpDownHeight";
+            numericUpDownHeight.Size = new System.Drawing.Size(67, 23);
+            numericUpDownHeight.TabIndex = 10;
+            numericUpDownHeight.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            numericUpDownHeight.ValueChanged += numericUpDown2_ValueChanged;
+            numericUpDownHeight.Enter += numericUpDown_Enter;
             // 
             // checkBoxAutoDims
             // 
-            checkBoxAutoDims.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
+            checkBoxAutoDims.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
             checkBoxAutoDims.AutoSize = true;
-            checkBoxAutoDims.Location = new System.Drawing.Point(538, 314);
+            rightTableLayoutPanel.SetColumnSpan(checkBoxAutoDims, 2);
+            checkBoxAutoDims.Location = new System.Drawing.Point(3, 304);
+            checkBoxAutoDims.Margin = new System.Windows.Forms.Padding(3, 3, 0, 3);
             checkBoxAutoDims.Name = "checkBoxAutoDims";
-            checkBoxAutoDims.Size = new System.Drawing.Size(121, 19);
+            checkBoxAutoDims.Size = new System.Drawing.Size(179, 19);
             checkBoxAutoDims.TabIndex = 8;
             checkBoxAutoDims.Text = "Auto Dimensions";
             checkBoxAutoDims.UseVisualStyleBackColor = true;
             checkBoxAutoDims.CheckedChanged += checkBox1_CheckedChanged;
             // 
-            // label1
+            // labelTopLeftX
             // 
-            label1.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
-            label1.AutoSize = true;
-            label1.Location = new System.Drawing.Point(538, 14);
-            label1.Name = "label1";
-            label1.Size = new System.Drawing.Size(65, 15);
-            label1.TabIndex = 15;
-            label1.Text = "Top Left X";
+            labelTopLeftX.Anchor = System.Windows.Forms.AnchorStyles.Left;
+            labelTopLeftX.AutoSize = true;
+            labelTopLeftX.Location = new System.Drawing.Point(3, 7);
+            labelTopLeftX.Name = "labelTopLeftX";
+            labelTopLeftX.Size = new System.Drawing.Size(65, 15);
+            labelTopLeftX.TabIndex = 15;
+            labelTopLeftX.Text = "Top Left X";
             // 
-            // label2
+            // labelTopLeftY
             // 
-            label2.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
-            label2.AutoSize = true;
-            label2.Location = new System.Drawing.Point(538, 43);
-            label2.Name = "label2";
-            label2.Size = new System.Drawing.Size(64, 15);
-            label2.TabIndex = 16;
-            label2.Text = "Top Left Y";
+            labelTopLeftY.Anchor = System.Windows.Forms.AnchorStyles.Left;
+            labelTopLeftY.AutoSize = true;
+            labelTopLeftY.Location = new System.Drawing.Point(3, 36);
+            labelTopLeftY.Name = "labelTopLeftY";
+            labelTopLeftY.Size = new System.Drawing.Size(64, 15);
+            labelTopLeftY.TabIndex = 16;
+            labelTopLeftY.Text = "Top Left Y";
             // 
-            // label3
+            // labelTopRightX
             // 
-            label3.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
-            label3.AutoSize = true;
-            label3.Location = new System.Drawing.Point(538, 86);
-            label3.Name = "label3";
-            label3.Size = new System.Drawing.Size(74, 15);
-            label3.TabIndex = 17;
-            label3.Text = "Top Right X";
+            labelTopRightX.Anchor = System.Windows.Forms.AnchorStyles.Left;
+            labelTopRightX.AutoSize = true;
+            labelTopRightX.Location = new System.Drawing.Point(3, 75);
+            labelTopRightX.Name = "labelTopRightX";
+            labelTopRightX.Size = new System.Drawing.Size(74, 15);
+            labelTopRightX.TabIndex = 17;
+            labelTopRightX.Text = "Top Right X";
             // 
-            // label4
+            // labelTopRightY
             // 
-            label4.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
-            label4.AutoSize = true;
-            label4.Location = new System.Drawing.Point(538, 115);
-            label4.Name = "label4";
-            label4.Size = new System.Drawing.Size(73, 15);
-            label4.TabIndex = 18;
-            label4.Text = "Top Right Y";
+            labelTopRightY.Anchor = System.Windows.Forms.AnchorStyles.Left;
+            labelTopRightY.AutoSize = true;
+            labelTopRightY.Location = new System.Drawing.Point(3, 104);
+            labelTopRightY.Name = "labelTopRightY";
+            labelTopRightY.Size = new System.Drawing.Size(73, 15);
+            labelTopRightY.TabIndex = 18;
+            labelTopRightY.Text = "Top Right Y";
             // 
-            // label5
+            // labelBottomRightX
             // 
-            label5.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
-            label5.AutoSize = true;
-            label5.Location = new System.Drawing.Point(538, 158);
-            label5.Name = "label5";
-            label5.Size = new System.Drawing.Size(93, 15);
-            label5.TabIndex = 19;
-            label5.Text = "Bottom Right X";
+            labelBottomRightX.Anchor = System.Windows.Forms.AnchorStyles.Left;
+            labelBottomRightX.AutoSize = true;
+            labelBottomRightX.Location = new System.Drawing.Point(3, 143);
+            labelBottomRightX.Name = "labelBottomRightX";
+            labelBottomRightX.Size = new System.Drawing.Size(93, 15);
+            labelBottomRightX.TabIndex = 19;
+            labelBottomRightX.Text = "Bottom Right X";
             // 
-            // label6
+            // labelBottomRightY
             // 
-            label6.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
-            label6.AutoSize = true;
-            label6.Location = new System.Drawing.Point(538, 187);
-            label6.Name = "label6";
-            label6.Size = new System.Drawing.Size(92, 15);
-            label6.TabIndex = 20;
-            label6.Text = "Bottom Right Y";
+            labelBottomRightY.Anchor = System.Windows.Forms.AnchorStyles.Left;
+            labelBottomRightY.AutoSize = true;
+            labelBottomRightY.Location = new System.Drawing.Point(3, 172);
+            labelBottomRightY.Name = "labelBottomRightY";
+            labelBottomRightY.Size = new System.Drawing.Size(92, 15);
+            labelBottomRightY.TabIndex = 20;
+            labelBottomRightY.Text = "Bottom Right Y";
             // 
-            // label7
+            // labelBottomLeftX
             // 
-            label7.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
-            label7.AutoSize = true;
-            label7.Location = new System.Drawing.Point(538, 230);
-            label7.Name = "label7";
-            label7.Size = new System.Drawing.Size(84, 15);
-            label7.TabIndex = 21;
-            label7.Text = "Bottom Left X";
+            labelBottomLeftX.Anchor = System.Windows.Forms.AnchorStyles.Left;
+            labelBottomLeftX.AutoSize = true;
+            labelBottomLeftX.Location = new System.Drawing.Point(3, 211);
+            labelBottomLeftX.Name = "labelBottomLeftX";
+            labelBottomLeftX.Size = new System.Drawing.Size(84, 15);
+            labelBottomLeftX.TabIndex = 21;
+            labelBottomLeftX.Text = "Bottom Left X";
             // 
-            // label8
+            // labelBottomLeftY
             // 
-            label8.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
-            label8.AutoSize = true;
-            label8.Location = new System.Drawing.Point(538, 259);
-            label8.Name = "label8";
-            label8.Size = new System.Drawing.Size(83, 15);
-            label8.TabIndex = 22;
-            label8.Text = "Bottom Left Y";
+            labelBottomLeftY.Anchor = System.Windows.Forms.AnchorStyles.Left;
+            labelBottomLeftY.AutoSize = true;
+            labelBottomLeftY.Location = new System.Drawing.Point(3, 240);
+            labelBottomLeftY.Name = "labelBottomLeftY";
+            labelBottomLeftY.Size = new System.Drawing.Size(83, 15);
+            labelBottomLeftY.TabIndex = 22;
+            labelBottomLeftY.Text = "Bottom Left Y";
             // 
-            // label9
+            // labelWidth
             // 
-            label9.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
-            label9.AutoSize = true;
-            label9.Location = new System.Drawing.Point(538, 350);
-            label9.Name = "label9";
-            label9.Size = new System.Drawing.Size(41, 15);
-            label9.TabIndex = 23;
-            label9.Text = "Width";
+            labelWidth.Anchor = System.Windows.Forms.AnchorStyles.Left;
+            labelWidth.AutoSize = true;
+            labelWidth.Location = new System.Drawing.Point(3, 333);
+            labelWidth.Name = "labelWidth";
+            labelWidth.Size = new System.Drawing.Size(41, 15);
+            labelWidth.TabIndex = 23;
+            labelWidth.Text = "Width";
             // 
-            // label10
+            // labelHeight
             // 
-            label10.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
-            label10.AutoSize = true;
-            label10.Location = new System.Drawing.Point(538, 379);
-            label10.Name = "label10";
-            label10.Size = new System.Drawing.Size(45, 15);
-            label10.TabIndex = 24;
-            label10.Text = "Height";
+            labelHeight.Anchor = System.Windows.Forms.AnchorStyles.Left;
+            labelHeight.AutoSize = true;
+            labelHeight.Location = new System.Drawing.Point(3, 362);
+            labelHeight.Name = "labelHeight";
+            labelHeight.Size = new System.Drawing.Size(45, 15);
+            labelHeight.TabIndex = 24;
+            labelHeight.Text = "Height";
             // 
             // checkBoxCenter
             // 
-            checkBoxCenter.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
+            checkBoxCenter.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
             checkBoxCenter.AutoSize = true;
-            checkBoxCenter.Location = new System.Drawing.Point(538, 406);
+            rightTableLayoutPanel.SetColumnSpan(checkBoxCenter, 2);
+            checkBoxCenter.Location = new System.Drawing.Point(3, 397);
+            checkBoxCenter.Margin = new System.Windows.Forms.Padding(3, 3, 0, 3);
             checkBoxCenter.Name = "checkBoxCenter";
-            checkBoxCenter.Size = new System.Drawing.Size(63, 19);
+            checkBoxCenter.Size = new System.Drawing.Size(179, 19);
             checkBoxCenter.TabIndex = 11;
             checkBoxCenter.Text = "Center";
             checkBoxCenter.UseVisualStyleBackColor = true;
@@ -353,49 +367,175 @@
             // panelDivider
             // 
             panelDivider.BackColor = System.Drawing.SystemColors.ControlDark;
-            panelDivider.Location = new System.Drawing.Point(527, 12);
+            panelDivider.Dock = System.Windows.Forms.DockStyle.Fill;
+            panelDivider.Location = new System.Drawing.Point(3, 6);
+            panelDivider.Margin = new System.Windows.Forms.Padding(3, 6, 3, 6);
             panelDivider.Name = "panelDivider";
-            panelDivider.Size = new System.Drawing.Size(1, 501);
+            panelDivider.Size = new System.Drawing.Size(1, 508);
             panelDivider.TabIndex = 25;
             // 
             // resetAllButton
             // 
+            resetAllButton.Anchor = System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
             resetAllButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            resetAllButton.Location = new System.Drawing.Point(632, 285);
+            resetAllButton.Location = new System.Drawing.Point(112, 265);
             resetAllButton.Name = "resetAllButton";
-            resetAllButton.Size = new System.Drawing.Size(60, 23);
+            resetAllButton.Size = new System.Drawing.Size(67, 23);
             resetAllButton.TabIndex = 26;
             resetAllButton.Text = "Reset All";
             resetAllButton.UseVisualStyleBackColor = true;
             resetAllButton.Click += resetAllButton_Click;
             // 
-            // cropOutsideCheckBox
+            // checkBoxCropOutside
             // 
-            cropOutsideCheckBox.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
-            cropOutsideCheckBox.AutoSize = true;
-            cropOutsideCheckBox.Checked = true;
-            cropOutsideCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
-            cropOutsideCheckBox.Location = new System.Drawing.Point(538, 431);
-            cropOutsideCheckBox.Name = "cropOutsideCheckBox";
-            cropOutsideCheckBox.Size = new System.Drawing.Size(174, 19);
-            cropOutsideCheckBox.TabIndex = 27;
-            cropOutsideCheckBox.Text = "Crop outside quadrilateral";
-            cropOutsideCheckBox.UseVisualStyleBackColor = true;
-            cropOutsideCheckBox.CheckedChanged += CropOutsideCheckBox_CheckedChanged;
+            checkBoxCropOutside.Checked = true;
+            checkBoxCropOutside.CheckState = System.Windows.Forms.CheckState.Checked;
+            rightTableLayoutPanel.SetColumnSpan(checkBoxCropOutside, 2);
+            checkBoxCropOutside.Dock = System.Windows.Forms.DockStyle.Fill;
+            checkBoxCropOutside.Location = new System.Drawing.Point(3, 422);
+            checkBoxCropOutside.Margin = new System.Windows.Forms.Padding(3, 3, 0, 3);
+            checkBoxCropOutside.Name = "checkBoxCropOutside";
+            checkBoxCropOutside.Size = new System.Drawing.Size(179, 19);
+            checkBoxCropOutside.TabIndex = 27;
+            checkBoxCropOutside.Text = "Crop outside quadrilateral";
+            checkBoxCropOutside.UseCompatibleTextRendering = true;
+            checkBoxCropOutside.UseVisualStyleBackColor = true;
+            checkBoxCropOutside.CheckedChanged += CropOutsideCheckBox_CheckedChanged;
             // 
             // checkBoxMoveNearestNub
             // 
-            checkBoxMoveNearestNub.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
+            checkBoxMoveNearestNub.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
             checkBoxMoveNearestNub.AutoSize = true;
             checkBoxMoveNearestNub.Checked = true;
             checkBoxMoveNearestNub.CheckState = System.Windows.Forms.CheckState.Checked;
-            checkBoxMoveNearestNub.Location = new System.Drawing.Point(538, 456);
+            rightTableLayoutPanel.SetColumnSpan(checkBoxMoveNearestNub, 2);
+            checkBoxMoveNearestNub.Location = new System.Drawing.Point(3, 447);
+            checkBoxMoveNearestNub.Margin = new System.Windows.Forms.Padding(3, 3, 0, 3);
             checkBoxMoveNearestNub.Name = "checkBoxMoveNearestNub";
-            checkBoxMoveNearestNub.Size = new System.Drawing.Size(173, 19);
+            checkBoxMoveNearestNub.Size = new System.Drawing.Size(179, 21);
             checkBoxMoveNearestNub.TabIndex = 28;
             checkBoxMoveNearestNub.Text = "Move nearest nub on click";
+            checkBoxMoveNearestNub.UseCompatibleTextRendering = true;
             checkBoxMoveNearestNub.UseVisualStyleBackColor = true;
             checkBoxMoveNearestNub.CheckedChanged += CheckBoxMoveNearestNub_CheckedChanged;
+            // 
+            // splitContainerMain
+            // 
+            splitContainerMain.Dock = System.Windows.Forms.DockStyle.Fill;
+            splitContainerMain.FixedPanel = System.Windows.Forms.FixedPanel.Panel2;
+            splitContainerMain.IsSplitterFixed = true;
+            splitContainerMain.Location = new System.Drawing.Point(0, 0);
+            splitContainerMain.Name = "splitContainerMain";
+            // 
+            // splitContainerMain.Panel1
+            // 
+            splitContainerMain.Panel1.Controls.Add(quadControl11);
+            splitContainerMain.Panel1.Padding = new System.Windows.Forms.Padding(3);
+            splitContainerMain.Panel1.Resize += splitContainerMain_Panel1_Resize;
+            // 
+            // splitContainerMain.Panel2
+            // 
+            splitContainerMain.Panel2.Controls.Add(rightRootTableLayoutPanel);
+            splitContainerMain.Panel2.ForeColor = System.Drawing.Color.Transparent;
+            splitContainerMain.Panel2.Padding = new System.Windows.Forms.Padding(3);
+            splitContainerMain.Size = new System.Drawing.Size(704, 526);
+            splitContainerMain.SplitterDistance = 510;
+            splitContainerMain.SplitterWidth = 1;
+            splitContainerMain.TabIndex = 29;
+            // 
+            // rightRootTableLayoutPanel
+            // 
+            rightRootTableLayoutPanel.ColumnCount = 2;
+            rightRootTableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 5F));
+            rightRootTableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            rightRootTableLayoutPanel.Controls.Add(panelDivider, 0, 0);
+            rightRootTableLayoutPanel.Controls.Add(rightTableLayoutPanel, 1, 0);
+            rightRootTableLayoutPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+            rightRootTableLayoutPanel.Location = new System.Drawing.Point(3, 3);
+            rightRootTableLayoutPanel.Name = "rightRootTableLayoutPanel";
+            rightRootTableLayoutPanel.RowCount = 1;
+            rightRootTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            rightRootTableLayoutPanel.Size = new System.Drawing.Size(187, 520);
+            rightRootTableLayoutPanel.TabIndex = 15;
+            // 
+            // rightTableLayoutPanel
+            // 
+            rightTableLayoutPanel.ColumnCount = 2;
+            rightTableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 60F));
+            rightTableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 40F));
+            rightTableLayoutPanel.Controls.Add(labelTopLeftX, 0, 0);
+            rightTableLayoutPanel.Controls.Add(numericUpDownTopLeftX, 1, 0);
+            rightTableLayoutPanel.Controls.Add(labelTopLeftY, 0, 1);
+            rightTableLayoutPanel.Controls.Add(numericUpDownTopLeftY, 1, 1);
+            rightTableLayoutPanel.Controls.Add(labelTopRightX, 0, 3);
+            rightTableLayoutPanel.Controls.Add(numericUpDownTopRightX, 1, 3);
+            rightTableLayoutPanel.Controls.Add(labelTopRightY, 0, 4);
+            rightTableLayoutPanel.Controls.Add(numericUpDownTopRightY, 1, 4);
+            rightTableLayoutPanel.Controls.Add(labelBottomRightX, 0, 6);
+            rightTableLayoutPanel.Controls.Add(numericUpDownBottomRightX, 1, 6);
+            rightTableLayoutPanel.Controls.Add(labelBottomRightY, 0, 7);
+            rightTableLayoutPanel.Controls.Add(numericUpDownBottomRightY, 1, 7);
+            rightTableLayoutPanel.Controls.Add(labelBottomLeftX, 0, 9);
+            rightTableLayoutPanel.Controls.Add(numericUpDownBottomLeftX, 1, 9);
+            rightTableLayoutPanel.Controls.Add(labelBottomLeftY, 0, 10);
+            rightTableLayoutPanel.Controls.Add(numericUpDownBottomLeftY, 1, 10);
+            rightTableLayoutPanel.Controls.Add(resetAllButton, 1, 11);
+            rightTableLayoutPanel.Controls.Add(checkBoxAutoDims, 0, 13);
+            rightTableLayoutPanel.Controls.Add(labelWidth, 0, 14);
+            rightTableLayoutPanel.Controls.Add(numericUpDownWidth, 1, 14);
+            rightTableLayoutPanel.Controls.Add(labelHeight, 0, 15);
+            rightTableLayoutPanel.Controls.Add(numericUpDownHeight, 1, 15);
+            rightTableLayoutPanel.Controls.Add(checkBoxCenter, 0, 17);
+            rightTableLayoutPanel.Controls.Add(checkBoxCropOutside, 0, 18);
+            rightTableLayoutPanel.Controls.Add(checkBoxMoveNearestNub, 0, 19);
+            rightTableLayoutPanel.Controls.Add(tableLayoutPanel1, 0, 20);
+            rightTableLayoutPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+            rightTableLayoutPanel.Location = new System.Drawing.Point(5, 0);
+            rightTableLayoutPanel.Margin = new System.Windows.Forms.Padding(0);
+            rightTableLayoutPanel.Name = "rightTableLayoutPanel";
+            rightTableLayoutPanel.RowCount = 18;
+            rightTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            rightTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            rightTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 10F));
+            rightTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            rightTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            rightTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 10F));
+            rightTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            rightTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            rightTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 10F));
+            rightTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            rightTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            rightTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            rightTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 10F));
+            rightTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            rightTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            rightTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            rightTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 10F));
+            rightTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            rightTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            rightTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            rightTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            rightTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            rightTableLayoutPanel.Size = new System.Drawing.Size(182, 520);
+            rightTableLayoutPanel.TabIndex = 15;
+            // 
+            // tableLayoutPanel1
+            // 
+            tableLayoutPanel1.ColumnCount = 2;
+            rightTableLayoutPanel.SetColumnSpan(tableLayoutPanel1, 2);
+            tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            tableLayoutPanel1.Controls.Add(buttonOK, 0, 0);
+            tableLayoutPanel1.Controls.Add(buttonCancel, 1, 0);
+            tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
+            tableLayoutPanel1.Location = new System.Drawing.Point(0, 471);
+            tableLayoutPanel1.Margin = new System.Windows.Forms.Padding(0);
+            tableLayoutPanel1.Name = "tableLayoutPanel1";
+            tableLayoutPanel1.Padding = new System.Windows.Forms.Padding(0, 0, 0, 5);
+            tableLayoutPanel1.RowCount = 1;
+            tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            tableLayoutPanel1.Size = new System.Drawing.Size(182, 51);
+            tableLayoutPanel1.TabIndex = 15;
             // 
             // QuadrilateralCorrectionConfigDialog
             // 
@@ -404,40 +544,14 @@
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             CancelButton = buttonCancel;
             ClientSize = new System.Drawing.Size(704, 526);
-            Controls.Add(resetAllButton);
-            Controls.Add(panelDivider);
-            Controls.Add(checkBoxCenter);
-            Controls.Add(label10);
-            Controls.Add(label9);
-            Controls.Add(label8);
-            Controls.Add(label7);
-            Controls.Add(label6);
-            Controls.Add(label5);
-            Controls.Add(label4);
-            Controls.Add(label3);
-            Controls.Add(label2);
-            Controls.Add(label1);
-            Controls.Add(checkBoxAutoDims);
-            Controls.Add(numericUpDown2);
-            Controls.Add(numericUpDown1);
-            Controls.Add(quadControl11);
-            Controls.Add(buttonCancel);
-            Controls.Add(buttonOK);
-            Controls.Add(numericUpDownBottomLeftY);
-            Controls.Add(numericUpDownBottomLeftX);
-            Controls.Add(numericUpDownBottomRightY);
-            Controls.Add(numericUpDownBottomRightX);
-            Controls.Add(numericUpDownTopRightY);
-            Controls.Add(numericUpDownTopRightX);
-            Controls.Add(numericUpDownTopLeftY);
-            Controls.Add(numericUpDownTopLeftX);
-            Controls.Add(cropOutsideCheckBox);
-            Controls.Add(checkBoxMoveNearestNub);
+            Controls.Add(splitContainerMain);
             DoubleBuffered = true;
             HelpButton = true;
             KeyPreview = true;
             Location = new System.Drawing.Point(0, 0);
+            MaximizeBox = true;
             Name = "QuadrilateralCorrectionConfigDialog";
+            SizeGripStyle = System.Windows.Forms.SizeGripStyle.Show;
             Text = "Quadrilateral Correction";
             ((System.ComponentModel.ISupportInitialize)numericUpDownTopLeftX).EndInit();
             ((System.ComponentModel.ISupportInitialize)numericUpDownTopLeftY).EndInit();
@@ -448,10 +562,17 @@
             ((System.ComponentModel.ISupportInitialize)numericUpDownBottomLeftX).EndInit();
             ((System.ComponentModel.ISupportInitialize)numericUpDownBottomLeftY).EndInit();
             ((System.ComponentModel.ISupportInitialize)quadControl11).EndInit();
-            ((System.ComponentModel.ISupportInitialize)numericUpDown1).EndInit();
-            ((System.ComponentModel.ISupportInitialize)numericUpDown2).EndInit();
+            ((System.ComponentModel.ISupportInitialize)numericUpDownWidth).EndInit();
+            ((System.ComponentModel.ISupportInitialize)numericUpDownHeight).EndInit();
+            splitContainerMain.Panel1.ResumeLayout(false);
+            splitContainerMain.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)splitContainerMain).EndInit();
+            splitContainerMain.ResumeLayout(false);
+            rightRootTableLayoutPanel.ResumeLayout(false);
+            rightTableLayoutPanel.ResumeLayout(false);
+            rightTableLayoutPanel.PerformLayout();
+            tableLayoutPanel1.ResumeLayout(false);
             ResumeLayout(false);
-            PerformLayout();
 
         }
 
@@ -468,23 +589,27 @@
         private System.Windows.Forms.Button buttonOK;
         private System.Windows.Forms.Button buttonCancel;
         private QuadrilateralCorrectionEffect.QuadControl quadControl11;
-        private System.Windows.Forms.NumericUpDown numericUpDown1;
-        private System.Windows.Forms.NumericUpDown numericUpDown2;
+        private System.Windows.Forms.NumericUpDown numericUpDownWidth;
+        private System.Windows.Forms.NumericUpDown numericUpDownHeight;
         private System.Windows.Forms.CheckBox checkBoxAutoDims;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.Label label6;
-        private System.Windows.Forms.Label label7;
-        private System.Windows.Forms.Label label8;
-        private System.Windows.Forms.Label label9;
-        private System.Windows.Forms.Label label10;
+        private System.Windows.Forms.Label labelTopLeftX;
+        private System.Windows.Forms.Label labelTopLeftY;
+        private System.Windows.Forms.Label labelTopRightX;
+        private System.Windows.Forms.Label labelTopRightY;
+        private System.Windows.Forms.Label labelBottomRightX;
+        private System.Windows.Forms.Label labelBottomRightY;
+        private System.Windows.Forms.Label labelBottomLeftX;
+        private System.Windows.Forms.Label labelBottomLeftY;
+        private System.Windows.Forms.Label labelWidth;
+        private System.Windows.Forms.Label labelHeight;
         private System.Windows.Forms.CheckBox checkBoxCenter;
         private System.Windows.Forms.Panel panelDivider;
         private System.Windows.Forms.Button resetAllButton;
-        private System.Windows.Forms.CheckBox cropOutsideCheckBox;
+        private System.Windows.Forms.CheckBox checkBoxCropOutside;
         private System.Windows.Forms.CheckBox checkBoxMoveNearestNub;
+        private System.Windows.Forms.SplitContainer splitContainerMain;
+        private System.Windows.Forms.TableLayoutPanel rightTableLayoutPanel;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
+        private System.Windows.Forms.TableLayoutPanel rightRootTableLayoutPanel;
     }
 }
