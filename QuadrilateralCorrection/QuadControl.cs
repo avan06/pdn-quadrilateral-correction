@@ -97,6 +97,11 @@ namespace QuadrilateralCorrectionEffect
             }
         }
 
+        [Category("Behavior")]
+        [Description("When enabled, clicking anywhere on the control moves the nearest nub to the mouse position and begins dragging it.")]
+        [DefaultValue(true)]
+        public bool MoveNearestNubOnClick { get; set; } = true;
+
         internal QuadrilateralCorrectionEffect.Nub SelectedNub
         {
             get
@@ -219,24 +224,36 @@ namespace QuadrilateralCorrectionEffect
             }
             else
             {
-                if (NearNub(e.Location, nubTL))
+                if (MoveNearestNubOnClick && e.Button == MouseButtons.Left)
                 {
-                    GrabNub(nubTL, e.Location);
+                    Nub nub = GetNearestNub(e.Location);
+                    Point mouseLocation = new Point(ClampToWidth(e.X), ClampToHeight(e.Y));
+                    nub.Location = mouseLocation;
+                    GrabNub(nub, mouseLocation);
+                    showMagnifier = true;
+                    OnValueChanged();
                 }
-                else if (NearNub(e.Location, nubTR))
+                else
                 {
-                    GrabNub(nubTR, e.Location);
-                }
-                else if (NearNub(e.Location, nubBR))
-                {
-                    GrabNub(nubBR, e.Location);
-                }
-                else if (NearNub(e.Location, nubBL))
-                {
-                    GrabNub(nubBL, e.Location);
-                }
+                    if (NearNub(e.Location, nubTL))
+                    {
+                        GrabNub(nubTL, e.Location);
+                    }
+                    else if (NearNub(e.Location, nubTR))
+                    {
+                        GrabNub(nubTR, e.Location);
+                    }
+                    else if (NearNub(e.Location, nubBR))
+                    {
+                        GrabNub(nubBR, e.Location);
+                    }
+                    else if (NearNub(e.Location, nubBL))
+                    {
+                        GrabNub(nubBL, e.Location);
+                    }
 
-                showMagnifier = HasGrabbedNub();
+                    showMagnifier = HasGrabbedNub();
+                }
             }
 
             this.Invalidate();
@@ -619,6 +636,43 @@ namespace QuadrilateralCorrectionEffect
         private bool HasGrabbedNub()
         {
             return nubTL.Grabbed || nubTR.Grabbed || nubBR.Grabbed || nubBL.Grabbed;
+        }
+
+        private Nub GetNearestNub(Point mouseLocation)
+        {
+            Nub nearestNub = nubTL;
+            int nearestDistanceSquared = GetDistanceSquared(mouseLocation, nubTL);
+
+            int distanceSquared = GetDistanceSquared(mouseLocation, nubTR);
+            if (distanceSquared < nearestDistanceSquared)
+            {
+                nearestNub = nubTR;
+                nearestDistanceSquared = distanceSquared;
+            }
+
+            distanceSquared = GetDistanceSquared(mouseLocation, nubBR);
+            if (distanceSquared < nearestDistanceSquared)
+            {
+                nearestNub = nubBR;
+                nearestDistanceSquared = distanceSquared;
+            }
+
+            distanceSquared = GetDistanceSquared(mouseLocation, nubBL);
+            if (distanceSquared < nearestDistanceSquared)
+            {
+                nearestNub = nubBL;
+                nearestDistanceSquared = distanceSquared;
+            }
+
+            return nearestNub;
+        }
+
+        private static int GetDistanceSquared(Point mouseLocation, Nub nub)
+        {
+            int xDist = mouseLocation.X - nub.X;
+            int yDist = mouseLocation.Y - nub.Y;
+
+            return xDist * xDist + yDist * yDist;
         }
 
         private static bool NearNub(Point mouseLocation, Nub nub)

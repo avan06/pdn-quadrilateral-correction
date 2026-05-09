@@ -28,445 +28,430 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.numericUpDownTopLeftX = new System.Windows.Forms.NumericUpDown();
-            this.numericUpDownTopLeftY = new System.Windows.Forms.NumericUpDown();
-            this.numericUpDownTopRightX = new System.Windows.Forms.NumericUpDown();
-            this.numericUpDownTopRightY = new System.Windows.Forms.NumericUpDown();
-            this.numericUpDownBottomRightX = new System.Windows.Forms.NumericUpDown();
-            this.numericUpDownBottomRightY = new System.Windows.Forms.NumericUpDown();
-            this.numericUpDownBottomLeftX = new System.Windows.Forms.NumericUpDown();
-            this.numericUpDownBottomLeftY = new System.Windows.Forms.NumericUpDown();
-            this.buttonOK = new System.Windows.Forms.Button();
-            this.buttonCancel = new System.Windows.Forms.Button();
-            this.quadControl11 = new QuadrilateralCorrectionEffect.QuadControl();
-            this.numericUpDown1 = new System.Windows.Forms.NumericUpDown();
-            this.numericUpDown2 = new System.Windows.Forms.NumericUpDown();
-            this.checkBoxAutoDims = new System.Windows.Forms.CheckBox();
-            this.label1 = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
-            this.label3 = new System.Windows.Forms.Label();
-            this.label4 = new System.Windows.Forms.Label();
-            this.label5 = new System.Windows.Forms.Label();
-            this.label6 = new System.Windows.Forms.Label();
-            this.label7 = new System.Windows.Forms.Label();
-            this.label8 = new System.Windows.Forms.Label();
-            this.label9 = new System.Windows.Forms.Label();
-            this.label10 = new System.Windows.Forms.Label();
-            this.checkBoxCenter = new System.Windows.Forms.CheckBox();
-            this.panelDivider = new System.Windows.Forms.Panel();
-            this.resetAllButton = new System.Windows.Forms.Button();
-            this.cropOutsideCheckBox = new System.Windows.Forms.CheckBox();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTopLeftX)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTopLeftY)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTopRightX)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTopRightY)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownBottomRightX)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownBottomRightY)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownBottomLeftX)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownBottomLeftY)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.quadControl11)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown2)).BeginInit();
-            this.SuspendLayout();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(QuadrilateralCorrectionConfigDialog));
+            numericUpDownTopLeftX = new System.Windows.Forms.NumericUpDown();
+            numericUpDownTopLeftY = new System.Windows.Forms.NumericUpDown();
+            numericUpDownTopRightX = new System.Windows.Forms.NumericUpDown();
+            numericUpDownTopRightY = new System.Windows.Forms.NumericUpDown();
+            numericUpDownBottomRightX = new System.Windows.Forms.NumericUpDown();
+            numericUpDownBottomRightY = new System.Windows.Forms.NumericUpDown();
+            numericUpDownBottomLeftX = new System.Windows.Forms.NumericUpDown();
+            numericUpDownBottomLeftY = new System.Windows.Forms.NumericUpDown();
+            buttonOK = new System.Windows.Forms.Button();
+            buttonCancel = new System.Windows.Forms.Button();
+            quadControl11 = new QuadControl();
+            numericUpDown1 = new System.Windows.Forms.NumericUpDown();
+            numericUpDown2 = new System.Windows.Forms.NumericUpDown();
+            checkBoxAutoDims = new System.Windows.Forms.CheckBox();
+            label1 = new System.Windows.Forms.Label();
+            label2 = new System.Windows.Forms.Label();
+            label3 = new System.Windows.Forms.Label();
+            label4 = new System.Windows.Forms.Label();
+            label5 = new System.Windows.Forms.Label();
+            label6 = new System.Windows.Forms.Label();
+            label7 = new System.Windows.Forms.Label();
+            label8 = new System.Windows.Forms.Label();
+            label9 = new System.Windows.Forms.Label();
+            label10 = new System.Windows.Forms.Label();
+            checkBoxCenter = new System.Windows.Forms.CheckBox();
+            panelDivider = new System.Windows.Forms.Panel();
+            resetAllButton = new System.Windows.Forms.Button();
+            cropOutsideCheckBox = new System.Windows.Forms.CheckBox();
+            checkBoxMoveNearestNub = new System.Windows.Forms.CheckBox();
+            ((System.ComponentModel.ISupportInitialize)numericUpDownTopLeftX).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)numericUpDownTopLeftY).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)numericUpDownTopRightX).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)numericUpDownTopRightY).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)numericUpDownBottomRightX).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)numericUpDownBottomRightY).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)numericUpDownBottomLeftX).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)numericUpDownBottomLeftY).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)quadControl11).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)numericUpDown1).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)numericUpDown2).BeginInit();
+            SuspendLayout();
             // 
             // numericUpDownTopLeftX
             // 
-            this.numericUpDownTopLeftX.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.numericUpDownTopLeftX.Location = new System.Drawing.Point(632, 12);
-            this.numericUpDownTopLeftX.Maximum = new decimal(new int[] {
-            2147483647,
-            0,
-            0,
-            0});
-            this.numericUpDownTopLeftX.Name = "numericUpDownTopLeftX";
-            this.numericUpDownTopLeftX.Size = new System.Drawing.Size(60, 23);
-            this.numericUpDownTopLeftX.TabIndex = 0;
-            this.numericUpDownTopLeftX.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            this.numericUpDownTopLeftX.ValueChanged += new System.EventHandler(this.numericUpDownTopLeft_ValueChanged);
-            this.numericUpDownTopLeftX.Enter += new System.EventHandler(this.numericUpDown_Enter);
+            numericUpDownTopLeftX.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
+            numericUpDownTopLeftX.Location = new System.Drawing.Point(632, 12);
+            numericUpDownTopLeftX.Maximum = new decimal(new int[] { int.MaxValue, 0, 0, 0 });
+            numericUpDownTopLeftX.Name = "numericUpDownTopLeftX";
+            numericUpDownTopLeftX.Size = new System.Drawing.Size(60, 23);
+            numericUpDownTopLeftX.TabIndex = 0;
+            numericUpDownTopLeftX.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            numericUpDownTopLeftX.ValueChanged += numericUpDownTopLeft_ValueChanged;
+            numericUpDownTopLeftX.Enter += numericUpDown_Enter;
             // 
             // numericUpDownTopLeftY
             // 
-            this.numericUpDownTopLeftY.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.numericUpDownTopLeftY.Location = new System.Drawing.Point(632, 41);
-            this.numericUpDownTopLeftY.Maximum = new decimal(new int[] {
-            2147483647,
-            0,
-            0,
-            0});
-            this.numericUpDownTopLeftY.Name = "numericUpDownTopLeftY";
-            this.numericUpDownTopLeftY.Size = new System.Drawing.Size(60, 23);
-            this.numericUpDownTopLeftY.TabIndex = 1;
-            this.numericUpDownTopLeftY.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            this.numericUpDownTopLeftY.ValueChanged += new System.EventHandler(this.numericUpDownTopLeft_ValueChanged);
-            this.numericUpDownTopLeftY.Enter += new System.EventHandler(this.numericUpDown_Enter);
+            numericUpDownTopLeftY.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
+            numericUpDownTopLeftY.Location = new System.Drawing.Point(632, 41);
+            numericUpDownTopLeftY.Maximum = new decimal(new int[] { int.MaxValue, 0, 0, 0 });
+            numericUpDownTopLeftY.Name = "numericUpDownTopLeftY";
+            numericUpDownTopLeftY.Size = new System.Drawing.Size(60, 23);
+            numericUpDownTopLeftY.TabIndex = 1;
+            numericUpDownTopLeftY.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            numericUpDownTopLeftY.ValueChanged += numericUpDownTopLeft_ValueChanged;
+            numericUpDownTopLeftY.Enter += numericUpDown_Enter;
             // 
             // numericUpDownTopRightX
             // 
-            this.numericUpDownTopRightX.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.numericUpDownTopRightX.Location = new System.Drawing.Point(632, 84);
-            this.numericUpDownTopRightX.Maximum = new decimal(new int[] {
-            2147483647,
-            0,
-            0,
-            0});
-            this.numericUpDownTopRightX.Name = "numericUpDownTopRightX";
-            this.numericUpDownTopRightX.Size = new System.Drawing.Size(60, 23);
-            this.numericUpDownTopRightX.TabIndex = 2;
-            this.numericUpDownTopRightX.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            this.numericUpDownTopRightX.ValueChanged += new System.EventHandler(this.numericUpDownTopRight_ValueChanged);
-            this.numericUpDownTopRightX.Enter += new System.EventHandler(this.numericUpDown_Enter);
+            numericUpDownTopRightX.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
+            numericUpDownTopRightX.Location = new System.Drawing.Point(632, 84);
+            numericUpDownTopRightX.Maximum = new decimal(new int[] { int.MaxValue, 0, 0, 0 });
+            numericUpDownTopRightX.Name = "numericUpDownTopRightX";
+            numericUpDownTopRightX.Size = new System.Drawing.Size(60, 23);
+            numericUpDownTopRightX.TabIndex = 2;
+            numericUpDownTopRightX.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            numericUpDownTopRightX.ValueChanged += numericUpDownTopRight_ValueChanged;
+            numericUpDownTopRightX.Enter += numericUpDown_Enter;
             // 
             // numericUpDownTopRightY
             // 
-            this.numericUpDownTopRightY.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.numericUpDownTopRightY.Location = new System.Drawing.Point(632, 113);
-            this.numericUpDownTopRightY.Maximum = new decimal(new int[] {
-            2147483647,
-            0,
-            0,
-            0});
-            this.numericUpDownTopRightY.Name = "numericUpDownTopRightY";
-            this.numericUpDownTopRightY.Size = new System.Drawing.Size(60, 23);
-            this.numericUpDownTopRightY.TabIndex = 3;
-            this.numericUpDownTopRightY.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            this.numericUpDownTopRightY.ValueChanged += new System.EventHandler(this.numericUpDownTopRight_ValueChanged);
-            this.numericUpDownTopRightY.Enter += new System.EventHandler(this.numericUpDown_Enter);
+            numericUpDownTopRightY.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
+            numericUpDownTopRightY.Location = new System.Drawing.Point(632, 113);
+            numericUpDownTopRightY.Maximum = new decimal(new int[] { int.MaxValue, 0, 0, 0 });
+            numericUpDownTopRightY.Name = "numericUpDownTopRightY";
+            numericUpDownTopRightY.Size = new System.Drawing.Size(60, 23);
+            numericUpDownTopRightY.TabIndex = 3;
+            numericUpDownTopRightY.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            numericUpDownTopRightY.ValueChanged += numericUpDownTopRight_ValueChanged;
+            numericUpDownTopRightY.Enter += numericUpDown_Enter;
             // 
             // numericUpDownBottomRightX
             // 
-            this.numericUpDownBottomRightX.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.numericUpDownBottomRightX.Location = new System.Drawing.Point(632, 156);
-            this.numericUpDownBottomRightX.Maximum = new decimal(new int[] {
-            2147483647,
-            0,
-            0,
-            0});
-            this.numericUpDownBottomRightX.Name = "numericUpDownBottomRightX";
-            this.numericUpDownBottomRightX.Size = new System.Drawing.Size(60, 23);
-            this.numericUpDownBottomRightX.TabIndex = 4;
-            this.numericUpDownBottomRightX.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            this.numericUpDownBottomRightX.ValueChanged += new System.EventHandler(this.numericUpDownBottomRight_ValueChanged);
-            this.numericUpDownBottomRightX.Enter += new System.EventHandler(this.numericUpDown_Enter);
+            numericUpDownBottomRightX.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
+            numericUpDownBottomRightX.Location = new System.Drawing.Point(632, 156);
+            numericUpDownBottomRightX.Maximum = new decimal(new int[] { int.MaxValue, 0, 0, 0 });
+            numericUpDownBottomRightX.Name = "numericUpDownBottomRightX";
+            numericUpDownBottomRightX.Size = new System.Drawing.Size(60, 23);
+            numericUpDownBottomRightX.TabIndex = 4;
+            numericUpDownBottomRightX.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            numericUpDownBottomRightX.ValueChanged += numericUpDownBottomRight_ValueChanged;
+            numericUpDownBottomRightX.Enter += numericUpDown_Enter;
             // 
             // numericUpDownBottomRightY
             // 
-            this.numericUpDownBottomRightY.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.numericUpDownBottomRightY.Location = new System.Drawing.Point(632, 185);
-            this.numericUpDownBottomRightY.Maximum = new decimal(new int[] {
-            2147483647,
-            0,
-            0,
-            0});
-            this.numericUpDownBottomRightY.Name = "numericUpDownBottomRightY";
-            this.numericUpDownBottomRightY.Size = new System.Drawing.Size(60, 23);
-            this.numericUpDownBottomRightY.TabIndex = 5;
-            this.numericUpDownBottomRightY.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            this.numericUpDownBottomRightY.ValueChanged += new System.EventHandler(this.numericUpDownBottomRight_ValueChanged);
-            this.numericUpDownBottomRightY.Enter += new System.EventHandler(this.numericUpDown_Enter);
+            numericUpDownBottomRightY.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
+            numericUpDownBottomRightY.Location = new System.Drawing.Point(632, 185);
+            numericUpDownBottomRightY.Maximum = new decimal(new int[] { int.MaxValue, 0, 0, 0 });
+            numericUpDownBottomRightY.Name = "numericUpDownBottomRightY";
+            numericUpDownBottomRightY.Size = new System.Drawing.Size(60, 23);
+            numericUpDownBottomRightY.TabIndex = 5;
+            numericUpDownBottomRightY.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            numericUpDownBottomRightY.ValueChanged += numericUpDownBottomRight_ValueChanged;
+            numericUpDownBottomRightY.Enter += numericUpDown_Enter;
             // 
             // numericUpDownBottomLeftX
             // 
-            this.numericUpDownBottomLeftX.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.numericUpDownBottomLeftX.Location = new System.Drawing.Point(632, 228);
-            this.numericUpDownBottomLeftX.Maximum = new decimal(new int[] {
-            2147483647,
-            0,
-            0,
-            0});
-            this.numericUpDownBottomLeftX.Name = "numericUpDownBottomLeftX";
-            this.numericUpDownBottomLeftX.Size = new System.Drawing.Size(60, 23);
-            this.numericUpDownBottomLeftX.TabIndex = 6;
-            this.numericUpDownBottomLeftX.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            this.numericUpDownBottomLeftX.ValueChanged += new System.EventHandler(this.numericUpDownBottomLeft_ValueChanged);
-            this.numericUpDownBottomLeftX.Enter += new System.EventHandler(this.numericUpDown_Enter);
+            numericUpDownBottomLeftX.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
+            numericUpDownBottomLeftX.Location = new System.Drawing.Point(632, 228);
+            numericUpDownBottomLeftX.Maximum = new decimal(new int[] { int.MaxValue, 0, 0, 0 });
+            numericUpDownBottomLeftX.Name = "numericUpDownBottomLeftX";
+            numericUpDownBottomLeftX.Size = new System.Drawing.Size(60, 23);
+            numericUpDownBottomLeftX.TabIndex = 6;
+            numericUpDownBottomLeftX.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            numericUpDownBottomLeftX.ValueChanged += numericUpDownBottomLeft_ValueChanged;
+            numericUpDownBottomLeftX.Enter += numericUpDown_Enter;
             // 
             // numericUpDownBottomLeftY
             // 
-            this.numericUpDownBottomLeftY.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.numericUpDownBottomLeftY.Location = new System.Drawing.Point(632, 257);
-            this.numericUpDownBottomLeftY.Maximum = new decimal(new int[] {
-            2147483647,
-            0,
-            0,
-            0});
-            this.numericUpDownBottomLeftY.Name = "numericUpDownBottomLeftY";
-            this.numericUpDownBottomLeftY.Size = new System.Drawing.Size(60, 23);
-            this.numericUpDownBottomLeftY.TabIndex = 7;
-            this.numericUpDownBottomLeftY.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            this.numericUpDownBottomLeftY.ValueChanged += new System.EventHandler(this.numericUpDownBottomLeft_ValueChanged);
-            this.numericUpDownBottomLeftY.Enter += new System.EventHandler(this.numericUpDown_Enter);
+            numericUpDownBottomLeftY.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
+            numericUpDownBottomLeftY.Location = new System.Drawing.Point(632, 257);
+            numericUpDownBottomLeftY.Maximum = new decimal(new int[] { int.MaxValue, 0, 0, 0 });
+            numericUpDownBottomLeftY.Name = "numericUpDownBottomLeftY";
+            numericUpDownBottomLeftY.Size = new System.Drawing.Size(60, 23);
+            numericUpDownBottomLeftY.TabIndex = 7;
+            numericUpDownBottomLeftY.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            numericUpDownBottomLeftY.ValueChanged += numericUpDownBottomLeft_ValueChanged;
+            numericUpDownBottomLeftY.Enter += numericUpDown_Enter;
             // 
             // buttonOK
             // 
-            this.buttonOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonOK.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.buttonOK.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.buttonOK.Location = new System.Drawing.Point(536, 491);
-            this.buttonOK.Name = "buttonOK";
-            this.buttonOK.Size = new System.Drawing.Size(75, 23);
-            this.buttonOK.TabIndex = 12;
-            this.buttonOK.Text = "OK";
-            this.buttonOK.UseVisualStyleBackColor = true;
+            buttonOK.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
+            buttonOK.DialogResult = System.Windows.Forms.DialogResult.OK;
+            buttonOK.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            buttonOK.Location = new System.Drawing.Point(536, 491);
+            buttonOK.Name = "buttonOK";
+            buttonOK.Size = new System.Drawing.Size(75, 23);
+            buttonOK.TabIndex = 12;
+            buttonOK.Text = "OK";
+            buttonOK.UseVisualStyleBackColor = true;
             // 
             // buttonCancel
             // 
-            this.buttonCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.buttonCancel.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.buttonCancel.Location = new System.Drawing.Point(617, 491);
-            this.buttonCancel.Name = "buttonCancel";
-            this.buttonCancel.Size = new System.Drawing.Size(75, 23);
-            this.buttonCancel.TabIndex = 13;
-            this.buttonCancel.Text = "Cancel";
-            this.buttonCancel.UseVisualStyleBackColor = true;
+            buttonCancel.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
+            buttonCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            buttonCancel.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            buttonCancel.Location = new System.Drawing.Point(617, 491);
+            buttonCancel.Name = "buttonCancel";
+            buttonCancel.Size = new System.Drawing.Size(75, 23);
+            buttonCancel.TabIndex = 13;
+            buttonCancel.Text = "Cancel";
+            buttonCancel.UseVisualStyleBackColor = true;
             // 
             // quadControl11
             // 
-            this.quadControl11.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.quadControl11.Location = new System.Drawing.Point(12, 12);
-            this.quadControl11.Name = "quadControl11";
-            this.quadControl11.NubBL = new System.Drawing.Point(0, 500);
-            this.quadControl11.NubBR = new System.Drawing.Point(500, 500);
-            this.quadControl11.NubTL = new System.Drawing.Point(0, 0);
-            this.quadControl11.NubTR = new System.Drawing.Point(500, 0);
-            this.quadControl11.Size = new System.Drawing.Size(502, 502);
-            this.quadControl11.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.quadControl11.TabIndex = 14;
-            this.quadControl11.TabStop = false;
-            this.quadControl11.ValueChanged += new System.EventHandler(this.quadControl11_ValueChanged);
+            quadControl11.BackgroundImage = (System.Drawing.Image)resources.GetObject("quadControl11.BackgroundImage");
+            quadControl11.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            quadControl11.Location = new System.Drawing.Point(12, 12);
+            quadControl11.Name = "quadControl11";
+            quadControl11.MoveNearestNubOnClick = true;
+            quadControl11.Size = new System.Drawing.Size(502, 502);
+            quadControl11.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            quadControl11.TabIndex = 14;
+            quadControl11.TabStop = false;
+            quadControl11.ValueChanged += quadControl11_ValueChanged;
             // 
             // numericUpDown1
             // 
-            this.numericUpDown1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.numericUpDown1.Location = new System.Drawing.Point(632, 348);
-            this.numericUpDown1.Name = "numericUpDown1";
-            this.numericUpDown1.Size = new System.Drawing.Size(60, 23);
-            this.numericUpDown1.TabIndex = 9;
-            this.numericUpDown1.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            this.numericUpDown1.ValueChanged += new System.EventHandler(this.numericUpDown1_ValueChanged);
-            this.numericUpDown1.Enter += new System.EventHandler(this.numericUpDown_Enter);
+            numericUpDown1.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
+            numericUpDown1.Location = new System.Drawing.Point(632, 348);
+            numericUpDown1.Name = "numericUpDown1";
+            numericUpDown1.Size = new System.Drawing.Size(60, 23);
+            numericUpDown1.TabIndex = 9;
+            numericUpDown1.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            numericUpDown1.ValueChanged += numericUpDown1_ValueChanged;
+            numericUpDown1.Enter += numericUpDown_Enter;
             // 
             // numericUpDown2
             // 
-            this.numericUpDown2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.numericUpDown2.Location = new System.Drawing.Point(632, 377);
-            this.numericUpDown2.Name = "numericUpDown2";
-            this.numericUpDown2.Size = new System.Drawing.Size(60, 23);
-            this.numericUpDown2.TabIndex = 10;
-            this.numericUpDown2.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            this.numericUpDown2.ValueChanged += new System.EventHandler(this.numericUpDown2_ValueChanged);
-            this.numericUpDown2.Enter += new System.EventHandler(this.numericUpDown_Enter);
+            numericUpDown2.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
+            numericUpDown2.Location = new System.Drawing.Point(632, 377);
+            numericUpDown2.Name = "numericUpDown2";
+            numericUpDown2.Size = new System.Drawing.Size(60, 23);
+            numericUpDown2.TabIndex = 10;
+            numericUpDown2.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            numericUpDown2.ValueChanged += numericUpDown2_ValueChanged;
+            numericUpDown2.Enter += numericUpDown_Enter;
             // 
             // checkBoxAutoDims
             // 
-            this.checkBoxAutoDims.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.checkBoxAutoDims.AutoSize = true;
-            this.checkBoxAutoDims.Location = new System.Drawing.Point(538, 325);
-            this.checkBoxAutoDims.Name = "checkBoxAutoDims";
-            this.checkBoxAutoDims.Size = new System.Drawing.Size(117, 19);
-            this.checkBoxAutoDims.TabIndex = 8;
-            this.checkBoxAutoDims.Text = "Auto Dimensions";
-            this.checkBoxAutoDims.UseVisualStyleBackColor = true;
-            this.checkBoxAutoDims.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
+            checkBoxAutoDims.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
+            checkBoxAutoDims.AutoSize = true;
+            checkBoxAutoDims.Location = new System.Drawing.Point(538, 314);
+            checkBoxAutoDims.Name = "checkBoxAutoDims";
+            checkBoxAutoDims.Size = new System.Drawing.Size(121, 19);
+            checkBoxAutoDims.TabIndex = 8;
+            checkBoxAutoDims.Text = "Auto Dimensions";
+            checkBoxAutoDims.UseVisualStyleBackColor = true;
+            checkBoxAutoDims.CheckedChanged += checkBox1_CheckedChanged;
             // 
             // label1
             // 
-            this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(538, 14);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(59, 15);
-            this.label1.TabIndex = 15;
-            this.label1.Text = "Top Left X";
+            label1.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
+            label1.AutoSize = true;
+            label1.Location = new System.Drawing.Point(538, 14);
+            label1.Name = "label1";
+            label1.Size = new System.Drawing.Size(65, 15);
+            label1.TabIndex = 15;
+            label1.Text = "Top Left X";
             // 
             // label2
             // 
-            this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(538, 43);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(59, 15);
-            this.label2.TabIndex = 16;
-            this.label2.Text = "Top Left Y";
+            label2.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
+            label2.AutoSize = true;
+            label2.Location = new System.Drawing.Point(538, 43);
+            label2.Name = "label2";
+            label2.Size = new System.Drawing.Size(64, 15);
+            label2.TabIndex = 16;
+            label2.Text = "Top Left Y";
             // 
             // label3
             // 
-            this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(538, 86);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(67, 15);
-            this.label3.TabIndex = 17;
-            this.label3.Text = "Top Right X";
+            label3.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
+            label3.AutoSize = true;
+            label3.Location = new System.Drawing.Point(538, 86);
+            label3.Name = "label3";
+            label3.Size = new System.Drawing.Size(74, 15);
+            label3.TabIndex = 17;
+            label3.Text = "Top Right X";
             // 
             // label4
             // 
-            this.label4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(538, 115);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(67, 15);
-            this.label4.TabIndex = 18;
-            this.label4.Text = "Top Right Y";
+            label4.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
+            label4.AutoSize = true;
+            label4.Location = new System.Drawing.Point(538, 115);
+            label4.Name = "label4";
+            label4.Size = new System.Drawing.Size(73, 15);
+            label4.TabIndex = 18;
+            label4.Text = "Top Right Y";
             // 
             // label5
             // 
-            this.label5.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(538, 158);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(88, 15);
-            this.label5.TabIndex = 19;
-            this.label5.Text = "Bottom Right X";
+            label5.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
+            label5.AutoSize = true;
+            label5.Location = new System.Drawing.Point(538, 158);
+            label5.Name = "label5";
+            label5.Size = new System.Drawing.Size(93, 15);
+            label5.TabIndex = 19;
+            label5.Text = "Bottom Right X";
             // 
             // label6
             // 
-            this.label6.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(538, 187);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(88, 15);
-            this.label6.TabIndex = 20;
-            this.label6.Text = "Bottom Right Y";
+            label6.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
+            label6.AutoSize = true;
+            label6.Location = new System.Drawing.Point(538, 187);
+            label6.Name = "label6";
+            label6.Size = new System.Drawing.Size(92, 15);
+            label6.TabIndex = 20;
+            label6.Text = "Bottom Right Y";
             // 
             // label7
             // 
-            this.label7.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(538, 230);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(80, 15);
-            this.label7.TabIndex = 21;
-            this.label7.Text = "Bottom Left X";
+            label7.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
+            label7.AutoSize = true;
+            label7.Location = new System.Drawing.Point(538, 230);
+            label7.Name = "label7";
+            label7.Size = new System.Drawing.Size(84, 15);
+            label7.TabIndex = 21;
+            label7.Text = "Bottom Left X";
             // 
             // label8
             // 
-            this.label8.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(538, 259);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(80, 15);
-            this.label8.TabIndex = 22;
-            this.label8.Text = "Bottom Left Y";
+            label8.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
+            label8.AutoSize = true;
+            label8.Location = new System.Drawing.Point(538, 259);
+            label8.Name = "label8";
+            label8.Size = new System.Drawing.Size(83, 15);
+            label8.TabIndex = 22;
+            label8.Text = "Bottom Left Y";
             // 
             // label9
             // 
-            this.label9.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(538, 350);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(39, 15);
-            this.label9.TabIndex = 23;
-            this.label9.Text = "Width";
+            label9.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
+            label9.AutoSize = true;
+            label9.Location = new System.Drawing.Point(538, 350);
+            label9.Name = "label9";
+            label9.Size = new System.Drawing.Size(41, 15);
+            label9.TabIndex = 23;
+            label9.Text = "Width";
             // 
             // label10
             // 
-            this.label10.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(538, 379);
-            this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(43, 15);
-            this.label10.TabIndex = 24;
-            this.label10.Text = "Height";
+            label10.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
+            label10.AutoSize = true;
+            label10.Location = new System.Drawing.Point(538, 379);
+            label10.Name = "label10";
+            label10.Size = new System.Drawing.Size(45, 15);
+            label10.TabIndex = 24;
+            label10.Text = "Height";
             // 
             // checkBoxCenter
             // 
-            this.checkBoxCenter.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.checkBoxCenter.AutoSize = true;
-            this.checkBoxCenter.Location = new System.Drawing.Point(540, 426);
-            this.checkBoxCenter.Name = "checkBoxCenter";
-            this.checkBoxCenter.Size = new System.Drawing.Size(61, 19);
-            this.checkBoxCenter.TabIndex = 11;
-            this.checkBoxCenter.Text = "Center";
-            this.checkBoxCenter.UseVisualStyleBackColor = true;
-            this.checkBoxCenter.CheckedChanged += new System.EventHandler(this.checkBoxCenter_CheckedChanged);
+            checkBoxCenter.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
+            checkBoxCenter.AutoSize = true;
+            checkBoxCenter.Location = new System.Drawing.Point(538, 406);
+            checkBoxCenter.Name = "checkBoxCenter";
+            checkBoxCenter.Size = new System.Drawing.Size(63, 19);
+            checkBoxCenter.TabIndex = 11;
+            checkBoxCenter.Text = "Center";
+            checkBoxCenter.UseVisualStyleBackColor = true;
+            checkBoxCenter.CheckedChanged += checkBoxCenter_CheckedChanged;
             // 
             // panelDivider
             // 
-            this.panelDivider.BackColor = System.Drawing.SystemColors.ControlDark;
-            this.panelDivider.Location = new System.Drawing.Point(527, 12);
-            this.panelDivider.Name = "panelDivider";
-            this.panelDivider.Size = new System.Drawing.Size(1, 501);
-            this.panelDivider.TabIndex = 25;
+            panelDivider.BackColor = System.Drawing.SystemColors.ControlDark;
+            panelDivider.Location = new System.Drawing.Point(527, 12);
+            panelDivider.Name = "panelDivider";
+            panelDivider.Size = new System.Drawing.Size(1, 501);
+            panelDivider.TabIndex = 25;
             // 
             // resetAllButton
             // 
-            this.resetAllButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.resetAllButton.Location = new System.Drawing.Point(632, 285);
-            this.resetAllButton.Name = "resetAllButton";
-            this.resetAllButton.Size = new System.Drawing.Size(60, 23);
-            this.resetAllButton.TabIndex = 26;
-            this.resetAllButton.Text = "Reset All";
-            this.resetAllButton.UseVisualStyleBackColor = true;
-            this.resetAllButton.Click += new System.EventHandler(this.resetAllButton_Click);
-            //
+            resetAllButton.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            resetAllButton.Location = new System.Drawing.Point(632, 285);
+            resetAllButton.Name = "resetAllButton";
+            resetAllButton.Size = new System.Drawing.Size(60, 23);
+            resetAllButton.TabIndex = 26;
+            resetAllButton.Text = "Reset All";
+            resetAllButton.UseVisualStyleBackColor = true;
+            resetAllButton.Click += resetAllButton_Click;
+            // 
             // cropOutsideCheckBox
-            //
-            this.cropOutsideCheckBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.cropOutsideCheckBox.AutoSize = true;
-            this.cropOutsideCheckBox.Location = new System.Drawing.Point(562, 451);
-            this.cropOutsideCheckBox.Name = "cropOutsideCheckBox";
-            this.cropOutsideCheckBox.Size = new System.Drawing.Size(150, 19);
-            this.cropOutsideCheckBox.TabIndex = 27;
-            this.cropOutsideCheckBox.Text = "Crop outside quadrilateral";
-            this.cropOutsideCheckBox.Checked = true;
-            this.cropOutsideCheckBox.UseVisualStyleBackColor = true;
-            this.cropOutsideCheckBox.CheckedChanged += new System.EventHandler(this.CropOutsideCheckBox_CheckedChanged);
+            // 
+            cropOutsideCheckBox.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
+            cropOutsideCheckBox.AutoSize = true;
+            cropOutsideCheckBox.Checked = true;
+            cropOutsideCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
+            cropOutsideCheckBox.Location = new System.Drawing.Point(538, 431);
+            cropOutsideCheckBox.Name = "cropOutsideCheckBox";
+            cropOutsideCheckBox.Size = new System.Drawing.Size(174, 19);
+            cropOutsideCheckBox.TabIndex = 27;
+            cropOutsideCheckBox.Text = "Crop outside quadrilateral";
+            cropOutsideCheckBox.UseVisualStyleBackColor = true;
+            cropOutsideCheckBox.CheckedChanged += CropOutsideCheckBox_CheckedChanged;
+            // 
+            // checkBoxMoveNearestNub
+            // 
+            checkBoxMoveNearestNub.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
+            checkBoxMoveNearestNub.AutoSize = true;
+            checkBoxMoveNearestNub.Checked = true;
+            checkBoxMoveNearestNub.CheckState = System.Windows.Forms.CheckState.Checked;
+            checkBoxMoveNearestNub.Location = new System.Drawing.Point(538, 456);
+            checkBoxMoveNearestNub.Name = "checkBoxMoveNearestNub";
+            checkBoxMoveNearestNub.Size = new System.Drawing.Size(173, 19);
+            checkBoxMoveNearestNub.TabIndex = 28;
+            checkBoxMoveNearestNub.Text = "Move nearest nub on click";
+            checkBoxMoveNearestNub.UseVisualStyleBackColor = true;
+            checkBoxMoveNearestNub.CheckedChanged += CheckBoxMoveNearestNub_CheckedChanged;
             // 
             // QuadrilateralCorrectionConfigDialog
             // 
-            this.AcceptButton = this.buttonOK;
-            this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
-            this.CancelButton = this.buttonCancel;
-            this.ClientSize = new System.Drawing.Size(704, 526);
-            this.Controls.Add(this.resetAllButton);
-            this.Controls.Add(this.panelDivider);
-            this.Controls.Add(this.checkBoxCenter);
-            this.Controls.Add(this.label10);
-            this.Controls.Add(this.label9);
-            this.Controls.Add(this.label8);
-            this.Controls.Add(this.label7);
-            this.Controls.Add(this.label6);
-            this.Controls.Add(this.label5);
-            this.Controls.Add(this.label4);
-            this.Controls.Add(this.label3);
-            this.Controls.Add(this.label2);
-            this.Controls.Add(this.label1);
-            this.Controls.Add(this.checkBoxAutoDims);
-            this.Controls.Add(this.numericUpDown2);
-            this.Controls.Add(this.numericUpDown1);
-            this.Controls.Add(this.quadControl11);
-            this.Controls.Add(this.buttonCancel);
-            this.Controls.Add(this.buttonOK);
-            this.Controls.Add(this.numericUpDownBottomLeftY);
-            this.Controls.Add(this.numericUpDownBottomLeftX);
-            this.Controls.Add(this.numericUpDownBottomRightY);
-            this.Controls.Add(this.numericUpDownBottomRightX);
-            this.Controls.Add(this.numericUpDownTopRightY);
-            this.Controls.Add(this.numericUpDownTopRightX);
-            this.Controls.Add(this.numericUpDownTopLeftY);
-            this.Controls.Add(this.numericUpDownTopLeftX);
-            this.Controls.Add(this.cropOutsideCheckBox);
-            this.DoubleBuffered = true;
-            this.HelpButton = true;
-            this.KeyPreview = true;
-            this.Name = "QuadrilateralCorrectionConfigDialog";
-            this.Text = "Quadrilateral Correction";
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTopLeftX)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTopLeftY)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTopRightX)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTopRightY)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownBottomRightX)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownBottomRightY)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownBottomLeftX)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownBottomLeftY)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.quadControl11)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown2)).EndInit();
-            this.ResumeLayout(false);
-            this.PerformLayout();
+            AcceptButton = buttonOK;
+            AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
+            AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
+            CancelButton = buttonCancel;
+            ClientSize = new System.Drawing.Size(704, 526);
+            Controls.Add(resetAllButton);
+            Controls.Add(panelDivider);
+            Controls.Add(checkBoxCenter);
+            Controls.Add(label10);
+            Controls.Add(label9);
+            Controls.Add(label8);
+            Controls.Add(label7);
+            Controls.Add(label6);
+            Controls.Add(label5);
+            Controls.Add(label4);
+            Controls.Add(label3);
+            Controls.Add(label2);
+            Controls.Add(label1);
+            Controls.Add(checkBoxAutoDims);
+            Controls.Add(numericUpDown2);
+            Controls.Add(numericUpDown1);
+            Controls.Add(quadControl11);
+            Controls.Add(buttonCancel);
+            Controls.Add(buttonOK);
+            Controls.Add(numericUpDownBottomLeftY);
+            Controls.Add(numericUpDownBottomLeftX);
+            Controls.Add(numericUpDownBottomRightY);
+            Controls.Add(numericUpDownBottomRightX);
+            Controls.Add(numericUpDownTopRightY);
+            Controls.Add(numericUpDownTopRightX);
+            Controls.Add(numericUpDownTopLeftY);
+            Controls.Add(numericUpDownTopLeftX);
+            Controls.Add(cropOutsideCheckBox);
+            Controls.Add(checkBoxMoveNearestNub);
+            DoubleBuffered = true;
+            HelpButton = true;
+            KeyPreview = true;
+            Location = new System.Drawing.Point(0, 0);
+            Name = "QuadrilateralCorrectionConfigDialog";
+            Text = "Quadrilateral Correction";
+            ((System.ComponentModel.ISupportInitialize)numericUpDownTopLeftX).EndInit();
+            ((System.ComponentModel.ISupportInitialize)numericUpDownTopLeftY).EndInit();
+            ((System.ComponentModel.ISupportInitialize)numericUpDownTopRightX).EndInit();
+            ((System.ComponentModel.ISupportInitialize)numericUpDownTopRightY).EndInit();
+            ((System.ComponentModel.ISupportInitialize)numericUpDownBottomRightX).EndInit();
+            ((System.ComponentModel.ISupportInitialize)numericUpDownBottomRightY).EndInit();
+            ((System.ComponentModel.ISupportInitialize)numericUpDownBottomLeftX).EndInit();
+            ((System.ComponentModel.ISupportInitialize)numericUpDownBottomLeftY).EndInit();
+            ((System.ComponentModel.ISupportInitialize)quadControl11).EndInit();
+            ((System.ComponentModel.ISupportInitialize)numericUpDown1).EndInit();
+            ((System.ComponentModel.ISupportInitialize)numericUpDown2).EndInit();
+            ResumeLayout(false);
+            PerformLayout();
 
         }
 
@@ -500,5 +485,6 @@
         private System.Windows.Forms.Panel panelDivider;
         private System.Windows.Forms.Button resetAllButton;
         private System.Windows.Forms.CheckBox cropOutsideCheckBox;
+        private System.Windows.Forms.CheckBox checkBoxMoveNearestNub;
     }
 }

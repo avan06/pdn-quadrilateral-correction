@@ -36,12 +36,11 @@ namespace QuadrilateralCorrectionEffect
         {
             base.OnLoading();
 
-            quadControl11.Width = uiImgBounds.Width + 2;
-            quadControl11.Height = uiImgBounds.Height + 2;
-            quadControl11.Location = new Point(quadControl11.Location.X + uiImgBounds.X, quadControl11.Location.Y + uiImgBounds.Y);
+            ApplyQuadControlImageBounds();
 
             checkBoxAutoDims.Left = label10.Left;
             checkBoxCenter.Left = label10.Left;
+            checkBoxMoveNearestNub.Left = label10.Left;
         }
 
         private bool initialized;
@@ -239,6 +238,11 @@ namespace QuadrilateralCorrectionEffect
         {
             UpdateTokenFromDialog();
 
+        }
+
+        private void CheckBoxMoveNearestNub_CheckedChanged(object sender, System.EventArgs e)
+        {
+            quadControl11.MoveNearestNubOnClick = checkBoxMoveNearestNub.Checked;
         }
         #endregion
 
