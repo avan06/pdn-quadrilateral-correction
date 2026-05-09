@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(QuadrilateralCorrectionConfigDialog));
             numericUpDownTopLeftX = new System.Windows.Forms.NumericUpDown();
             numericUpDownTopLeftY = new System.Windows.Forms.NumericUpDown();
             numericUpDownTopRightX = new System.Windows.Forms.NumericUpDown();
@@ -57,6 +58,7 @@
             resetAllButton = new System.Windows.Forms.Button();
             checkBoxCropOutside = new System.Windows.Forms.CheckBox();
             checkBoxMoveNearestNub = new System.Windows.Forms.CheckBox();
+            checkBoxLineSnap = new System.Windows.Forms.CheckBox();
             splitContainerMain = new System.Windows.Forms.SplitContainer();
             rightRootTableLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
             rightTableLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
@@ -182,7 +184,7 @@
             buttonOK.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
             buttonOK.DialogResult = System.Windows.Forms.DialogResult.OK;
             buttonOK.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            buttonOK.Location = new System.Drawing.Point(3, 20);
+            buttonOK.Location = new System.Drawing.Point(3, 26);
             buttonOK.Name = "buttonOK";
             buttonOK.Size = new System.Drawing.Size(76, 23);
             buttonOK.TabIndex = 12;
@@ -194,7 +196,7 @@
             buttonCancel.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
             buttonCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             buttonCancel.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            buttonCancel.Location = new System.Drawing.Point(94, 20);
+            buttonCancel.Location = new System.Drawing.Point(94, 26);
             buttonCancel.Name = "buttonCancel";
             buttonCancel.Size = new System.Drawing.Size(76, 23);
             buttonCancel.TabIndex = 13;
@@ -204,8 +206,9 @@
             // quadControl11
             // 
             quadControl11.Anchor = System.Windows.Forms.AnchorStyles.None;
+            quadControl11.BackgroundImage = (System.Drawing.Image)resources.GetObject("quadControl11.BackgroundImage");
             quadControl11.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            quadControl11.Location = new System.Drawing.Point(-12, 3);
+            quadControl11.Location = new System.Drawing.Point(-12, 20);
             quadControl11.Margin = new System.Windows.Forms.Padding(0);
             quadControl11.Name = "quadControl11";
             quadControl11.Size = new System.Drawing.Size(532, 520);
@@ -371,7 +374,7 @@
             panelDivider.Location = new System.Drawing.Point(3, 6);
             panelDivider.Margin = new System.Windows.Forms.Padding(3, 6, 3, 6);
             panelDivider.Name = "panelDivider";
-            panelDivider.Size = new System.Drawing.Size(1, 508);
+            panelDivider.Size = new System.Drawing.Size(1, 543);
             panelDivider.TabIndex = 25;
             // 
             // resetAllButton
@@ -419,6 +422,23 @@
             checkBoxMoveNearestNub.UseVisualStyleBackColor = true;
             checkBoxMoveNearestNub.CheckedChanged += CheckBoxMoveNearestNub_CheckedChanged;
             // 
+            // checkBoxLineSnap
+            // 
+            checkBoxLineSnap.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+            checkBoxLineSnap.AutoSize = true;
+            checkBoxLineSnap.Checked = true;
+            checkBoxLineSnap.CheckState = System.Windows.Forms.CheckState.Checked;
+            rightTableLayoutPanel.SetColumnSpan(checkBoxLineSnap, 2);
+            checkBoxLineSnap.Location = new System.Drawing.Point(3, 474);
+            checkBoxLineSnap.Margin = new System.Windows.Forms.Padding(3, 3, 0, 3);
+            checkBoxLineSnap.Name = "checkBoxLineSnap";
+            checkBoxLineSnap.Size = new System.Drawing.Size(179, 21);
+            checkBoxLineSnap.TabIndex = 29;
+            checkBoxLineSnap.Text = "Snap nubs to lines";
+            checkBoxLineSnap.UseCompatibleTextRendering = true;
+            checkBoxLineSnap.UseVisualStyleBackColor = true;
+            checkBoxLineSnap.CheckedChanged += CheckBoxLineSnap_CheckedChanged;
+            // 
             // splitContainerMain
             // 
             splitContainerMain.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -438,7 +458,7 @@
             splitContainerMain.Panel2.Controls.Add(rightRootTableLayoutPanel);
             splitContainerMain.Panel2.ForeColor = System.Drawing.Color.Transparent;
             splitContainerMain.Panel2.Padding = new System.Windows.Forms.Padding(3);
-            splitContainerMain.Size = new System.Drawing.Size(704, 526);
+            splitContainerMain.Size = new System.Drawing.Size(704, 561);
             splitContainerMain.SplitterDistance = 510;
             splitContainerMain.SplitterWidth = 1;
             splitContainerMain.TabIndex = 29;
@@ -455,7 +475,7 @@
             rightRootTableLayoutPanel.Name = "rightRootTableLayoutPanel";
             rightRootTableLayoutPanel.RowCount = 1;
             rightRootTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            rightRootTableLayoutPanel.Size = new System.Drawing.Size(187, 520);
+            rightRootTableLayoutPanel.Size = new System.Drawing.Size(187, 555);
             rightRootTableLayoutPanel.TabIndex = 15;
             // 
             // rightTableLayoutPanel
@@ -488,12 +508,13 @@
             rightTableLayoutPanel.Controls.Add(checkBoxCenter, 0, 17);
             rightTableLayoutPanel.Controls.Add(checkBoxCropOutside, 0, 18);
             rightTableLayoutPanel.Controls.Add(checkBoxMoveNearestNub, 0, 19);
-            rightTableLayoutPanel.Controls.Add(tableLayoutPanel1, 0, 20);
+            rightTableLayoutPanel.Controls.Add(checkBoxLineSnap, 0, 20);
+            rightTableLayoutPanel.Controls.Add(tableLayoutPanel1, 0, 21);
             rightTableLayoutPanel.Dock = System.Windows.Forms.DockStyle.Fill;
             rightTableLayoutPanel.Location = new System.Drawing.Point(5, 0);
             rightTableLayoutPanel.Margin = new System.Windows.Forms.Padding(0);
             rightTableLayoutPanel.Name = "rightTableLayoutPanel";
-            rightTableLayoutPanel.RowCount = 18;
+            rightTableLayoutPanel.RowCount = 22;
             rightTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
             rightTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
             rightTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 10F));
@@ -511,12 +532,16 @@
             rightTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
             rightTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
             rightTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 10F));
+            rightTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            rightTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            rightTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            rightTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
             rightTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
             rightTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
             rightTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
             rightTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
             rightTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            rightTableLayoutPanel.Size = new System.Drawing.Size(182, 520);
+            rightTableLayoutPanel.Size = new System.Drawing.Size(182, 555);
             rightTableLayoutPanel.TabIndex = 15;
             // 
             // tableLayoutPanel1
@@ -528,13 +553,13 @@
             tableLayoutPanel1.Controls.Add(buttonOK, 0, 0);
             tableLayoutPanel1.Controls.Add(buttonCancel, 1, 0);
             tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            tableLayoutPanel1.Location = new System.Drawing.Point(0, 471);
+            tableLayoutPanel1.Location = new System.Drawing.Point(0, 498);
             tableLayoutPanel1.Margin = new System.Windows.Forms.Padding(0);
             tableLayoutPanel1.Name = "tableLayoutPanel1";
             tableLayoutPanel1.Padding = new System.Windows.Forms.Padding(0, 0, 0, 5);
             tableLayoutPanel1.RowCount = 1;
             tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            tableLayoutPanel1.Size = new System.Drawing.Size(182, 51);
+            tableLayoutPanel1.Size = new System.Drawing.Size(182, 57);
             tableLayoutPanel1.TabIndex = 15;
             // 
             // QuadrilateralCorrectionConfigDialog
@@ -543,7 +568,7 @@
             AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             CancelButton = buttonCancel;
-            ClientSize = new System.Drawing.Size(704, 526);
+            ClientSize = new System.Drawing.Size(704, 561);
             Controls.Add(splitContainerMain);
             DoubleBuffered = true;
             HelpButton = true;
@@ -575,7 +600,6 @@
             ResumeLayout(false);
 
         }
-
         #endregion
 
         private System.Windows.Forms.NumericUpDown numericUpDownTopLeftX;
@@ -607,6 +631,7 @@
         private System.Windows.Forms.Button resetAllButton;
         private System.Windows.Forms.CheckBox checkBoxCropOutside;
         private System.Windows.Forms.CheckBox checkBoxMoveNearestNub;
+        private System.Windows.Forms.CheckBox checkBoxLineSnap;
         private System.Windows.Forms.SplitContainer splitContainerMain;
         private System.Windows.Forms.TableLayoutPanel rightTableLayoutPanel;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;

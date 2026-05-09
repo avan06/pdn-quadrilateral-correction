@@ -16,14 +16,13 @@ namespace QuadrilateralCorrectionEffect
         private Rectangle selection;
         private Bitmap srcImage; // Used for UI preview (PictureBox / QuadControl)
         private BitmapRegionUtil.BitmapBgra32Data srcImageData; // Used for perspective warp and pixel-level computations
-        private Point quadControl11BaseLocation;
 
         public QuadrilateralCorrectionConfigDialog()
         {
             InitializeComponent();
             this.UseAppThemeColors = true;
 
-            quadControl11BaseLocation = quadControl11.Location;
+            quadControl11.LineSnapEnabled = checkBoxLineSnap.Checked;
 
             ApplyThemeColorsToNumericUpDowns(this);
         }
@@ -312,6 +311,11 @@ namespace QuadrilateralCorrectionEffect
         private void CheckBoxMoveNearestNub_CheckedChanged(object sender, System.EventArgs e)
         {
             quadControl11.MoveNearestNubOnClick = checkBoxMoveNearestNub.Checked;
+        }
+
+        private void CheckBoxLineSnap_CheckedChanged(object sender, System.EventArgs e)
+        {
+            quadControl11.LineSnapEnabled = checkBoxLineSnap.Checked;
         }
         #endregion
 

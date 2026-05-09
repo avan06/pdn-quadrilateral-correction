@@ -102,6 +102,21 @@ namespace QuadrilateralCorrectionEffect
         [DefaultValue(true)]
         public bool MoveNearestNubOnClick { get; set; } = true;
 
+        [Category("Behavior")]
+        [Description("When enabled, dragging a nub snaps it to nearby high-contrast lines in the image.")]
+        [DefaultValue(true)]
+        public bool LineSnapEnabled { get; set; } = true;
+
+        [Category("Behavior")]
+        [Description("Search radius, in control pixels, used when snapping a nub to a nearby line.")]
+        [DefaultValue(8)]
+        public int LineSnapSearchRadius { get; set; } = 8;
+
+        [Category("Behavior")]
+        [Description("Minimum Sobel edge strength required for line snapping.")]
+        [DefaultValue(120)]
+        public int LineSnapMinEdgeStrength { get; set; } = 120;
+
         internal QuadrilateralCorrectionEffect.Nub SelectedNub
         {
             get
@@ -228,7 +243,10 @@ namespace QuadrilateralCorrectionEffect
                 {
                     Nub nub = GetNearestNub(e.Location);
                     Point mouseLocation = new Point(ClampToWidth(e.X), ClampToHeight(e.Y));
-                    nub.Location = mouseLocation;
+
+                    nub.Location = SnapToNearestLineIfEnabled(mouseLocation);
+                    mouseLocation = nub.Location;
+
                     GrabNub(nub, mouseLocation);
                     showMagnifier = true;
                     OnValueChanged();
@@ -310,92 +328,37 @@ namespace QuadrilateralCorrectionEffect
             }
             else if (nubTL.Grabbed)
             {
-                if (e.Button == MouseButtons.Middle)
-                {
-                    if (e.X <= nubTL.X - DeadZone)
-                        nubTL.X = ClampToWidth(e.X + DeadZone);
-                    else if (e.X >= nubTL.X + DeadZone)
-                        nubTL.X = ClampToWidth(e.X - DeadZone);
+                Point targetPoint = GetDragTargetPoint(nubTL, e);
 
-                    if (e.Y <= nubTL.Y - DeadZone)
-                        nubTL.Y = ClampToHeight(e.Y + DeadZone);
-                    else if (e.Y >= nubTL.Y + DeadZone)
-                        nubTL.Y = ClampToHeight(e.Y - DeadZone);
-                }
-                else
-                {
-                    nubTL.X = ClampToWidth(e.X - MouseFromNub.Width);
-                    nubTL.Y = ClampToHeight(e.Y - MouseFromNub.Height);
-                }
+                nubTL.Location = SnapToNearestLineIfEnabled(targetPoint);
 
                 showMagnifier = true;
             }
             else if (nubTR.Grabbed)
             {
-                if (e.Button == MouseButtons.Middle)
-                {
-                    if (e.X <= nubTR.X - DeadZone)
-                        nubTR.X = ClampToWidth(e.X + DeadZone);
-                    else if (e.X >= nubTR.X + DeadZone)
-                        nubTR.X = ClampToWidth(e.X - DeadZone);
+                Point targetPoint = GetDragTargetPoint(nubTR, e);
 
-                    if (e.Y <= nubTR.Y - DeadZone)
-                        nubTR.Y = ClampToHeight(e.Y + DeadZone);
-                    else if (e.Y >= nubTR.Y + DeadZone)
-                        nubTR.Y = ClampToHeight(e.Y - DeadZone);
-                }
-                else
-                {
-                    nubTR.X = ClampToWidth(e.X - MouseFromNub.Width);
-                    nubTR.Y = ClampToHeight(e.Y - MouseFromNub.Height);
-                }
+                nubTR.Location = SnapToNearestLineIfEnabled(targetPoint);
 
                 showMagnifier = true;
             }
             else if (nubBR.Grabbed)
             {
-                if (e.Button == MouseButtons.Middle)
-                {
-                    if (e.X <= nubBR.X - DeadZone)
-                        nubBR.X = ClampToWidth(e.X + DeadZone);
-                    else if (e.X >= nubBR.X + DeadZone)
-                        nubBR.X = ClampToWidth(e.X - DeadZone);
+                Point targetPoint = GetDragTargetPoint(nubBR, e);
 
-                    if (e.Y <= nubBR.Y - DeadZone)
-                        nubBR.Y = ClampToHeight(e.Y + DeadZone);
-                    else if (e.Y >= nubBR.Y + DeadZone)
-                        nubBR.Y = ClampToHeight(e.Y - DeadZone);
-                }
-                else
-                {
-                    nubBR.X = ClampToWidth(e.X - MouseFromNub.Width);
-                    nubBR.Y = ClampToHeight(e.Y - MouseFromNub.Height);
-                }
+                nubBR.Location = SnapToNearestLineIfEnabled(targetPoint);
 
                 showMagnifier = true;
             }
             else if (nubBL.Grabbed)
             {
-                if (e.Button == MouseButtons.Middle)
-                {
-                    if (e.X <= nubBL.X - DeadZone)
-                        nubBL.X = ClampToWidth(e.X + DeadZone);
-                    else if (e.X >= nubBL.X + DeadZone)
-                        nubBL.X = ClampToWidth(e.X - DeadZone);
+                Point targetPoint = GetDragTargetPoint(nubBL, e);
 
-                    if (e.Y <= nubBL.Y - DeadZone)
-                        nubBL.Y = ClampToHeight(e.Y + DeadZone);
-                    else if (e.Y >= nubBL.Y + DeadZone)
-                        nubBL.Y = ClampToHeight(e.Y - DeadZone);
-                }
-                else
-                {
-                    nubBL.X = ClampToWidth(e.X - MouseFromNub.Width);
-                    nubBL.Y = ClampToHeight(e.Y - MouseFromNub.Height);
-                }
+                nubBL.Location = SnapToNearestLineIfEnabled(targetPoint);
 
                 showMagnifier = true;
             }
+
             this.Invalidate();
             if (MouseIsDown)
                 OnValueChanged();
@@ -841,6 +804,135 @@ namespace QuadrilateralCorrectionEffect
         private int ClampToHeight(int y)
         {
             return (y < 0) ? 0 : (y > this.ClientSize.Height - 1) ? this.ClientSize.Height - 1 : y;
+        }
+
+        private Point GetDragTargetPoint(Nub nub, MouseEventArgs e)
+        {
+            int x = nub.X;
+            int y = nub.Y;
+
+            if (e.Button == MouseButtons.Middle)
+            {
+                if (e.X <= nub.X - DeadZone)
+                {
+                    x = ClampToWidth(e.X + DeadZone);
+                }
+                else if (e.X >= nub.X + DeadZone)
+                {
+                    x = ClampToWidth(e.X - DeadZone);
+                }
+
+                if (e.Y <= nub.Y - DeadZone)
+                {
+                    y = ClampToHeight(e.Y + DeadZone);
+                }
+                else if (e.Y >= nub.Y + DeadZone)
+                {
+                    y = ClampToHeight(e.Y - DeadZone);
+                }
+            }
+            else
+            {
+                x = ClampToWidth(e.X - MouseFromNub.Width);
+                y = ClampToHeight(e.Y - MouseFromNub.Height);
+            }
+
+            return new Point(x, y);
+        }
+
+        private Point SnapToNearestLineIfEnabled(Point controlPoint)
+        {
+            controlPoint = new Point(
+                ClampToWidth(controlPoint.X),
+                ClampToHeight(controlPoint.Y));
+
+            if (!LineSnapEnabled ||
+                this.Image is not Bitmap bitmap ||
+                bitmap.Width < 3 ||
+                bitmap.Height < 3 ||
+                this.ClientSize.Width < 3 ||
+                this.ClientSize.Height < 3)
+            {
+                return controlPoint;
+            }
+
+            int searchRadius = Math.Max(0, LineSnapSearchRadius);
+            if (searchRadius == 0)
+            {
+                return controlPoint;
+            }
+
+            Point bestPoint = controlPoint;
+            int bestStrength = LineSnapMinEdgeStrength;
+            int bestDistanceSquared = int.MaxValue;
+
+            int clientWidth = Math.Max(1, this.ClientSize.Width - 1);
+            int clientHeight = Math.Max(1, this.ClientSize.Height - 1);
+
+            for (int dy = -searchRadius; dy <= searchRadius; dy++)
+            {
+                for (int dx = -searchRadius; dx <= searchRadius; dx++)
+                {
+                    int distanceSquared = dx * dx + dy * dy;
+                    if (distanceSquared > searchRadius * searchRadius)
+                    {
+                        continue;
+                    }
+
+                    Point candidate = new Point(
+                        ClampToWidth(controlPoint.X + dx),
+                        ClampToHeight(controlPoint.Y + dy));
+
+                    int imageX = (int)Math.Round((double)candidate.X * (bitmap.Size.Width - 1) / clientWidth);
+                    int imageY = (int)Math.Round((double)candidate.Y * (bitmap.Size.Height - 1) / clientHeight);
+
+                    // control point to image point
+                    Point imagePoint = new Point(
+                        Math.Max(0, Math.Min(bitmap.Size.Width - 1, imageX)),
+                        Math.Max(0, Math.Min(bitmap.Size.Height - 1, imageY)));
+
+                    // Sobel needs a 1-pixel border.
+                    if (imagePoint.X <= 0 ||
+                        imagePoint.Y <= 0 ||
+                        imagePoint.X >= bitmap.Width - 1 ||
+                        imagePoint.Y >= bitmap.Height - 1)
+                    {
+                        continue;
+                    }
+
+                    //get sobel edge strength
+                    int tl = GetLuma(bitmap.GetPixel(imagePoint.X - 1, imagePoint.Y - 1));
+                    int tc = GetLuma(bitmap.GetPixel(imagePoint.X, imagePoint.Y - 1));
+                    int tr = GetLuma(bitmap.GetPixel(imagePoint.X + 1, imagePoint.Y - 1));
+
+                    int ml = GetLuma(bitmap.GetPixel(imagePoint.X - 1, imagePoint.Y));
+                    int mr = GetLuma(bitmap.GetPixel(imagePoint.X + 1, imagePoint.Y));
+
+                    int bl = GetLuma(bitmap.GetPixel(imagePoint.X - 1, imagePoint.Y + 1));
+                    int bc = GetLuma(bitmap.GetPixel(imagePoint.X, imagePoint.Y + 1));
+                    int br = GetLuma(bitmap.GetPixel(imagePoint.X + 1, imagePoint.Y + 1));
+
+                    int gx = -tl - (2 * ml) - bl + tr + (2 * mr) + br;
+                    int gy = -tl - (2 * tc) - tr + bl + (2 * bc) + br;
+
+                    int strength = Math.Abs(gx) + Math.Abs(gy);
+
+                    if (strength > bestStrength ||
+                        (strength == bestStrength && distanceSquared < bestDistanceSquared))
+                    {
+                        bestStrength = strength;
+                        bestDistanceSquared = distanceSquared;
+                        bestPoint = candidate;
+                    }
+                }
+            }
+
+            return bestPoint;
+        }
+
+        private static int GetLuma(Color color)
+        {
+            return (int)Math.Round((0.299 * color.R) + (0.587 * color.G) + (0.114 * color.B));
         }
         #endregion
 
