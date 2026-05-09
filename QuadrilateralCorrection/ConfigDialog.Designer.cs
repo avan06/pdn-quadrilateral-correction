@@ -367,7 +367,7 @@
             // 
             comboBoxResampling.Anchor = System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
             comboBoxResampling.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            comboBoxResampling.Items.AddRange(new object[] { "Nearest Neighbor", "Bilinear", "Bicubic", "Lanczos 3" });
+            comboBoxResampling.Items.AddRange(new object[] { "Nearest Neighbor", "Bilinear", "Bicubic", "Lanczos 3", "High Quality Supersampling" });
             comboBoxResampling.Location = new System.Drawing.Point(112, 397);
             comboBoxResampling.Name = "comboBoxResampling";
             comboBoxResampling.Size = new System.Drawing.Size(67, 23);

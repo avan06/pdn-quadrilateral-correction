@@ -8,7 +8,8 @@ namespace QuadrilateralCorrectionEffect
         NearestNeighbor = 0,
         Bilinear = 1,
         Bicubic = 2,
-        Lanczos3 = 3
+        Lanczos3 = 3,
+        HighQualitySupersampling = 4
     }
 
     internal class QuadrilateralCorrectionConfigToken : EffectConfigToken

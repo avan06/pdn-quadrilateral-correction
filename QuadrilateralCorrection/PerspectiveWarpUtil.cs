@@ -126,18 +126,49 @@ namespace QuadrilateralCorrectionEffect
                     double sourceX = (h00 * correctedX + h01 * correctedY + h02) / denominator;
                     double sourceY = (h10 * correctedX + h11 * correctedY + h12) / denominator;
 
-                    Sample(
-                        sourceBuffer,
-                        sourceStride,
-                        sourceWidth,
-                        sourceHeight,
-                        sourceX,
-                        sourceY,
-                        resamplingMode,
-                        out byte a,
-                        out byte r,
-                        out byte g,
-                        out byte b);
+                    byte a;
+                    byte r;
+                    byte g;
+                    byte b;
+
+                    if (resamplingMode == ResamplingMode.HighQualitySupersampling)
+                    {
+                        SampleSupersampling2x2(
+                            sourceBuffer,
+                            sourceStride,
+                            sourceWidth,
+                            sourceHeight,
+                            correctedX,
+                            correctedY,
+                            h00,
+                            h01,
+                            h02,
+                            h10,
+                            h11,
+                            h12,
+                            h20,
+                            h21,
+                            h22,
+                            out a,
+                            out r,
+                            out g,
+                            out b);
+                    }
+                    else
+                    {
+                        Sample(
+                            sourceBuffer,
+                            sourceStride,
+                            sourceWidth,
+                            sourceHeight,
+                            sourceX,
+                            sourceY,
+                            resamplingMode,
+                            out a,
+                            out r,
+                            out g,
+                            out b);
+                    }
 
                     int destinationIndex = y * destinationStride + x * 4;
 
@@ -217,328 +248,6 @@ namespace QuadrilateralCorrectionEffect
             double sourceY = (h[1, 0] * x + h[1, 1] * y + h[1, 2]) / denominator;
 
             return new PointF((float)sourceX, (float)sourceY);
-        }
-
-        public static void Sample(
-            byte[] sourceBuffer,
-            int sourceStride,
-            int sourceWidth,
-            int sourceHeight,
-            double x,
-            double y,
-            ResamplingMode resamplingMode,
-            out byte a,
-            out byte r,
-            out byte g,
-            out byte b)
-        {
-            switch (resamplingMode)
-            {
-                case ResamplingMode.NearestNeighbor:
-                    a = 0;
-                    r = 0;
-                    g = 0;
-                    b = 0;
-
-                    if (double.IsNaN(x) || double.IsNaN(y))
-                    {
-                        break;
-                    }
-
-                    int ix = (int)Math.Round(x);
-                    int iy = (int)Math.Round(y);
-
-                    if (ix < 0 || iy < 0 || ix >= sourceWidth || iy >= sourceHeight)
-                    {
-                        break;
-                    }
-
-                    int p = iy * sourceStride + ix * 4;
-
-                    b = sourceBuffer[p];
-                    g = sourceBuffer[p + 1];
-                    r = sourceBuffer[p + 2];
-                    a = sourceBuffer[p + 3];
-                    break;
-
-                case ResamplingMode.Bicubic:
-                    SampleKernel(
-                        sourceBuffer,
-                        sourceStride,
-                        sourceWidth,
-                        sourceHeight,
-                        x,
-                        y,
-                        2, //Bicubic
-                        CubicWeight,
-                        out a,
-                        out r,
-                        out g,
-                        out b);
-                    break;
-
-                case ResamplingMode.Lanczos3:
-                    SampleKernel(
-                        sourceBuffer,
-                        sourceStride,
-                        sourceWidth,
-                        sourceHeight,
-                        x,
-                        y,
-                        3, //Lanczos3
-                        Lanczos3Weight,
-                        out a,
-                        out r,
-                        out g,
-                        out b);
-                    break;
-
-                case ResamplingMode.Bilinear:
-                default:
-                    SampleBilinear(
-                        sourceBuffer,
-                        sourceStride,
-                        sourceWidth,
-                        sourceHeight,
-                        x,
-                        y,
-                        out a,
-                        out r,
-                        out g,
-                        out b);
-                    break;
-            }
-        }
-
-        private delegate double WeightFunction(double distance);
-
-        private static void SampleKernel(
-            byte[] sourceBuffer,
-            int sourceStride,
-            int sourceWidth,
-            int sourceHeight,
-            double x,
-            double y,
-            int radius,
-            WeightFunction weightFunction,
-            out byte a,
-            out byte r,
-            out byte g,
-            out byte b)
-        {
-            a = 0;
-            r = 0;
-            g = 0;
-            b = 0;
-
-            if (double.IsNaN(x) || double.IsNaN(y))
-            {
-                return;
-            }
-
-            if (x < 0 || y < 0 || x >= sourceWidth || y >= sourceHeight)
-            {
-                return;
-            }
-
-            int centerX = (int)Math.Floor(x);
-            int centerY = (int)Math.Floor(y);
-
-            double sumA = 0;
-            double sumR = 0;
-            double sumG = 0;
-            double sumB = 0;
-            double sumWeight = 0;
-
-            for (int yy = centerY - radius + 1; yy <= centerY + radius; yy++)
-            {
-                int sampleY = ClampInt(yy, 0, sourceHeight - 1);
-                double wy = weightFunction(y - yy);
-
-                if (wy == 0)
-                {
-                    continue;
-                }
-
-                for (int xx = centerX - radius + 1; xx <= centerX + radius; xx++)
-                {
-                    int sampleX = ClampInt(xx, 0, sourceWidth - 1);
-                    double wx = weightFunction(x - xx);
-
-                    if (wx == 0)
-                    {
-                        continue;
-                    }
-
-                    double weight = wx * wy;
-                    int p = sampleY * sourceStride + sampleX * 4;
-
-                    sumB += sourceBuffer[p] * weight;
-                    sumG += sourceBuffer[p + 1] * weight;
-                    sumR += sourceBuffer[p + 2] * weight;
-                    sumA += sourceBuffer[p + 3] * weight;
-                    sumWeight += weight;
-                }
-            }
-
-            if (Math.Abs(sumWeight) < 1e-12)
-            {
-                return;
-            }
-
-            b = (byte)ClampToByte(sumB / sumWeight);
-            g = (byte)ClampToByte(sumG / sumWeight);
-            r = (byte)ClampToByte(sumR / sumWeight);
-            a = (byte)ClampToByte(sumA / sumWeight);
-        }
-
-        private static double CubicWeight(double x)
-        {
-            // Catmull-Rom bicubic, a = -0.5
-            const double a = -0.5;
-
-            x = Math.Abs(x);
-
-            if (x <= 1)
-            {
-                return ((a + 2) * x * x * x) - ((a + 3) * x * x) + 1;
-            }
-
-            if (x < 2)
-            {
-                return (a * x * x * x) - (5 * a * x * x) + (8 * a * x) - (4 * a);
-            }
-
-            return 0;
-        }
-
-        private static double Lanczos3Weight(double x)
-        {
-            x = Math.Abs(x);
-
-            if (x < 1e-12)
-            {
-                return 1;
-            }
-
-            if (x >= 3)
-            {
-                return 0;
-            }
-
-            return Sinc(x) * Sinc(x / 3);
-        }
-
-        private static double Sinc(double x)
-        {
-            double pix = Math.PI * x;
-
-            if (Math.Abs(pix) < 1e-12)
-            {
-                return 1;
-            }
-
-            return Math.Sin(pix) / pix;
-        }
-
-        private static int ClampInt(int value, int min, int max)
-        {
-            if (value < min)
-            {
-                return min;
-            }
-
-            if (value > max)
-            {
-                return max;
-            }
-
-            return value;
-        }
-
-        public static void SampleBilinear(
-            byte[] sourceBuffer,
-            int sourceStride,
-            int sourceWidth,
-            int sourceHeight,
-            double x,
-            double y,
-            out byte a,
-            out byte r,
-            out byte g,
-            out byte b)
-        {
-            a = 0;
-            r = 0;
-            g = 0;
-            b = 0;
-
-            if (double.IsNaN(x) || double.IsNaN(y))
-            {
-                return;
-            }
-
-            if (x < 0 || y < 0 || x >= sourceWidth - 1 || y >= sourceHeight - 1)
-            {
-                return;
-            }
-
-            int x0 = (int)Math.Floor(x);
-            int y0 = (int)Math.Floor(y);
-            int x1 = x0 + 1;
-            int y1 = y0 + 1;
-
-            double dx = x - x0;
-            double dy = y - y0;
-
-            double wx00 = (1 - dx) * (1 - dy);
-            double wx10 = dx * (1 - dy);
-            double wx01 = (1 - dx) * dy;
-            double wx11 = dx * dy;
-
-            int p00 = y0 * sourceStride + x0 * 4;
-            int p10 = y0 * sourceStride + x1 * 4;
-            int p01 = y1 * sourceStride + x0 * 4;
-            int p11 = y1 * sourceStride + x1 * 4;
-
-            b = (byte)ClampToByte(
-                sourceBuffer[p00] * wx00 +
-                sourceBuffer[p10] * wx10 +
-                sourceBuffer[p01] * wx01 +
-                sourceBuffer[p11] * wx11);
-
-            g = (byte)ClampToByte(
-                sourceBuffer[p00 + 1] * wx00 +
-                sourceBuffer[p10 + 1] * wx10 +
-                sourceBuffer[p01 + 1] * wx01 +
-                sourceBuffer[p11 + 1] * wx11);
-
-            r = (byte)ClampToByte(
-                sourceBuffer[p00 + 2] * wx00 +
-                sourceBuffer[p10 + 2] * wx10 +
-                sourceBuffer[p01 + 2] * wx01 +
-                sourceBuffer[p11 + 2] * wx11);
-
-            a = (byte)ClampToByte(
-                sourceBuffer[p00 + 3] * wx00 +
-                sourceBuffer[p10 + 3] * wx10 +
-                sourceBuffer[p01 + 3] * wx01 +
-                sourceBuffer[p11 + 3] * wx11);
-        }
-
-        public static int ClampToByte(double value)
-        {
-            if (value < 0)
-            {
-                return 0;
-            }
-
-            if (value > 255)
-            {
-                return 255;
-            }
-
-            return (int)Math.Round(value);
         }
 
         public static double[] SolveLinearSystem(double[,] a, double[] b)
@@ -640,6 +349,478 @@ namespace QuadrilateralCorrectionEffect
             }
 
             return offSet;
+        }
+        #endregion
+
+        #region Sample
+        private static void SampleSupersampling2x2(
+            byte[] sourceBuffer,
+            int sourceStride,
+            int sourceWidth,
+            int sourceHeight,
+            double correctedX,
+            double correctedY,
+            double h00,
+            double h01,
+            double h02,
+            double h10,
+            double h11,
+            double h12,
+            double h20,
+            double h21,
+            double h22,
+            out byte a,
+            out byte r,
+            out byte g,
+            out byte b)
+        {
+            double sumA = 0.0;
+            double sumPremulR = 0.0;
+            double sumPremulG = 0.0;
+            double sumPremulB = 0.0;
+
+            SampleSupersamplingSubPixel(
+                sourceBuffer,
+                sourceStride,
+                sourceWidth,
+                sourceHeight,
+                correctedX - 0.25,
+                correctedY - 0.25,
+                h00,
+                h01,
+                h02,
+                h10,
+                h11,
+                h12,
+                h20,
+                h21,
+                h22,
+                ref sumA,
+                ref sumPremulR,
+                ref sumPremulG,
+                ref sumPremulB);
+
+            SampleSupersamplingSubPixel(
+                sourceBuffer,
+                sourceStride,
+                sourceWidth,
+                sourceHeight,
+                correctedX + 0.25,
+                correctedY - 0.25,
+                h00,
+                h01,
+                h02,
+                h10,
+                h11,
+                h12,
+                h20,
+                h21,
+                h22,
+                ref sumA,
+                ref sumPremulR,
+                ref sumPremulG,
+                ref sumPremulB);
+
+            SampleSupersamplingSubPixel(
+                sourceBuffer,
+                sourceStride,
+                sourceWidth,
+                sourceHeight,
+                correctedX - 0.25,
+                correctedY + 0.25,
+                h00,
+                h01,
+                h02,
+                h10,
+                h11,
+                h12,
+                h20,
+                h21,
+                h22,
+                ref sumA,
+                ref sumPremulR,
+                ref sumPremulG,
+                ref sumPremulB);
+
+            SampleSupersamplingSubPixel(
+                sourceBuffer,
+                sourceStride,
+                sourceWidth,
+                sourceHeight,
+                correctedX + 0.25,
+                correctedY + 0.25,
+                h00,
+                h01,
+                h02,
+                h10,
+                h11,
+                h12,
+                h20,
+                h21,
+                h22,
+                ref sumA,
+                ref sumPremulR,
+                ref sumPremulG,
+                ref sumPremulB);
+
+            a = (byte)ClampToByte(sumA / 4.0);
+
+            if (sumA <= 0.0)
+            {
+                r = 0;
+                g = 0;
+                b = 0;
+            }
+            else
+            {
+                r = (byte)ClampToByte(sumPremulR * 255.0 / sumA);
+                g = (byte)ClampToByte(sumPremulG * 255.0 / sumA);
+                b = (byte)ClampToByte(sumPremulB * 255.0 / sumA);
+            }
+        }
+
+        private static void SampleSupersamplingSubPixel(
+            byte[] sourceBuffer,
+            int sourceStride,
+            int sourceWidth,
+            int sourceHeight,
+            double correctedX,
+            double correctedY,
+            double h00,
+            double h01,
+            double h02,
+            double h10,
+            double h11,
+            double h12,
+            double h20,
+            double h21,
+            double h22,
+            ref double sumA,
+            ref double sumPremulR,
+            ref double sumPremulG,
+            ref double sumPremulB)
+        {
+            double denominator = h20 * correctedX + h21 * correctedY + h22;
+
+            if (Math.Abs(denominator) < 1e-12)
+                return;
+
+            double sourceX = (h00 * correctedX + h01 * correctedY + h02) / denominator;
+            double sourceY = (h10 * correctedX + h11 * correctedY + h12) / denominator;
+
+            if (!double.IsFinite(sourceX) || !double.IsFinite(sourceY))
+                return;
+
+            SampleBilinear(
+                sourceBuffer,
+                sourceStride,
+                sourceWidth,
+                sourceHeight,
+                sourceX,
+                sourceY,
+                out byte sampleA,
+                out byte sampleR,
+                out byte sampleG,
+                out byte sampleB);
+
+            double alpha = sampleA / 255.0;
+
+            sumA += sampleA;
+            sumPremulR += sampleR * alpha;
+            sumPremulG += sampleG * alpha;
+            sumPremulB += sampleB * alpha;
+        }
+
+        public static void Sample(
+            byte[] sourceBuffer,
+            int sourceStride,
+            int sourceWidth,
+            int sourceHeight,
+            double x,
+            double y,
+            ResamplingMode resamplingMode,
+            out byte a,
+            out byte r,
+            out byte g,
+            out byte b)
+        {
+            switch (resamplingMode)
+            {
+                case ResamplingMode.NearestNeighbor:
+                    a = 0;
+                    r = 0;
+                    g = 0;
+                    b = 0;
+
+                    if (double.IsNaN(x) || double.IsNaN(y))
+                        break;
+
+                    int ix = (int)Math.Round(x);
+                    int iy = (int)Math.Round(y);
+
+                    if (ix < 0 || iy < 0 || ix >= sourceWidth || iy >= sourceHeight)
+                        break;
+
+                    int p = iy * sourceStride + ix * 4;
+
+                    b = sourceBuffer[p];
+                    g = sourceBuffer[p + 1];
+                    r = sourceBuffer[p + 2];
+                    a = sourceBuffer[p + 3];
+                    break;
+
+                case ResamplingMode.Bicubic:
+                    SampleKernel(
+                        sourceBuffer,
+                        sourceStride,
+                        sourceWidth,
+                        sourceHeight,
+                        x,
+                        y,
+                        2, //Bicubic
+                        CubicWeight,
+                        out a,
+                        out r,
+                        out g,
+                        out b);
+                    break;
+
+                case ResamplingMode.Lanczos3:
+                    SampleKernel(
+                        sourceBuffer,
+                        sourceStride,
+                        sourceWidth,
+                        sourceHeight,
+                        x,
+                        y,
+                        3, //Lanczos3
+                        Lanczos3Weight,
+                        out a,
+                        out r,
+                        out g,
+                        out b);
+                    break;
+
+                case ResamplingMode.Bilinear:
+                default:
+                    SampleBilinear(
+                        sourceBuffer,
+                        sourceStride,
+                        sourceWidth,
+                        sourceHeight,
+                        x,
+                        y,
+                        out a,
+                        out r,
+                        out g,
+                        out b);
+                    break;
+            }
+        }
+
+        private delegate double WeightFunction(double distance);
+
+        private static void SampleKernel(
+            byte[] sourceBuffer,
+            int sourceStride,
+            int sourceWidth,
+            int sourceHeight,
+            double x,
+            double y,
+            int radius,
+            WeightFunction weightFunction,
+            out byte a,
+            out byte r,
+            out byte g,
+            out byte b)
+        {
+            a = 0;
+            r = 0;
+            g = 0;
+            b = 0;
+
+            if (double.IsNaN(x) || double.IsNaN(y))
+                return;
+
+            if (x < 0 || y < 0 || x >= sourceWidth || y >= sourceHeight)
+                return;
+
+            if (!double.IsFinite(x) || !double.IsFinite(y))
+                return;
+
+            int centerX = (int)Math.Floor(x);
+            int centerY = (int)Math.Floor(y);
+
+            double sumA = 0;
+            double sumR = 0;
+            double sumG = 0;
+            double sumB = 0;
+            double sumWeight = 0;
+
+            for (int yy = centerY - radius + 1; yy <= centerY + radius; yy++)
+            {
+                int sampleY = ClampInt(yy, 0, sourceHeight - 1);
+                double wy = weightFunction(y - yy);
+
+                if (wy == 0)
+                    continue;
+
+                for (int xx = centerX - radius + 1; xx <= centerX + radius; xx++)
+                {
+                    int sampleX = ClampInt(xx, 0, sourceWidth - 1);
+                    double wx = weightFunction(x - xx);
+
+                    if (wx == 0)
+                        continue;
+
+                    double weight = wx * wy;
+                    int p = sampleY * sourceStride + sampleX * 4;
+
+                    sumB += sourceBuffer[p] * weight;
+                    sumG += sourceBuffer[p + 1] * weight;
+                    sumR += sourceBuffer[p + 2] * weight;
+                    sumA += sourceBuffer[p + 3] * weight;
+                    sumWeight += weight;
+                }
+            }
+
+            if (Math.Abs(sumWeight) < 1e-12)
+                return;
+
+            b = (byte)ClampToByte(sumB / sumWeight);
+            g = (byte)ClampToByte(sumG / sumWeight);
+            r = (byte)ClampToByte(sumR / sumWeight);
+            a = (byte)ClampToByte(sumA / sumWeight);
+        }
+
+        public static void SampleBilinear(
+            byte[] sourceBuffer,
+            int sourceStride,
+            int sourceWidth,
+            int sourceHeight,
+            double x,
+            double y,
+            out byte a,
+            out byte r,
+            out byte g,
+            out byte b)
+        {
+            a = 0;
+            r = 0;
+            g = 0;
+            b = 0;
+
+            if (double.IsNaN(x) || double.IsNaN(y))
+                return;
+
+            if (x < 0 || y < 0 || x >= sourceWidth - 1 || y >= sourceHeight - 1)
+                return;
+
+            if (!double.IsFinite(x) || !double.IsFinite(y))
+                return;
+
+            int x0 = (int)Math.Floor(x);
+            int y0 = (int)Math.Floor(y);
+            int x1 = x0 + 1;
+            int y1 = y0 + 1;
+
+            double dx = x - x0;
+            double dy = y - y0;
+
+            double wx00 = (1 - dx) * (1 - dy);
+            double wx10 = dx * (1 - dy);
+            double wx01 = (1 - dx) * dy;
+            double wx11 = dx * dy;
+
+            int p00 = y0 * sourceStride + x0 * 4;
+            int p10 = y0 * sourceStride + x1 * 4;
+            int p01 = y1 * sourceStride + x0 * 4;
+            int p11 = y1 * sourceStride + x1 * 4;
+
+            b = (byte)ClampToByte(
+                sourceBuffer[p00] * wx00 +
+                sourceBuffer[p10] * wx10 +
+                sourceBuffer[p01] * wx01 +
+                sourceBuffer[p11] * wx11);
+
+            g = (byte)ClampToByte(
+                sourceBuffer[p00 + 1] * wx00 +
+                sourceBuffer[p10 + 1] * wx10 +
+                sourceBuffer[p01 + 1] * wx01 +
+                sourceBuffer[p11 + 1] * wx11);
+
+            r = (byte)ClampToByte(
+                sourceBuffer[p00 + 2] * wx00 +
+                sourceBuffer[p10 + 2] * wx10 +
+                sourceBuffer[p01 + 2] * wx01 +
+                sourceBuffer[p11 + 2] * wx11);
+
+            a = (byte)ClampToByte(
+                sourceBuffer[p00 + 3] * wx00 +
+                sourceBuffer[p10 + 3] * wx10 +
+                sourceBuffer[p01 + 3] * wx01 +
+                sourceBuffer[p11 + 3] * wx11);
+        }
+
+        private static double CubicWeight(double x)
+        {
+            // Catmull-Rom bicubic, a = -0.5
+            const double a = -0.5;
+
+            x = Math.Abs(x);
+
+            if (x <= 1)
+                return ((a + 2) * x * x * x) - ((a + 3) * x * x) + 1;
+
+            if (x < 2)
+                return (a * x * x * x) - (5 * a * x * x) + (8 * a * x) - (4 * a);
+
+            return 0;
+        }
+
+        private static double Lanczos3Weight(double x)
+        {
+            x = Math.Abs(x);
+
+            if (x < 1e-12)
+                return 1;
+
+            if (x >= 3)
+                return 0;
+
+            return Sinc(x) * Sinc(x / 3);
+        }
+
+        private static double Sinc(double x)
+        {
+            double pix = Math.PI * x;
+
+            if (Math.Abs(pix) < 1e-12)
+                return 1;
+
+            return Math.Sin(pix) / pix;
+        }
+
+        private static int ClampInt(int value, int min, int max)
+        {
+            if (value < min)
+                return min;
+
+            if (value > max)
+                return max;
+
+            return value;
+        }
+
+        public static int ClampToByte(double value)
+        {
+            if (value < 0)
+                return 0;
+
+            if (value > 255)
+                return 255;
+
+            return (int)Math.Round(value);
         }
         #endregion
     }

@@ -367,11 +367,9 @@ namespace QuadrilateralCorrectionEffect
                     numericUpDownHeight.Text = "-";
                 }
 
-                int resamplingIndex = (int)effectTokenCopy.ResamplingMode;
-                if (resamplingIndex < 0 || resamplingIndex >= comboBoxResampling.Items.Count)
-                {
-                    resamplingIndex = (int)ResamplingMode.Bilinear;
-                }
+                int resamplingIndex = FindResamplingModeIndex(comboBoxResampling, effectTokenCopy.ResamplingMode);
+                if (resamplingIndex < 0)
+                    resamplingIndex = FindResamplingModeIndex(comboBoxResampling, ResamplingMode.Bilinear);
 
                 comboBoxResampling.SelectedIndex = resamplingIndex;
                 checkBoxCenter.Checked = effectTokenCopy.Center;
@@ -395,9 +393,9 @@ namespace QuadrilateralCorrectionEffect
             writeValuesHere.AutoDims = checkBoxAutoDims.Checked;
             writeValuesHere.Width = (int)numericUpDownWidth.Value;
             writeValuesHere.Height = (int)numericUpDownHeight.Value;
-            writeValuesHere.ResamplingMode = comboBoxResampling.SelectedIndex >= 0
-                ? (ResamplingMode)comboBoxResampling.SelectedIndex
-                : ResamplingMode.Bilinear;
+            writeValuesHere.ResamplingMode = TryParseResamplingModeFromText(comboBoxResampling.Text, out ResamplingMode resamplingMode)
+                ? resamplingMode : ResamplingMode.Bilinear;
+
             writeValuesHere.Center = checkBoxCenter.Checked;
             writeValuesHere.CropOutsideQuadrilateral = checkBoxCropOutside.Checked;
         }
@@ -406,6 +404,41 @@ namespace QuadrilateralCorrectionEffect
         private static decimal Clamp(decimal value, decimal min, decimal max)
         {
             return (value < min) ? min : (value > max) ? max : value;
+        }
+
+        private static bool TryParseResamplingModeFromText(string text, out ResamplingMode resamplingMode)
+        {
+            resamplingMode = ResamplingMode.Bilinear;
+
+            if (string.IsNullOrWhiteSpace(text))
+                return false;
+
+            char[] chars = new char[text.Length];
+            int length = 0;
+
+            foreach (char c in text)
+            {
+                if (!char.IsWhiteSpace(c))
+                    chars[length++] = c;
+            }
+
+            string normalizedText = new string(chars, 0, length);
+
+            return Enum.TryParse(normalizedText, true, out resamplingMode) && Enum.IsDefined(resamplingMode);
+        }
+
+        private static int FindResamplingModeIndex(ComboBox comboBox, ResamplingMode resamplingMode)
+        {
+            for (int i = 0; i < comboBox.Items.Count; i++)
+            {
+                if (TryParseResamplingModeFromText(comboBox.Items[i]?.ToString(), out ResamplingMode parsedMode)
+                    && parsedMode == resamplingMode)
+                {
+                    return i;
+                }
+            }
+
+            return -1;
         }
 
         private void SetDimensionValues()
