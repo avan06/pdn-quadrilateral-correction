@@ -51,8 +51,8 @@ namespace QuadrilateralCorrectionEffect
             width = newToken.Width;
             height = newToken.Height;
             resamplingMode = newToken.ResamplingMode;
+            cropOutsideMode = newToken.CropOutsideMode;
             center = newToken.Center;
-            cropOutsideQuadrilateral = newToken.CropOutsideQuadrilateral;
 
             // Use Environment.Selection to get the selection bounds
             RectInt32 renderBounds = Environment.Selection.RenderBounds;
@@ -75,9 +75,6 @@ namespace QuadrilateralCorrectionEffect
                         sourceBitmap.Size.Width,
                         sourceBitmap.Size.Height);
 
-                // cropOutsideQuadrilateral
-                // true: remove content outside the quadrilateral
-                // false: Preserve content outside the quadrilateral and apply perspective warp to the entire image
                 quadTransOutput = PerspectiveWarpUtil.PerspectiveWarp(
                     srcImage,
                     topLeft,
@@ -88,7 +85,7 @@ namespace QuadrilateralCorrectionEffect
                     width,
                     height,
                     resamplingMode,
-                    cropOutsideQuadrilateral,
+                    cropOutsideMode,
                     out preserveOutsideOffset,
                     out preserveOutsideSize);
             }
@@ -98,8 +95,8 @@ namespace QuadrilateralCorrectionEffect
                 preserveOutsideSize = new Size(quadTransOutput.Width, quadTransOutput.Height);
             }
 
-            int outputWidth = cropOutsideQuadrilateral ? quadTransOutput.Width : preserveOutsideSize.Width;
-            int outputHeight = cropOutsideQuadrilateral ? quadTransOutput.Height : preserveOutsideSize.Height;
+            int outputWidth = cropOutsideMode == CropOutsideMode.Crop ? quadTransOutput.Width : preserveOutsideSize.Width;
+            int outputHeight = cropOutsideMode == CropOutsideMode.Crop ? quadTransOutput.Height : preserveOutsideSize.Height;
 
             Point offSet = new Point
             {
@@ -107,7 +104,7 @@ namespace QuadrilateralCorrectionEffect
                 Y = selection.Y + (center ? (selection.Height - outputHeight) / 2 : 0)
             };
 
-            if (!cropOutsideQuadrilateral)
+            if (cropOutsideMode != CropOutsideMode.Crop)
             {
                 offSet.X += preserveOutsideOffset.X;
                 offSet.Y += preserveOutsideOffset.Y;
@@ -203,8 +200,8 @@ namespace QuadrilateralCorrectionEffect
         private int width;
         private int height;
         private ResamplingMode resamplingMode;
+        private CropOutsideMode cropOutsideMode;
         private bool center;
-        private bool cropOutsideQuadrilateral;
 
         // In PDNv5, the preprocessed surface is stored as a BGRA buffer
         private BitmapRegionUtil.BitmapBgra32Data quadrilateralSurfaceData;

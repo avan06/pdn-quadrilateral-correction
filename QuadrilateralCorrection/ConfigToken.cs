@@ -12,6 +12,14 @@ namespace QuadrilateralCorrectionEffect
         HighQualitySupersampling = 4
     }
 
+    internal enum CropOutsideMode
+    {
+        Crop = 0,
+        Preserve = 1,
+        Repeat = 2,
+        Mirror = 3
+    }
+
     internal class QuadrilateralCorrectionConfigToken : EffectConfigToken
     {
         internal QuadrilateralCorrectionConfigToken()
@@ -25,9 +33,7 @@ namespace QuadrilateralCorrectionEffect
             Height = int.MaxValue;
             Center = true;
             ResamplingMode = ResamplingMode.Bilinear;
-
-            // Remove content outside the quadrilateral by default
-            CropOutsideQuadrilateral = true;
+            CropOutsideMode = CropOutsideMode.Crop; // Remove content outside the quadrilateral by default
         }
 
         private QuadrilateralCorrectionConfigToken(QuadrilateralCorrectionConfigToken copyMe)
@@ -41,7 +47,7 @@ namespace QuadrilateralCorrectionEffect
             Height = copyMe.Height;
             Center = copyMe.Center;
             ResamplingMode = copyMe.ResamplingMode;
-            CropOutsideQuadrilateral = copyMe.CropOutsideQuadrilateral;
+            CropOutsideMode = copyMe.CropOutsideMode;
         }
 
         public override object Clone()
@@ -57,7 +63,7 @@ namespace QuadrilateralCorrectionEffect
         internal int Width { get; set; }
         internal int Height { get; set; }
         internal ResamplingMode ResamplingMode { get; set; }
+        internal CropOutsideMode CropOutsideMode { get; set; }
         internal bool Center { get; set; }
-        internal bool CropOutsideQuadrilateral { get; set; }
     }
 }

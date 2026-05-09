@@ -54,10 +54,11 @@
             labelHeight = new System.Windows.Forms.Label();
             labelResampling = new System.Windows.Forms.Label();
             comboBoxResampling = new System.Windows.Forms.ComboBox();
+            labelCropMode = new System.Windows.Forms.Label();
+            comboBoxCropMode = new System.Windows.Forms.ComboBox();
             checkBoxCenter = new System.Windows.Forms.CheckBox();
             panelDivider = new System.Windows.Forms.Panel();
             resetAllButton = new System.Windows.Forms.Button();
-            checkBoxCropOutside = new System.Windows.Forms.CheckBox();
             checkBoxMoveNearestNub = new System.Windows.Forms.CheckBox();
             checkBoxLineSnap = new System.Windows.Forms.CheckBox();
             splitContainerMain = new System.Windows.Forms.SplitContainer();
@@ -375,12 +376,34 @@
             comboBoxResampling.TabIndex = 28;
             comboBoxResampling.SelectedIndexChanged += ComboBoxResampling_SelectedIndexChanged;
             // 
+            // labelCropMode
+            // 
+            labelCropMode.Anchor = System.Windows.Forms.AnchorStyles.Left;
+            labelCropMode.AutoSize = true;
+            labelCropMode.Location = new System.Drawing.Point(3, 430);
+            labelCropMode.Name = "labelCropMode";
+            labelCropMode.Size = new System.Drawing.Size(73, 15);
+            labelCropMode.TabIndex = 27;
+            labelCropMode.Text = "Crop Mode";
+            // 
+            // comboBoxCropMode
+            // 
+            comboBoxCropMode.Anchor = System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+            comboBoxCropMode.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            comboBoxCropMode.DropDownWidth = 150;
+            comboBoxCropMode.Items.AddRange(new object[] { "Crop", "Do not crop", "Do not crop - Repeat", "Do not crop - Mirror" });
+            comboBoxCropMode.Location = new System.Drawing.Point(112, 426);
+            comboBoxCropMode.Name = "comboBoxCropMode";
+            comboBoxCropMode.Size = new System.Drawing.Size(67, 23);
+            comboBoxCropMode.TabIndex = 27;
+            comboBoxCropMode.SelectedIndexChanged += ComboBoxCropMode_SelectedIndexChanged;
+            // 
             // checkBoxCenter
             // 
             checkBoxCenter.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
             checkBoxCenter.AutoSize = true;
             rightTableLayoutPanel.SetColumnSpan(checkBoxCenter, 2);
-            checkBoxCenter.Location = new System.Drawing.Point(3, 426);
+            checkBoxCenter.Location = new System.Drawing.Point(3, 455);
             checkBoxCenter.Margin = new System.Windows.Forms.Padding(3, 3, 0, 3);
             checkBoxCenter.Name = "checkBoxCenter";
             checkBoxCenter.Size = new System.Drawing.Size(179, 19);
@@ -411,22 +434,6 @@
             resetAllButton.UseVisualStyleBackColor = true;
             resetAllButton.Click += resetAllButton_Click;
             // 
-            // checkBoxCropOutside
-            // 
-            checkBoxCropOutside.Checked = true;
-            checkBoxCropOutside.CheckState = System.Windows.Forms.CheckState.Checked;
-            rightTableLayoutPanel.SetColumnSpan(checkBoxCropOutside, 2);
-            checkBoxCropOutside.Dock = System.Windows.Forms.DockStyle.Fill;
-            checkBoxCropOutside.Location = new System.Drawing.Point(3, 451);
-            checkBoxCropOutside.Margin = new System.Windows.Forms.Padding(3, 3, 0, 3);
-            checkBoxCropOutside.Name = "checkBoxCropOutside";
-            checkBoxCropOutside.Size = new System.Drawing.Size(179, 19);
-            checkBoxCropOutside.TabIndex = 27;
-            checkBoxCropOutside.Text = "Crop outside quadrilateral";
-            checkBoxCropOutside.UseCompatibleTextRendering = true;
-            checkBoxCropOutside.UseVisualStyleBackColor = true;
-            checkBoxCropOutside.CheckedChanged += CropOutsideCheckBox_CheckedChanged;
-            // 
             // checkBoxMoveNearestNub
             // 
             checkBoxMoveNearestNub.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
@@ -434,7 +441,7 @@
             checkBoxMoveNearestNub.Checked = true;
             checkBoxMoveNearestNub.CheckState = System.Windows.Forms.CheckState.Checked;
             rightTableLayoutPanel.SetColumnSpan(checkBoxMoveNearestNub, 2);
-            checkBoxMoveNearestNub.Location = new System.Drawing.Point(3, 476);
+            checkBoxMoveNearestNub.Location = new System.Drawing.Point(3, 480);
             checkBoxMoveNearestNub.Margin = new System.Windows.Forms.Padding(3, 3, 0, 3);
             checkBoxMoveNearestNub.Name = "checkBoxMoveNearestNub";
             checkBoxMoveNearestNub.Size = new System.Drawing.Size(179, 21);
@@ -451,7 +458,7 @@
             checkBoxLineSnap.Checked = true;
             checkBoxLineSnap.CheckState = System.Windows.Forms.CheckState.Checked;
             rightTableLayoutPanel.SetColumnSpan(checkBoxLineSnap, 2);
-            checkBoxLineSnap.Location = new System.Drawing.Point(3, 503);
+            checkBoxLineSnap.Location = new System.Drawing.Point(3, 507);
             checkBoxLineSnap.Margin = new System.Windows.Forms.Padding(3, 3, 0, 3);
             checkBoxLineSnap.Name = "checkBoxLineSnap";
             checkBoxLineSnap.Size = new System.Drawing.Size(179, 21);
@@ -529,8 +536,9 @@
             rightTableLayoutPanel.Controls.Add(numericUpDownHeight, 1, 15);
             rightTableLayoutPanel.Controls.Add(labelResampling, 0, 17);
             rightTableLayoutPanel.Controls.Add(comboBoxResampling, 1, 17);
-            rightTableLayoutPanel.Controls.Add(checkBoxCenter, 0, 18);
-            rightTableLayoutPanel.Controls.Add(checkBoxCropOutside, 0, 19);
+            rightTableLayoutPanel.Controls.Add(labelCropMode, 0, 18);
+            rightTableLayoutPanel.Controls.Add(comboBoxCropMode, 1, 18);
+            rightTableLayoutPanel.Controls.Add(checkBoxCenter, 0, 19);
             rightTableLayoutPanel.Controls.Add(checkBoxMoveNearestNub, 0, 20);
             rightTableLayoutPanel.Controls.Add(checkBoxLineSnap, 0, 21);
             rightTableLayoutPanel.Controls.Add(tableLayoutPanel1, 0, 22);
@@ -578,7 +586,7 @@
             tableLayoutPanel1.Controls.Add(buttonOK, 0, 0);
             tableLayoutPanel1.Controls.Add(buttonCancel, 1, 0);
             tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            tableLayoutPanel1.Location = new System.Drawing.Point(0, 527);
+            tableLayoutPanel1.Location = new System.Drawing.Point(0, 531);
             tableLayoutPanel1.Margin = new System.Windows.Forms.Padding(0);
             tableLayoutPanel1.Name = "tableLayoutPanel1";
             tableLayoutPanel1.Padding = new System.Windows.Forms.Padding(0, 0, 0, 5);
@@ -653,10 +661,11 @@
         private System.Windows.Forms.Label labelHeight;
         private System.Windows.Forms.Label labelResampling;
         private System.Windows.Forms.ComboBox comboBoxResampling;
+        private System.Windows.Forms.Label labelCropMode;
+        private System.Windows.Forms.ComboBox comboBoxCropMode;
         private System.Windows.Forms.CheckBox checkBoxCenter;
         private System.Windows.Forms.Panel panelDivider;
         private System.Windows.Forms.Button resetAllButton;
-        private System.Windows.Forms.CheckBox checkBoxCropOutside;
         private System.Windows.Forms.CheckBox checkBoxMoveNearestNub;
         private System.Windows.Forms.CheckBox checkBoxLineSnap;
         private System.Windows.Forms.SplitContainer splitContainerMain;

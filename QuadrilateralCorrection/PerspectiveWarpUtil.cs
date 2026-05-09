@@ -16,7 +16,7 @@ namespace QuadrilateralCorrectionEffect
             int outputWidth,
             int outputHeight,
             ResamplingMode resamplingMode,
-            bool cropOutsideQuadrilateral,
+            CropOutsideMode cropOutsideMode,
             out Point preserveOutsideOffset,
             out Size preserveOutsideQuadrilateralSize)
         {
@@ -57,7 +57,7 @@ namespace QuadrilateralCorrectionEffect
             int destinationWidth = outputWidth;
             int destinationHeight = outputHeight;
 
-            if (cropOutsideQuadrilateral)
+            if (cropOutsideMode == CropOutsideMode.Crop)
             {
                 preserveOutsideOffset = Point.Empty;
             }
@@ -161,6 +161,7 @@ namespace QuadrilateralCorrectionEffect
                             h20,
                             h21,
                             h22,
+                            cropOutsideMode,
                             out a,
                             out r,
                             out g,
@@ -168,6 +169,16 @@ namespace QuadrilateralCorrectionEffect
                     }
                     else
                     {
+                        if (cropOutsideMode == CropOutsideMode.Repeat || cropOutsideMode == CropOutsideMode.Mirror)
+                        {
+                            ApplyCropOutsideMode(
+                                cropOutsideMode,
+                                sourceWidth,
+                                sourceHeight,
+                                ref sourceX,
+                                ref sourceY);
+                        }
+
                         SampleWithMode(
                             sourceBuffer,
                             sourceStride,
@@ -616,6 +627,7 @@ namespace QuadrilateralCorrectionEffect
             double h20,
             double h21,
             double h22,
+            CropOutsideMode cropOutsideMode,
             out byte a,
             out byte r,
             out byte g,
@@ -650,6 +662,7 @@ namespace QuadrilateralCorrectionEffect
                         h20,
                         h21,
                         h22,
+                        cropOutsideMode,
                         ref sumA,
                         ref sumPremulR,
                         ref sumPremulG,
@@ -689,6 +702,7 @@ namespace QuadrilateralCorrectionEffect
             double h20,
             double h21,
             double h22,
+            CropOutsideMode cropOutsideMode,
             ref double sumA,
             ref double sumPremulR,
             ref double sumPremulG,
@@ -704,6 +718,17 @@ namespace QuadrilateralCorrectionEffect
 
             if (!double.IsFinite(sourceX) || !double.IsFinite(sourceY))
                 return;
+
+
+            if (cropOutsideMode == CropOutsideMode.Repeat || cropOutsideMode == CropOutsideMode.Mirror)
+            {
+                ApplyCropOutsideMode(
+                cropOutsideMode,
+                sourceWidth,
+                sourceHeight,
+                ref sourceX,
+                ref sourceY);
+            }
 
             SampleSeparableKernel(
                 sourceBuffer,
@@ -727,6 +752,61 @@ namespace QuadrilateralCorrectionEffect
             sumPremulG += sampleG * alpha;
             sumPremulB += sampleB * alpha;
         }
+
+        #region CropOutsideMode
+        private static void ApplyCropOutsideMode(
+            CropOutsideMode cropOutsideMode,
+            int sourceWidth,
+            int sourceHeight,
+            ref double sourceX,
+            ref double sourceY)
+        {
+            if (sourceWidth <= 0 || sourceHeight <= 0)
+                return;
+
+            switch (cropOutsideMode)
+            {
+                case CropOutsideMode.Repeat:
+                    sourceX = RepeatCoordinate(sourceX, sourceWidth);
+                    sourceY = RepeatCoordinate(sourceY, sourceHeight);
+                    break;
+
+                case CropOutsideMode.Mirror:
+                    sourceX = MirrorCoordinate(sourceX, sourceWidth);
+                    sourceY = MirrorCoordinate(sourceY, sourceHeight);
+                    break;
+            }
+        }
+
+        private static double RepeatCoordinate(double value, int length)
+        {
+            if (length <= 1)
+                return 0;
+
+            double result = value % length;
+            if (result < 0)
+                result += length;
+
+            return result;
+        }
+
+        private static double MirrorCoordinate(double value, int length)
+        {
+            if (length <= 1)
+                return 0;
+
+            double period = (length - 1) * 2.0;
+            double result = value % period;
+
+            if (result < 0)
+                result += period;
+
+            if (result > length - 1)
+                result = period - result;
+
+            return result;
+        }
+        #endregion
 
 
         private delegate double WeightFunction(double distance);

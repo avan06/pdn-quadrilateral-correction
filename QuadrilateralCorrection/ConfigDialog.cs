@@ -309,7 +309,7 @@ namespace QuadrilateralCorrectionEffect
             UpdateTokenFromDialog();
         }
 
-        private void CropOutsideCheckBox_CheckedChanged(object sender, System.EventArgs e)
+        private void ComboBoxCropMode_SelectedIndexChanged(object sender, System.EventArgs e)
         {
             UpdateTokenFromDialog();
 
@@ -371,9 +371,13 @@ namespace QuadrilateralCorrectionEffect
                 if (resamplingIndex < 0)
                     resamplingIndex = FindResamplingModeIndex(comboBoxResampling, ResamplingMode.Bilinear);
 
+                int cropModeIndex = (int)effectTokenCopy.CropOutsideMode;
+                if (cropModeIndex < 0 || cropModeIndex >= comboBoxCropMode.Items.Count)
+                    cropModeIndex = 0;
+
                 comboBoxResampling.SelectedIndex = resamplingIndex;
+                comboBoxCropMode.SelectedIndex = cropModeIndex;
                 checkBoxCenter.Checked = effectTokenCopy.Center;
-                checkBoxCropOutside.Checked = effectTokenCopy.CropOutsideQuadrilateral;
             }
             finally
             {
@@ -396,8 +400,9 @@ namespace QuadrilateralCorrectionEffect
             writeValuesHere.ResamplingMode = TryParseResamplingModeFromText(comboBoxResampling.Text, out ResamplingMode resamplingMode)
                 ? resamplingMode : ResamplingMode.Bilinear;
 
+            writeValuesHere.CropOutsideMode = comboBoxCropMode.SelectedIndex >= 0
+                ? (CropOutsideMode)comboBoxCropMode.SelectedIndex : CropOutsideMode.Crop;
             writeValuesHere.Center = checkBoxCenter.Checked;
-            writeValuesHere.CropOutsideQuadrilateral = checkBoxCropOutside.Checked;
         }
         #endregion
 
@@ -456,7 +461,7 @@ namespace QuadrilateralCorrectionEffect
                     int.MaxValue,
                     int.MaxValue,
                     ResamplingMode.Bilinear,
-                    true,
+                    CropOutsideMode.Crop,
                     out _,
                     out _);
                 quadTransOutput = new Size(outputBitmap.Width, outputBitmap.Height);
