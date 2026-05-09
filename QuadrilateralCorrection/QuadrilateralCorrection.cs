@@ -50,6 +50,7 @@ namespace QuadrilateralCorrectionEffect
             autoDims = newToken.AutoDims;
             width = newToken.Width;
             height = newToken.Height;
+            resamplingMode = newToken.ResamplingMode;
             center = newToken.Center;
             cropOutsideQuadrilateral = newToken.CropOutsideQuadrilateral;
 
@@ -74,38 +75,22 @@ namespace QuadrilateralCorrectionEffect
                         sourceBitmap.Size.Width,
                         sourceBitmap.Size.Height);
 
-                if (cropOutsideQuadrilateral)
-                {
-                    // remove content outside the quadrilateral
-                    quadTransOutput = PerspectiveWarpUtil.PerspectiveWarp(
-                        srcImage,
-                        topLeft,
-                        topRight,
-                        bottomRight,
-                        bottomLeft,
-                        autoDims,
-                        width,
-                        height,
-                        true,
-                        out preserveOutsideOffset,
-                        out preserveOutsideSize);
-                }
-                else
-                {
-                    // Preserve content outside the quadrilateral and apply perspective warp to the entire image
-                    quadTransOutput = PerspectiveWarpUtil.PerspectiveWarp(
-                        srcImage,
-                        topLeft,
-                        topRight,
-                        bottomRight,
-                        bottomLeft,
-                        autoDims,
-                        width,
-                        height,
-                        false,
-                        out preserveOutsideOffset,
-                        out preserveOutsideSize);
-                }
+                // cropOutsideQuadrilateral
+                // true: remove content outside the quadrilateral
+                // false: Preserve content outside the quadrilateral and apply perspective warp to the entire image
+                quadTransOutput = PerspectiveWarpUtil.PerspectiveWarp(
+                    srcImage,
+                    topLeft,
+                    topRight,
+                    bottomRight,
+                    bottomLeft,
+                    autoDims,
+                    width,
+                    height,
+                    resamplingMode,
+                    cropOutsideQuadrilateral,
+                    out preserveOutsideOffset,
+                    out preserveOutsideSize);
             }
             catch
             {
@@ -137,17 +122,14 @@ namespace QuadrilateralCorrectionEffect
             BitmapRegionUtil.BitmapBgra32Data alignedImage =
                 BitmapRegionUtil.CreateBgra32Data(Environment.Document.Size.Width, Environment.Document.Size.Height);
             BitmapRegionUtil.DrawBgra32Data(quadTransOutput, alignedImage, offSet);
-
-            BitmapRegionUtil.BitmapBgra32Data newQuadrilateralSurface = alignedImage;
-            BitmapRegionUtil.BitmapBgra32Data newQuadrilateralSurfaceData = newQuadrilateralSurface;
+            BitmapRegionUtil.BitmapBgra32Data newQuadrilateralSurfaceData = alignedImage;
 
 
             // Update the preprocessed full-size image
-            quadrilateralSurface = newQuadrilateralSurface;
             quadrilateralSurfaceData = newQuadrilateralSurfaceData;
         }
 
-        // In PDNv5, OnRender uses concurrent tile rendering, so only the corresponding slice from the precomputed quadrilateralSurface needs to be copied
+        // In PDNv5, OnRender uses concurrent tile rendering, so only the corresponding slice from the precomputed quadrilateralSurfaceData needs to be copied
         protected override void OnRender(IBitmapEffectOutput output)
         {
             BitmapRegionUtil.BitmapBgra32Data surfaceData = quadrilateralSurfaceData;
@@ -207,7 +189,6 @@ namespace QuadrilateralCorrectionEffect
         {
             if (disposing)
             {
-                quadrilateralSurface = null;
                 quadrilateralSurfaceData = null;
             }
 
@@ -221,11 +202,11 @@ namespace QuadrilateralCorrectionEffect
         private bool autoDims;
         private int width;
         private int height;
+        private ResamplingMode resamplingMode;
         private bool center;
         private bool cropOutsideQuadrilateral;
 
         // In PDNv5, the preprocessed surface is stored as a BGRA buffer
-        private BitmapRegionUtil.BitmapBgra32Data quadrilateralSurface;
         private BitmapRegionUtil.BitmapBgra32Data quadrilateralSurfaceData;
     }
 }

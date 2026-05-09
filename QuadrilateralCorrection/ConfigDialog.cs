@@ -1,7 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Drawing;
-using System.Linq;
 using System.Windows.Forms;
 using PaintDotNet.Effects;
 using PaintDotNet.Imaging;
@@ -16,6 +15,7 @@ namespace QuadrilateralCorrectionEffect
         private Rectangle selection;
         private Bitmap srcImage; // Used for UI preview (PictureBox / QuadControl)
         private BitmapRegionUtil.BitmapBgra32Data srcImageData; // Used for perspective warp and pixel-level computations
+        private bool updatingDialogFromToken;
 
         public QuadrilateralCorrectionConfigDialog()
         {
@@ -131,8 +131,7 @@ namespace QuadrilateralCorrectionEffect
             uiImgBounds.Y = padding.Top + Math.Max(0, (availableHeight - uiImgBounds.Height) / 2);
 
             quadControl11.Dock = DockStyle.None;
-            quadControl11.Width = uiImgBounds.Width + 2;
-            quadControl11.Height = uiImgBounds.Height + 2;
+            quadControl11.ClientSize = new Size(uiImgBounds.Width, uiImgBounds.Height);
             quadControl11.Location = new Point(uiImgBounds.X, uiImgBounds.Y);
 
             quadControl11.Visible = true;
@@ -297,6 +296,14 @@ namespace QuadrilateralCorrectionEffect
             UpdateTokenFromDialog();
         }
 
+        private void ComboBoxResampling_SelectedIndexChanged(object sender, System.EventArgs e)
+        {
+            if (updatingDialogFromToken)
+                return;
+
+            UpdateTokenFromDialog();
+        }
+
         private void checkBoxCenter_CheckedChanged(object sender, EventArgs e)
         {
             UpdateTokenFromDialog();
@@ -335,28 +342,45 @@ namespace QuadrilateralCorrectionEffect
 
         protected override void OnUpdateDialogFromToken(QuadrilateralCorrectionConfigToken effectTokenCopy)
         {
-            Initializers();
-            ApplyQuadControlImageBounds();
+            updatingDialogFromToken = true;
 
-            numericUpDownTopLeftX.Value = Clamp(effectTokenCopy.TopLeft.X, numericUpDownTopLeftX.Minimum, numericUpDownTopLeftX.Maximum);
-            numericUpDownTopLeftY.Value = Clamp(effectTokenCopy.TopLeft.Y, numericUpDownTopLeftY.Minimum, numericUpDownTopLeftY.Maximum);
-            numericUpDownTopRightX.Value = Clamp(effectTokenCopy.TopRight.X, numericUpDownTopRightX.Minimum, numericUpDownTopRightX.Maximum);
-            numericUpDownTopRightY.Value = Clamp(effectTokenCopy.TopRight.Y, numericUpDownTopRightY.Minimum, numericUpDownTopRightY.Maximum);
-            numericUpDownBottomRightX.Value = Clamp(effectTokenCopy.BottomRight.X, numericUpDownBottomRightX.Minimum, numericUpDownBottomRightX.Maximum);
-            numericUpDownBottomRightY.Value = Clamp(effectTokenCopy.BottomRight.Y, numericUpDownBottomRightY.Minimum, numericUpDownBottomRightY.Maximum);
-            numericUpDownBottomLeftX.Value = Clamp(effectTokenCopy.BottomLeft.X, numericUpDownBottomLeftX.Minimum, numericUpDownBottomLeftX.Maximum);
-            numericUpDownBottomLeftY.Value = Clamp(effectTokenCopy.BottomLeft.Y, numericUpDownBottomLeftY.Minimum, numericUpDownBottomLeftY.Maximum);
-
-            checkBoxAutoDims.Checked = effectTokenCopy.AutoDims;
-            numericUpDownWidth.Value = Clamp(effectTokenCopy.Width, numericUpDownWidth.Minimum, numericUpDownWidth.Maximum);
-            numericUpDownHeight.Value = Clamp(effectTokenCopy.Height, numericUpDownHeight.Minimum, numericUpDownHeight.Maximum);
-            if (checkBoxAutoDims.Checked)
+            try
             {
-                numericUpDownWidth.Text = "-";
-                numericUpDownHeight.Text = "-";
+                Initializers();
+                ApplyQuadControlImageBounds();
+
+                numericUpDownTopLeftX.Value = Clamp(effectTokenCopy.TopLeft.X, numericUpDownTopLeftX.Minimum, numericUpDownTopLeftX.Maximum);
+                numericUpDownTopLeftY.Value = Clamp(effectTokenCopy.TopLeft.Y, numericUpDownTopLeftY.Minimum, numericUpDownTopLeftY.Maximum);
+                numericUpDownTopRightX.Value = Clamp(effectTokenCopy.TopRight.X, numericUpDownTopRightX.Minimum, numericUpDownTopRightX.Maximum);
+                numericUpDownTopRightY.Value = Clamp(effectTokenCopy.TopRight.Y, numericUpDownTopRightY.Minimum, numericUpDownTopRightY.Maximum);
+                numericUpDownBottomRightX.Value = Clamp(effectTokenCopy.BottomRight.X, numericUpDownBottomRightX.Minimum, numericUpDownBottomRightX.Maximum);
+                numericUpDownBottomRightY.Value = Clamp(effectTokenCopy.BottomRight.Y, numericUpDownBottomRightY.Minimum, numericUpDownBottomRightY.Maximum);
+                numericUpDownBottomLeftX.Value = Clamp(effectTokenCopy.BottomLeft.X, numericUpDownBottomLeftX.Minimum, numericUpDownBottomLeftX.Maximum);
+                numericUpDownBottomLeftY.Value = Clamp(effectTokenCopy.BottomLeft.Y, numericUpDownBottomLeftY.Minimum, numericUpDownBottomLeftY.Maximum);
+
+                checkBoxAutoDims.Checked = effectTokenCopy.AutoDims;
+                numericUpDownWidth.Value = Clamp(effectTokenCopy.Width, numericUpDownWidth.Minimum, numericUpDownWidth.Maximum);
+                numericUpDownHeight.Value = Clamp(effectTokenCopy.Height, numericUpDownHeight.Minimum, numericUpDownHeight.Maximum);
+                if (checkBoxAutoDims.Checked)
+                {
+                    numericUpDownWidth.Text = "-";
+                    numericUpDownHeight.Text = "-";
+                }
+
+                int resamplingIndex = (int)effectTokenCopy.ResamplingMode;
+                if (resamplingIndex < 0 || resamplingIndex >= comboBoxResampling.Items.Count)
+                {
+                    resamplingIndex = (int)ResamplingMode.Bilinear;
+                }
+
+                comboBoxResampling.SelectedIndex = resamplingIndex;
+                checkBoxCenter.Checked = effectTokenCopy.Center;
+                checkBoxCropOutside.Checked = effectTokenCopy.CropOutsideQuadrilateral;
             }
-            checkBoxCenter.Checked = effectTokenCopy.Center;
-            checkBoxCropOutside.Checked = effectTokenCopy.CropOutsideQuadrilateral;
+            finally
+            {
+                updatingDialogFromToken = false;
+            }
 
             quadControl11.Invalidate();
         }
@@ -371,6 +395,9 @@ namespace QuadrilateralCorrectionEffect
             writeValuesHere.AutoDims = checkBoxAutoDims.Checked;
             writeValuesHere.Width = (int)numericUpDownWidth.Value;
             writeValuesHere.Height = (int)numericUpDownHeight.Value;
+            writeValuesHere.ResamplingMode = comboBoxResampling.SelectedIndex >= 0
+                ? (ResamplingMode)comboBoxResampling.SelectedIndex
+                : ResamplingMode.Bilinear;
             writeValuesHere.Center = checkBoxCenter.Checked;
             writeValuesHere.CropOutsideQuadrilateral = checkBoxCropOutside.Checked;
         }
@@ -395,6 +422,7 @@ namespace QuadrilateralCorrectionEffect
                     true,
                     int.MaxValue,
                     int.MaxValue,
+                    ResamplingMode.Bilinear,
                     true,
                     out _,
                     out _);

@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using System.Drawing.Imaging;
 using System.Windows.Forms;
 
 namespace QuadrilateralCorrectionEffect
@@ -150,7 +151,7 @@ namespace QuadrilateralCorrectionEffect
 
         protected override void OnPaint(PaintEventArgs pe)
         {
-            base.OnPaint(pe);
+            DrawPreviewImage(pe.Graphics);
 
             pe.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
             pe.Graphics.CompositingQuality = CompositingQuality.HighQuality;
@@ -206,6 +207,51 @@ namespace QuadrilateralCorrectionEffect
 
             // Draw local magnified view after the nubs so it stays visible.
             DrawMagnifier(pe.Graphics);
+        }
+
+        private void DrawPreviewImage(Graphics graphics)
+        {
+            Rectangle destination = new Rectangle(
+                0,
+                0,
+                this.ClientSize.Width,
+                this.ClientSize.Height);
+
+            if (destination.Width <= 0 || destination.Height <= 0) return;
+
+            // Draw the background first to prevent transparent layers or edges from revealing unpainted areas.
+            if (this.BackgroundImage != null)
+            {
+                using TextureBrush brush = new TextureBrush(this.BackgroundImage, WrapMode.Tile);
+                graphics.FillRectangle(brush, destination);
+            }
+            else
+            {
+                using SolidBrush brush = new SolidBrush(this.BackColor);
+                graphics.FillRectangle(brush, destination);
+            }
+
+            if (this.Image == null) return;
+
+            graphics.CompositingMode = CompositingMode.SourceOver;
+            graphics.CompositingQuality = CompositingQuality.HighQuality;
+            graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
+            graphics.PixelOffsetMode = PixelOffsetMode.Half;
+
+            using ImageAttributes imageAttributes = new ImageAttributes();
+
+            // Prevent sampling transparent/background colors outside the image bounds during scaling.
+            imageAttributes.SetWrapMode(WrapMode.TileFlipXY);
+
+            graphics.DrawImage(
+                this.Image,
+                destination,
+                0,
+                0,
+                this.Image.Width,
+                this.Image.Height,
+                GraphicsUnit.Pixel,
+                imageAttributes);
         }
 
         #region Mouse events

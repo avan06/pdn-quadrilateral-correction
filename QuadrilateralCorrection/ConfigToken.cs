@@ -3,6 +3,14 @@ using PaintDotNet.Effects;
 
 namespace QuadrilateralCorrectionEffect
 {
+    internal enum ResamplingMode
+    {
+        NearestNeighbor = 0,
+        Bilinear = 1,
+        Bicubic = 2,
+        Lanczos3 = 3
+    }
+
     internal class QuadrilateralCorrectionConfigToken : EffectConfigToken
     {
         internal QuadrilateralCorrectionConfigToken()
@@ -15,10 +23,10 @@ namespace QuadrilateralCorrectionEffect
             Width = int.MaxValue;
             Height = int.MaxValue;
             Center = true;
+            ResamplingMode = ResamplingMode.Bilinear;
 
             // Remove content outside the quadrilateral by default
             CropOutsideQuadrilateral = true;
-
         }
 
         private QuadrilateralCorrectionConfigToken(QuadrilateralCorrectionConfigToken copyMe)
@@ -31,6 +39,7 @@ namespace QuadrilateralCorrectionEffect
             Width = copyMe.Width;
             Height = copyMe.Height;
             Center = copyMe.Center;
+            ResamplingMode = copyMe.ResamplingMode;
             CropOutsideQuadrilateral = copyMe.CropOutsideQuadrilateral;
         }
 
@@ -46,6 +55,7 @@ namespace QuadrilateralCorrectionEffect
         internal bool AutoDims { get; set; }
         internal int Width { get; set; }
         internal int Height { get; set; }
+        internal ResamplingMode ResamplingMode { get; set; }
         internal bool Center { get; set; }
         internal bool CropOutsideQuadrilateral { get; set; }
     }
