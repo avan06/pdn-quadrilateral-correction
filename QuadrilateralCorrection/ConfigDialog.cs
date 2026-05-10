@@ -536,7 +536,7 @@ namespace QuadrilateralCorrectionEffect
             e.Cancel = true;
             base.OnHelpButtonClicked(e);
 
-            const string helpMessage = "The control nubs can be manipulated with the mouse in the following three ways:\r\n"
+            const string helpMessage = "The control nubs can be manipulated with the mouse in the following ways:\r\n"
             + "\r\n"
             + "Left Mouse Button — Grab and Drag\r\n"
             + "\r\n"
@@ -544,7 +544,16 @@ namespace QuadrilateralCorrectionEffect
             + "\r\n"
             + "Right Mouse Button — Select nub for Keyboard Arrow manipulation\r\n"
             + "    Arrow — 1px\r\n"
-            + "    Ctrl + Arrow — 5px\r\n";
+            + "    Ctrl + Arrow — 5px\r\n"
+            + "\r\n"
+            + "When enabled, Move Nearest Nub moves the nub nearest to the mouse pointer.\r\n"
+            + "\r\n"
+            + "When enabled, Line Snap snaps the nub to the nearest detected line while dragging.\r\n"
+            + "\r\n"
+            + "Magnifier\r\n"
+            + "    + — Increase magnification\r\n"
+            + "    - — Decrease magnification\r\n"
+            + "    Range — 2x to 12x\r\n";
 
             MessageBox.Show(helpMessage, "Help");
         }
