@@ -391,7 +391,7 @@
             comboBoxCropMode.Anchor = System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
             comboBoxCropMode.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             comboBoxCropMode.DropDownWidth = 150;
-            comboBoxCropMode.Items.AddRange(new object[] { "Crop", "Do not crop", "Do not crop - Repeat", "Do not crop - Mirror" });
+            comboBoxCropMode.Items.AddRange(new object[] { "Crop", "Do not crop - Preserve", "Do not crop - Repeat", "Do not crop - Mirror" });
             comboBoxCropMode.Location = new System.Drawing.Point(112, 426);
             comboBoxCropMode.Name = "comboBoxCropMode";
             comboBoxCropMode.Size = new System.Drawing.Size(67, 23);

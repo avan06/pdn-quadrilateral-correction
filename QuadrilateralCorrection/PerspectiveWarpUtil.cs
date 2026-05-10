@@ -341,38 +341,6 @@ namespace QuadrilateralCorrectionEffect
 
             return b;
         }
-
-        public static Point FitOffsetInsideCanvas(Point offSet, Size imageSize, Size canvasSize)
-        {
-            Rectangle canvasBounds = new Rectangle(0, 0, canvasSize.Width, canvasSize.Height);
-            Rectangle outputBounds = new Rectangle(offSet, imageSize);
-
-            if (outputBounds.Width <= canvasBounds.Width)
-            {
-                if (outputBounds.Left < canvasBounds.Left)
-                {
-                    offSet.X += canvasBounds.Left - outputBounds.Left;
-                }
-                else if (outputBounds.Right > canvasBounds.Right)
-                {
-                    offSet.X -= outputBounds.Right - canvasBounds.Right;
-                }
-            }
-
-            if (outputBounds.Height <= canvasBounds.Height)
-            {
-                if (outputBounds.Top < canvasBounds.Top)
-                {
-                    offSet.Y += canvasBounds.Top - outputBounds.Top;
-                }
-                else if (outputBounds.Bottom > canvasBounds.Bottom)
-                {
-                    offSet.Y -= outputBounds.Bottom - canvasBounds.Bottom;
-                }
-            }
-
-            return offSet;
-        }
         #endregion
 
         #region Sample
@@ -728,6 +696,11 @@ namespace QuadrilateralCorrectionEffect
                 sourceHeight,
                 ref sourceX,
                 ref sourceY);
+            }
+            else
+            {
+                sourceX = Math.Max(0.0, Math.Min(sourceWidth - 1, sourceX));
+                sourceY = Math.Max(0.0, Math.Min(sourceHeight - 1, sourceY));
             }
 
             SampleSeparableKernel(

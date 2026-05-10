@@ -108,17 +108,16 @@ namespace QuadrilateralCorrectionEffect
             {
                 offSet.X += preserveOutsideOffset.X;
                 offSet.Y += preserveOutsideOffset.Y;
-
-                // Use Environment.Document.Size for the canvas size
-                offSet = PerspectiveWarpUtil.FitOffsetInsideCanvas(
-                    offSet,
-                    new Size(quadTransOutput.Width, quadTransOutput.Height),
-                    new Size(Environment.Document.Size.Width, Environment.Document.Size.Height));
             }
 
             BitmapRegionUtil.BitmapBgra32Data alignedImage =
                 BitmapRegionUtil.CreateBgra32Data(Environment.Document.Size.Width, Environment.Document.Size.Height);
-            BitmapRegionUtil.DrawBgra32Data(quadTransOutput, alignedImage, offSet);
+
+            if (cropOutsideMode == CropOutsideMode.Repeat || cropOutsideMode == CropOutsideMode.Mirror)
+                BitmapRegionUtil.DrawBgra32Data(quadTransOutput, alignedImage, offSet, cropOutsideMode);
+            else
+                BitmapRegionUtil.DrawBgra32Data(quadTransOutput, alignedImage, offSet);
+
             BitmapRegionUtil.BitmapBgra32Data newQuadrilateralSurfaceData = alignedImage;
 
 

@@ -108,6 +108,96 @@ namespace QuadrilateralCorrectionEffect
             }
         }
 
+        public static void DrawBgra32Data(
+            BitmapBgra32Data source,
+            BitmapBgra32Data destination,
+            Point offSet,
+            CropOutsideMode cropOutsideMode)
+        {
+            if (cropOutsideMode != CropOutsideMode.Repeat &&
+                cropOutsideMode != CropOutsideMode.Mirror)
+            {
+                DrawBgra32Data(source, destination, offSet);
+                return;
+            }
+
+            if (source == null || destination == null)
+                return;
+
+            if (source.Width <= 0 || source.Height <= 0 ||
+                destination.Width <= 0 || destination.Height <= 0)
+                return;
+
+            for (int y = 0; y < destination.Height; y++)
+            {
+                int sourceY = y - offSet.Y;
+
+                if (cropOutsideMode == CropOutsideMode.Repeat)
+                    sourceY = RepeatCoordinate(sourceY, source.Height);
+                else
+                    sourceY = MirrorCoordinate(sourceY, source.Height);
+
+                int sourceRowY = source.StridePositive
+                    ? sourceY
+                    : source.Height - 1 - sourceY;
+
+                int destinationRowY = destination.StridePositive
+                    ? y
+                    : destination.Height - 1 - y;
+
+                int sourceRowOffset = sourceRowY * source.StrideAbs;
+                int destinationRowOffset = destinationRowY * destination.StrideAbs;
+
+                for (int x = 0; x < destination.Width; x++)
+                {
+                    int sourceX = x - offSet.X;
+
+                    if (cropOutsideMode == CropOutsideMode.Repeat)
+                        sourceX = RepeatCoordinate(sourceX, source.Width);
+                    else
+                        sourceX = MirrorCoordinate(sourceX, source.Width);
+
+                    int sourceOffset = sourceRowOffset + sourceX * 4;
+                    int destinationOffset = destinationRowOffset + x * 4;
+
+                    destination.Buffer[destinationOffset + 0] = source.Buffer[sourceOffset + 0];
+                    destination.Buffer[destinationOffset + 1] = source.Buffer[sourceOffset + 1];
+                    destination.Buffer[destinationOffset + 2] = source.Buffer[sourceOffset + 2];
+                    destination.Buffer[destinationOffset + 3] = source.Buffer[sourceOffset + 3];
+                }
+            }
+        }
+
+        private static int RepeatCoordinate(int value, int length)
+        {
+            if (length <= 1)
+                return 0;
+
+            int result = value % length;
+
+            if (result < 0)
+                result += length;
+
+            return result;
+        }
+
+        private static int MirrorCoordinate(int value, int length)
+        {
+            if (length <= 1)
+                return 0;
+
+            int period = (length - 1) * 2;
+            int result = value % period;
+
+            if (result < 0)
+                result += period;
+
+            if (result > length - 1)
+                result = period - result;
+
+            return result;
+        }
+
         public static Bitmap CreateBitmapFromSourceRegion(
             RegionPtr<ColorBgra32> sourceRegion,
             int width,
