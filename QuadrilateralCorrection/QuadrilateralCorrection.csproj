@@ -35,8 +35,17 @@
             <HintPath>$(PaintDotNetDir)\PaintDotNet.ObjectModel.dll</HintPath>
         </Reference>
     </ItemGroup>
-    <ItemGroup>
-        <!--For view designer Start -->
+    <!--
+    Visual Studio WinForms Designer workaround Start
+
+    Temporarily enable the references in this block only when the Visual Studio
+    Designer needs them to load the EffectConfigForm-derived dialog.
+
+    These references are not intended for normal builds or release builds.
+    Avoid using any private or unsupported Paint.NET types from these assemblies
+    in plugin code.
+    -->
+    <!-- ItemGroup>
         <Reference Include="System.Runtime.Serialization.Formatters">
             <HintPath>$(PaintDotNetDir)\System.Runtime.Serialization.Formatters.dll</HintPath>
         </Reference>
@@ -94,8 +103,8 @@
         <Reference Include="PaintDotNet.Plugins.Compatibility">
             <HintPath>$(PaintDotNetDir)\PaintDotNet.Plugins.Compatibility.dll</HintPath>
         </Reference>
-        <!--For view designer End -->
-    </ItemGroup>
+    </ItemGroup -->
+    <!-- Visual Studio WinForms Designer workaround End -->
     <ItemGroup>
         <Compile Update="QuadControl.cs">
             <SubType>Component</SubType>
