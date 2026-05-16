@@ -2,9 +2,9 @@
 using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
+using PaintDotNet;
 using PaintDotNet.Effects;
 using PaintDotNet.Imaging;
-using PaintDotNet;
 using PaintDotNet.Rendering;
 
 namespace QuadrilateralCorrectionEffect
@@ -13,7 +13,7 @@ namespace QuadrilateralCorrectionEffect
     {
         private Rectangle uiImgBounds;
         private Rectangle selection;
-        private Bitmap srcImage; // Used for UI preview (PictureBox / QuadControl)
+        private Size srcImageSize; // Used for UI preview / QuadControl bounds
         private BitmapRegionUtil.BitmapBgra32Data srcImageData; // Used for perspective warp and pixel-level computations
         private bool updatingDialogFromToken;
 
@@ -75,30 +75,30 @@ namespace QuadrilateralCorrectionEffect
 
             // Read the current layer as the UI image
             using IEffectInputBitmap<ColorBgra32> sourceBitmap = this.Environment.GetSourceBitmapBgra32();
+
+            srcImageSize = new Size(sourceBitmap.Size.Width, sourceBitmap.Size.Height);
+
             using (IBitmapLock<ColorBgra32> sourceLock = sourceBitmap.Lock(new RectInt32(0, 0, sourceBitmap.Size)))
             {
                 RegionPtr<ColorBgra32> sourceRegion = sourceLock.AsRegionPtr();
 
                 srcImageData = BitmapRegionUtil.CreateBgra32DataFromSourceRegion(sourceRegion, sourceBitmap.Size.Width, sourceBitmap.Size.Height);
 
-                using Bitmap tempBmp = BitmapRegionUtil.CreateBitmapFromSourceRegion(sourceRegion, sourceBitmap.Size.Width, sourceBitmap.Size.Height);
-                srcImage = new Bitmap(tempBmp);
+                quadControl11.SetImageFromSourceRegion(sourceRegion, sourceBitmap.Size.Width, sourceBitmap.Size.Height);
             }
 
-            quadControl11.Image = srcImage;
-
             float quadBaseSize = this.AutoScaleDimensions.Width / 96f * 500f;
-            float divisor = Math.Max(srcImage.Width, srcImage.Height) / quadBaseSize;
+            float divisor = Math.Max(srcImageSize.Width, srcImageSize.Height) / quadBaseSize;
 
-            uiImgBounds.Width = (int)Math.Round(srcImage.Width / divisor);
-            uiImgBounds.Height = (int)Math.Round(srcImage.Height / divisor);
+            uiImgBounds.Width = (int)Math.Round(srcImageSize.Width / divisor);
+            uiImgBounds.Height = (int)Math.Round(srcImageSize.Height / divisor);
             uiImgBounds.X = (int)Math.Max(0, (quadBaseSize - uiImgBounds.Width) / 2f);
             uiImgBounds.Y = (int)Math.Max(0, (quadBaseSize - uiImgBounds.Height) / 2f);
         }
 
         private void ApplyQuadControlImageBounds()
         {
-            if (srcImage == null)
+            if (srcImageSize.IsEmpty)
             {
                 return;
             }
@@ -121,11 +121,11 @@ namespace QuadrilateralCorrectionEffect
             }
 
             float divisor = Math.Max(
-                (float)srcImage.Width / availableWidth,
-                (float)srcImage.Height / availableHeight);
+                (float)srcImageSize.Width / availableWidth,
+                (float)srcImageSize.Height / availableHeight);
 
-            uiImgBounds.Width = Math.Max(1, (int)Math.Round(srcImage.Width / divisor));
-            uiImgBounds.Height = Math.Max(1, (int)Math.Round(srcImage.Height / divisor));
+            uiImgBounds.Width = Math.Max(1, (int)Math.Round(srcImageSize.Width / divisor));
+            uiImgBounds.Height = Math.Max(1, (int)Math.Round(srcImageSize.Height / divisor));
 
             uiImgBounds.X = padding.Left + Math.Max(0, (availableWidth - uiImgBounds.Width) / 2);
             uiImgBounds.Y = padding.Top + Math.Max(0, (availableHeight - uiImgBounds.Height) / 2);

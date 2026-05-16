@@ -73,7 +73,6 @@
             ((System.ComponentModel.ISupportInitialize)numericUpDownBottomRightY).BeginInit();
             ((System.ComponentModel.ISupportInitialize)numericUpDownBottomLeftX).BeginInit();
             ((System.ComponentModel.ISupportInitialize)numericUpDownBottomLeftY).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)quadControl11).BeginInit();
             ((System.ComponentModel.ISupportInitialize)numericUpDownWidth).BeginInit();
             ((System.ComponentModel.ISupportInitialize)numericUpDownHeight).BeginInit();
             ((System.ComponentModel.ISupportInitialize)splitContainerMain).BeginInit();
@@ -208,12 +207,11 @@
             // quadControl11
             // 
             quadControl11.Anchor = System.Windows.Forms.AnchorStyles.None;
-            quadControl11.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             quadControl11.Location = new System.Drawing.Point(1, 35);
             quadControl11.Margin = new System.Windows.Forms.Padding(0);
             quadControl11.Name = "quadControl11";
             quadControl11.Size = new System.Drawing.Size(506, 520);
-            quadControl11.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            quadControl11.SizeMode = PaintDotNet.Controls.Direct2DPictureBoxSizeMode.StretchBitmap;
             quadControl11.TabIndex = 14;
             quadControl11.TabStop = false;
             quadControl11.ValueChanged += quadControl11_ValueChanged;
@@ -619,7 +617,6 @@
             ((System.ComponentModel.ISupportInitialize)numericUpDownBottomRightY).EndInit();
             ((System.ComponentModel.ISupportInitialize)numericUpDownBottomLeftX).EndInit();
             ((System.ComponentModel.ISupportInitialize)numericUpDownBottomLeftY).EndInit();
-            ((System.ComponentModel.ISupportInitialize)quadControl11).EndInit();
             ((System.ComponentModel.ISupportInitialize)numericUpDownWidth).EndInit();
             ((System.ComponentModel.ISupportInitialize)numericUpDownHeight).EndInit();
             splitContainerMain.Panel1.ResumeLayout(false);

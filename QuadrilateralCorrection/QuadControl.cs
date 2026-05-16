@@ -1,24 +1,28 @@
 ﻿using System;
-using System.ComponentModel;
 using System.Drawing;
-using System.Drawing.Drawing2D;
-using System.Drawing.Imaging;
+using System.ComponentModel;
 using System.Windows.Forms;
+using PaintDotNet;
+using PaintDotNet.Controls;
+using PaintDotNet.Imaging;
+using PaintDotNet.Rendering;
+using PaintDotNet.DirectWrite;
+using PaintDotNet.Direct2D1;
 
 namespace QuadrilateralCorrectionEffect
 {
     [DefaultEvent(nameof(ValueChanged))]
-    internal class QuadControl : PictureBox
+    internal class QuadControl : Direct2DPictureBox
     {
         private static readonly Cursor handOpen = new Cursor(typeof(QuadControl), "Resources.HandOpen.cur");
         private static readonly Cursor handGrab = new Cursor(typeof(QuadControl), "Resources.HandGrab.cur");
 
         public QuadControl()
         {
-            this.BackgroundImage = new Bitmap(typeof(QuadControl), "Resources.CheckerBoard.png");
-            this.SizeMode = PictureBoxSizeMode.StretchImage;
+            this.SizeMode = Direct2DPictureBoxSizeMode.StretchBitmap;
+            this.EnableAlphaCheckerboard = true;
+            this.BitmapInterpolationMode = InterpolationMode.Linear;
             this.TabStop = false;
-            this.BorderStyle = BorderStyle.FixedSingle;
 
             nubTL = new Nub(0, 0);
             nubTR = new Nub(this.ClientSize.Width - 1, 0);
@@ -26,7 +30,49 @@ namespace QuadrilateralCorrectionEffect
             nubBL = new Nub(0, this.ClientSize.Height - 1);
         }
 
-        #region Variables
+        #region Image Source
+        internal void SetImageFromSourceRegion(
+            RegionPtr<ColorBgra32> sourceRegion,
+            int width,
+            int height)
+        {
+            IBitmap<ColorBgra32> newBitmap = null;
+
+            try
+            {
+                newBitmap = (IBitmap<ColorBgra32>)this.ImagingFactory.CreateBitmap(
+                    width,
+                    height,
+                    PixelFormats.Bgra32);
+
+                using (IBitmapLock<ColorBgra32> bitmapLock = newBitmap.Lock(new RectInt32(0, 0, width, height), BitmapLockOptions.Write))
+                {
+                    RegionPtr<ColorBgra32> destinationRegion = bitmapLock.AsRegionPtr();
+
+                    for (int y = 0; y < height; y++)
+                    {
+                        for (int x = 0; x < width; x++)
+                        {
+                            destinationRegion[x, y] = sourceRegion[x, y];
+                        }
+                    }
+                }
+
+                SetPreviewBitmap(newBitmap);
+                newBitmap = null; // ownership transferred to QuadControl
+            }
+            finally
+            {
+                newBitmap?.Dispose();
+            }
+        }
+        #endregion
+
+        #region Fields
+        private IBitmap<ColorBgra32> previewBitmap;
+        private IBitmapSource previewBitmapSource;
+        private SizeInt32 previewBitmapSize;
+
         private bool MouseIsDown = false; // True if mouse button is down
         private Size MouseFromNub = Size.Empty;
         private const int RadiusSmall = 3; // nb Radius * 2 + 1 = size
@@ -36,6 +82,8 @@ namespace QuadrilateralCorrectionEffect
         private Nub nubTL, nubTR, nubBR, nubBL; // four Nubs to store coordinates and activation states
 
         // Magnifier variables.
+        private IDeviceBitmap magnifierDeviceBitmap;
+        private ITextFormat magnifierTextFormat;
         private bool showMagnifier = false;
         private Point magnifierMouseLocation = Point.Empty;
         private const int MagnifierSize = 160;
@@ -139,7 +187,7 @@ namespace QuadrilateralCorrectionEffect
         }
         #endregion
 
-        #region Event handler
+        #region Events
         [Category("Action")]
         public event EventHandler ValueChanged;
 
@@ -149,110 +197,114 @@ namespace QuadrilateralCorrectionEffect
         }
         #endregion
 
-        protected override void OnPaint(PaintEventArgs pe)
+        #region Rendering
+        protected override void OnRenderForeground(
+            PaintDotNet.Direct2D1.IDeviceContext deviceContext,
+            RectFloat clipRect,
+            RectFloat bitmapRect)
         {
-            DrawPreviewImage(pe.Graphics);
+            ArgumentNullException.ThrowIfNull(deviceContext);
 
-            pe.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
-            pe.Graphics.CompositingQuality = CompositingQuality.HighQuality;
+
+            using ISolidColorBrush whiteBrush = deviceContext.CreateSolidColorBrush(Color.White);
+            using ISolidColorBrush blackBrush = deviceContext.CreateSolidColorBrush(Color.Black);
+            using ISolidColorBrush selectedBrush = deviceContext.CreateSolidColorBrush(Color.DodgerBlue);
+
+            using IStrokeStyle dashStyle = this.Direct2DFactory.CreateStrokeStyle(
+                new StrokeStyleProperties { DashStyle = DashStyle.Dash }, []
+            );
+
+            using IStrokeStyle dotStyle = this.Direct2DFactory.CreateStrokeStyle(
+                new StrokeStyleProperties { DashStyle = DashStyle.Dot }, []
+            );
 
             // Draw quadrilateral
-            using (Pen outlinePen = new Pen(Color.Black))
-            {
-                outlinePen.Color = Color.White;
-                outlinePen.DashStyle = DashStyle.Dash;
-                pe.Graphics.DrawLine(outlinePen, nubTL.Location, nubTR.Location);
-                pe.Graphics.DrawLine(outlinePen, nubTR.Location, nubBR.Location);
-                pe.Graphics.DrawLine(outlinePen, nubBR.Location, nubBL.Location);
-                pe.Graphics.DrawLine(outlinePen, nubBL.Location, nubTL.Location);
+            deviceContext.DrawLine(nubTL.Point2Float, nubTR.Point2Float, whiteBrush, 1.0f, dashStyle);
+            deviceContext.DrawLine(nubTR.Point2Float, nubBR.Point2Float, whiteBrush, 1.0f, dashStyle);
+            deviceContext.DrawLine(nubBR.Point2Float, nubBL.Point2Float, whiteBrush, 1.0f, dashStyle);
+            deviceContext.DrawLine(nubBL.Point2Float, nubTL.Point2Float, whiteBrush, 1.0f, dashStyle);
 
-                outlinePen.Color = Color.Black;
-                outlinePen.DashStyle = DashStyle.Dot;
-                pe.Graphics.DrawLine(outlinePen, nubTL.Location, nubTR.Location);
-                pe.Graphics.DrawLine(outlinePen, nubTR.Location, nubBR.Location);
-                pe.Graphics.DrawLine(outlinePen, nubBR.Location, nubBL.Location);
-                pe.Graphics.DrawLine(outlinePen, nubBL.Location, nubTL.Location);
-            }
+            deviceContext.DrawLine(nubTL.Point2Float, nubTR.Point2Float, blackBrush, 1.0f, dotStyle);
+            deviceContext.DrawLine(nubTR.Point2Float, nubBR.Point2Float, blackBrush, 1.0f, dotStyle);
+            deviceContext.DrawLine(nubBR.Point2Float, nubBL.Point2Float, blackBrush, 1.0f, dotStyle);
+            deviceContext.DrawLine(nubBL.Point2Float, nubTL.Point2Float, blackBrush, 1.0f, dotStyle);
 
             // Draw Nubs
-            using (Pen nubPen = new Pen(Color.White, 4))
-            using (Pen nubStatePen = new Pen(Color.Black, 1.6f))
-            {
-                int radius;
-
-                // Top Left control nub
-                radius = (nubTL.Hovered || nubTL.Selected) ? RadiusLarge : RadiusSmall;
-                pe.Graphics.DrawEllipse(nubPen, nubTL.X - radius, nubTL.Y - radius, radius * 2 + 1, radius * 2 + 1);
-                nubStatePen.Color = (nubTL.Selected) ? Color.DodgerBlue : Color.Black;
-                pe.Graphics.DrawEllipse(nubStatePen, nubTL.X - radius, nubTL.Y - radius, radius * 2 + 1, radius * 2 + 1);
-
-                // Top Right control nub
-                radius = (nubTR.Hovered || nubTR.Selected) ? RadiusLarge : RadiusSmall;
-                pe.Graphics.DrawEllipse(nubPen, nubTR.X - radius - 1, nubTR.Y - radius, radius * 2 + 1, radius * 2 + 1);
-                nubStatePen.Color = (nubTR.Selected) ? Color.DodgerBlue : Color.Black;
-                pe.Graphics.DrawEllipse(nubStatePen, nubTR.X - radius - 1, nubTR.Y - radius, radius * 2 + 1, radius * 2 + 1);
-
-                // Bottom Right control nub
-                radius = (nubBR.Hovered || nubBR.Selected) ? RadiusLarge : RadiusSmall;
-                pe.Graphics.DrawEllipse(nubPen, nubBR.X - radius - 1, nubBR.Y - radius - 1, radius * 2 + 1, radius * 2 + 1);
-                nubStatePen.Color = (nubBR.Selected) ? Color.DodgerBlue : Color.Black;
-                pe.Graphics.DrawEllipse(nubStatePen, nubBR.X - radius - 1, nubBR.Y - radius - 1, radius * 2 + 1, radius * 2 + 1);
-
-                // Bottom Left control nub
-                radius = (nubBL.Hovered || nubBL.Selected) ? RadiusLarge : RadiusSmall;
-                pe.Graphics.DrawEllipse(nubPen, nubBL.X - radius, nubBL.Y - radius - 1, radius * 2 + 1, radius * 2 + 1);
-                nubStatePen.Color = (nubBL.Selected) ? Color.DodgerBlue : Color.Black;
-                pe.Graphics.DrawEllipse(nubStatePen, nubBL.X - radius, nubBL.Y - radius - 1, radius * 2 + 1, radius * 2 + 1);
-            }
+            // Top Left control nub
+            DrawNub(deviceContext, nubTL, 0, 0, whiteBrush, blackBrush, selectedBrush);
+            // Top Right control nub
+            DrawNub(deviceContext, nubTR, -1, 0, whiteBrush, blackBrush, selectedBrush);
+            // Bottom Right control nub
+            DrawNub(deviceContext, nubBR, -1, -1, whiteBrush, blackBrush, selectedBrush);
+            // Bottom Left control nub
+            DrawNub(deviceContext, nubBL, 0, -1, whiteBrush, blackBrush, selectedBrush);
 
             // Draw local magnified view after the nubs so it stays visible.
-            DrawMagnifier(pe.Graphics);
+            DrawMagnifier(deviceContext);
         }
 
-        private void DrawPreviewImage(Graphics graphics)
+        private void DrawNub(
+            PaintDotNet.Direct2D1.IDeviceContext deviceContext,
+            Nub nub,
+            int offsetX,
+            int offsetY,
+            IDeviceBrush whiteBrush,
+            IDeviceBrush blackBrush,
+            IDeviceBrush selectedBrush)
         {
-            Rectangle destination = new Rectangle(
-                0,
-                0,
-                this.ClientSize.Width,
-                this.ClientSize.Height);
+            int radius = (nub.Hovered || nub.Selected) ? RadiusLarge : RadiusSmall;
 
-            if (destination.Width <= 0 || destination.Height <= 0) return;
+            float diameter = (radius * 2) + 1;
+            float d2dRadius = diameter / 2.0f;
 
-            // Draw the background first to prevent transparent layers or edges from revealing unpainted areas.
-            if (this.BackgroundImage != null)
-            {
-                using TextureBrush brush = new TextureBrush(this.BackgroundImage, WrapMode.Tile);
-                graphics.FillRectangle(brush, destination);
-            }
-            else
-            {
-                using SolidBrush brush = new SolidBrush(this.BackColor);
-                graphics.FillRectangle(brush, destination);
-            }
+            Ellipse bounds = new Ellipse(nub.Location.X + offsetX + 0.5f, nub.Location.Y + offsetY + 0.5f, d2dRadius, d2dRadius);
 
-            if (this.Image == null) return;
-
-            graphics.CompositingMode = CompositingMode.SourceOver;
-            graphics.CompositingQuality = CompositingQuality.HighQuality;
-            graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
-            graphics.PixelOffsetMode = PixelOffsetMode.Half;
-
-            using ImageAttributes imageAttributes = new ImageAttributes();
-
-            // Prevent sampling transparent/background colors outside the image bounds during scaling.
-            imageAttributes.SetWrapMode(WrapMode.TileFlipXY);
-
-            graphics.DrawImage(
-                this.Image,
-                destination,
-                0,
-                0,
-                this.Image.Width,
-                this.Image.Height,
-                GraphicsUnit.Pixel,
-                imageAttributes);
+            deviceContext.DrawEllipse(bounds, whiteBrush, 4.0f);
+            deviceContext.DrawEllipse(bounds, nub.Selected ? selectedBrush : blackBrush, 1.6f);
         }
+        #endregion
+
+        #region Resource Management
+        protected override void OnInvalidateDeviceResources()
+        {
+            DisposeMagnifierDeviceResources();
+
+            base.OnInvalidateDeviceResources();
+        }
+
+        protected override void OnDispose(bool disposing)
+        {
+            if (disposing)
+            {
+                this.Bitmap = null;
+
+                DisposeMagnifierDeviceResources();
+                magnifierTextFormat?.Dispose();
+                magnifierTextFormat = null;
+
+                DisposePreviewBitmapResources();
+            }
+
+            base.OnDispose(disposing);
+        }
+
+        private void DisposePreviewBitmapResources()
+        {
+            previewBitmapSource?.Dispose();
+            previewBitmapSource = null;
+
+            previewBitmap?.Dispose();
+            previewBitmap = null;
+
+            previewBitmapSize = default;
+        }
+
+        private void DisposeMagnifierDeviceResources()
+        {
+            magnifierDeviceBitmap?.Dispose();
+            magnifierDeviceBitmap = null;
+        }
+        #endregion
 
         #region Mouse events
         protected override void OnMouseDown(MouseEventArgs e)
@@ -427,7 +479,6 @@ namespace QuadrilateralCorrectionEffect
         #endregion
 
         #region Keyboard events
-
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
         {
             int step = ((keyData & Keys.Control) == Keys.Control) ? 5 : 1;
@@ -491,7 +542,7 @@ namespace QuadrilateralCorrectionEffect
         }
         #endregion
 
-        #region Nub functions
+        #region Nub Helpers
         private void SelectNub(Nub nub)
         {
             nubTL.Selected = false;
@@ -694,90 +745,133 @@ namespace QuadrilateralCorrectionEffect
 
         #region Magnifier
 
-        private void DrawMagnifier(Graphics g)
+        private void DrawMagnifier(PaintDotNet.Direct2D1.IDeviceContext deviceContext)
         {
-            if (!showMagnifier || this.Image == null || this.ClientSize.Width <= 0 || this.ClientSize.Height <= 0)
-            {
+            if (!showMagnifier || !HasPreviewBitmap || this.ClientSize.Width <= 0 || this.ClientSize.Height <= 0)
                 return;
-            }
 
             Nub activeNub = GetActiveNub();
 
             if (activeNub == null)
-            {
                 return;
-            }
 
             Point nubClientPoint = activeNub.Location;
             Point imagePoint = ClientToImagePoint(nubClientPoint);
 
-            int srcSize = Math.Max(1, MagnifierSize / Math.Max(1, MagnifierZoom));
-            int halfSrcSize = srcSize / 2;
-
-            Rectangle srcRect = new Rectangle(
-                imagePoint.X - halfSrcSize,
-                imagePoint.Y - halfSrcSize,
-                srcSize,
-                srcSize);
-
-            Rectangle imageBounds = new Rectangle(0, 0, this.Image.Width, this.Image.Height);
-            srcRect.Intersect(imageBounds);
+            Rectangle srcRect = GetMagnifierSourceRectangle(imagePoint);
 
             if (srcRect.Width <= 0 || srcRect.Height <= 0)
-            {
                 return;
-            }
 
             Rectangle destRect = GetMagnifierDestinationRectangle(nubClientPoint);
 
-            SmoothingMode oldSmoothingMode = g.SmoothingMode;
-            InterpolationMode oldInterpolationMode = g.InterpolationMode;
-            PixelOffsetMode oldPixelOffsetMode = g.PixelOffsetMode;
-            CompositingQuality oldCompositingQuality = g.CompositingQuality;
+            RectFloat targetRect = RectFloat.FromEdges(destRect.Left, destRect.Top, destRect.Right, destRect.Bottom);
+            RectFloat sourceRect = RectFloat.FromEdges(srcRect.Left, srcRect.Top, srcRect.Right, srcRect.Bottom);
 
-            try
+            if (magnifierDeviceBitmap == null)
+                magnifierDeviceBitmap = deviceContext.CreateBitmap(previewBitmapSource);
+
+            using ISolidColorBrush backgroundBrush = deviceContext.CreateSolidColorBrush(Color.FromArgb(230, Color.White));
+            using ISolidColorBrush borderBrush = deviceContext.CreateSolidColorBrush(Color.Black);
+            using ISolidColorBrush crossBrush = deviceContext.CreateSolidColorBrush(Color.Red);
+            using ISolidColorBrush textBackBrush = deviceContext.CreateSolidColorBrush(Color.FromArgb(200, Color.White));
+            using ISolidColorBrush textBrush = deviceContext.CreateSolidColorBrush(Color.Black);
+
+            // Background first, same as old GDI+ implementation.
+            deviceContext.FillRectangle(targetRect, backgroundBrush);
+
+            // Draw cropped image area into magnifier rectangle with nearest-neighbor scaling.
+            RectFloat? targetRectNullable = targetRect;
+            RectFloat? sourceRectNullable = sourceRect;
+
+            deviceContext.DrawBitmap(magnifierDeviceBitmap, in targetRectNullable, 1.0f, InterpolationMode.NearestNeighbor, in sourceRectNullable);
+
+            // Border.
+            deviceContext.DrawRectangle(targetRect, borderBrush, 1.0f);
+
+            float scaleX = (float)destRect.Width / srcRect.Width;
+            float scaleY = (float)destRect.Height / srcRect.Height;
+
+            float centerX = destRect.Left + ((imagePoint.X - srcRect.Left) + 0.5f) * scaleX;
+            float centerY = destRect.Top + ((imagePoint.Y - srcRect.Top) + 0.5f) * scaleY;
+
+            // Crosshair.
+            deviceContext.DrawLine(new Point2Float(centerX, destRect.Top), new Point2Float(centerX, destRect.Bottom), crossBrush, 1.0f);
+            deviceContext.DrawLine(new Point2Float(destRect.Left, centerY), new Point2Float(destRect.Right, centerY), crossBrush, 1.0f);
+
+            DrawMagnifierText(deviceContext, destRect, imagePoint, textBackBrush, textBrush);
+        }
+
+        private void DrawMagnifierText(
+            PaintDotNet.Direct2D1.IDeviceContext deviceContext,
+            Rectangle destRect,
+            Point imagePoint,
+            IDeviceBrush textBackBrush,
+            IDeviceBrush textBrush)
+        {
+            string text = $"X:{imagePoint.X}, Y:{imagePoint.Y}, {MagnifierZoom}x";
+
+
+            if (magnifierTextFormat == null)
             {
-                g.SmoothingMode = SmoothingMode.None;
-                g.InterpolationMode = InterpolationMode.NearestNeighbor;
-                g.PixelOffsetMode = PixelOffsetMode.Half;
-                g.CompositingQuality = CompositingQuality.HighSpeed;
+                float fontSizeDip = this.Font.SizeInPoints * 96.0f / 72.0f;
 
-                using (SolidBrush backgroundBrush = new SolidBrush(Color.FromArgb(230, Color.White)))
-                using (Pen borderPen = new Pen(Color.Black, 1))
-                using (Pen crossPen = new Pen(Color.Red, 1))
-                using (SolidBrush textBackBrush = new SolidBrush(Color.FromArgb(200, Color.White)))
-                using (SolidBrush textBrush = new SolidBrush(Color.Black))
-                {
-                    g.FillRectangle(backgroundBrush, destRect);
-                    g.DrawImage(this.Image, destRect, srcRect, GraphicsUnit.Pixel);
-                    g.DrawRectangle(borderPen, destRect);
-
-                    int centerX = destRect.Left + destRect.Width / 2;
-                    int centerY = destRect.Top + destRect.Height / 2;
-
-                    g.DrawLine(crossPen, centerX, destRect.Top, centerX, destRect.Bottom);
-                    g.DrawLine(crossPen, destRect.Left, centerY, destRect.Right, centerY);
-
-                    string text = $"X:{imagePoint.X}, Y:{imagePoint.Y}, {MagnifierZoom}x";
-                    SizeF textSize = g.MeasureString(text, this.Font);
-
-                    RectangleF textBackRect = new RectangleF(
-                        destRect.Left + 3,
-                        destRect.Bottom - textSize.Height - 5,
-                        textSize.Width + 4,
-                        textSize.Height + 2);
-
-                    g.FillRectangle(textBackBrush, textBackRect);
-                    g.DrawString(text, this.Font, textBrush, textBackRect.Left + 2, textBackRect.Top + 1);
-                }
+                magnifierTextFormat = this.DirectWriteFactory.CreateTextFormat(
+                    this.Font.FontFamily.Name,
+                    null,
+                    FontWeight.Normal,
+                    PaintDotNet.DirectWrite.FontStyle.Normal,
+                    FontStretch.Normal,
+                    fontSizeDip,
+                    null);
+                magnifierTextFormat.WordWrapping = WordWrapping.NoWrap;
             }
-            finally
-            {
-                g.SmoothingMode = oldSmoothingMode;
-                g.InterpolationMode = oldInterpolationMode;
-                g.PixelOffsetMode = oldPixelOffsetMode;
-                g.CompositingQuality = oldCompositingQuality;
-            }
+
+            // Match the old GDI+ MeasureString + DrawString layout.
+            const float backLeftMargin = 3.0f;
+            const float backBottomOffset = 5.0f;
+            const float textOffsetX = 2.0f;
+            const float textOffsetY = 1.0f;
+
+            float maxTextWidth = Math.Max(1.0f, destRect.Width - 6.0f);
+            float maxTextHeight = Math.Max(1.0f, destRect.Height);
+
+            using ITextLayout textLayout = this.DirectWriteFactory.CreateTextLayout(
+                text,
+                magnifierTextFormat,
+                maxTextWidth,
+                maxTextHeight);
+
+            TextMetrics metrics = textLayout.Metrics;
+
+            float textWidth = (float)Math.Ceiling(metrics.WidthIncludingTrailingWhitespace);
+            float textHeight = (float)Math.Ceiling(metrics.Height);
+
+            float backLeft = destRect.Left + backLeftMargin;
+            float backTop = destRect.Bottom - textHeight - backBottomOffset;
+            float backRight = backLeft + textWidth + (textOffsetX * 2.0f);
+            float backBottom = backTop + textHeight + (textOffsetY * 2.0f);
+
+            RectFloat textBackRect = RectFloat.FromEdges(
+                backLeft,
+                backTop,
+                backRight,
+                backBottom);
+
+            deviceContext.FillRectangle(textBackRect, textBackBrush);
+
+            RectFloat textRect = RectFloat.FromEdges(
+                textBackRect.Left + textOffsetX,
+                textBackRect.Top + textOffsetY,
+                textBackRect.Right - textOffsetX,
+                textBackRect.Bottom - textOffsetY);
+
+            deviceContext.DrawText(
+                text,
+                magnifierTextFormat,
+                textRect,
+                textBrush,
+                DrawTextOptions.Clip);
         }
 
         private Rectangle GetMagnifierDestinationRectangle(Point nubClientPoint)
@@ -825,23 +919,90 @@ namespace QuadrilateralCorrectionEffect
 
         private Point ClientToImagePoint(Point clientPoint)
         {
-            if (this.Image == null || this.ClientSize.Width <= 0 || this.ClientSize.Height <= 0)
+            if (!HasPreviewBitmap || this.ClientSize.Width <= 0 || this.ClientSize.Height <= 0)
             {
                 return Point.Empty;
             }
 
-            int x = (int)Math.Round((double)clientPoint.X * (this.Image.Width - 1) / Math.Max(1, this.ClientSize.Width - 1));
-            int y = (int)Math.Round((double)clientPoint.Y * (this.Image.Height - 1) / Math.Max(1, this.ClientSize.Height - 1));
+            int x = (int)Math.Round((double)clientPoint.X * (previewBitmapSize.Width - 1) / Math.Max(1, this.ClientSize.Width - 1));
+            int y = (int)Math.Round((double)clientPoint.Y * (previewBitmapSize.Height - 1) / Math.Max(1, this.ClientSize.Height - 1));
 
-            x = Math.Max(0, Math.Min(this.Image.Width - 1, x));
-            y = Math.Max(0, Math.Min(this.Image.Height - 1, y));
+            x = Math.Max(0, Math.Min(previewBitmapSize.Width - 1, x));
+            y = Math.Max(0, Math.Min(previewBitmapSize.Height - 1, y));
 
             return new Point(x, y);
         }
 
+        private Rectangle GetMagnifierSourceRectangle(Point imagePoint)
+        {
+            int zoom = Math.Max(1, MagnifierZoom);
+
+            int srcSize = Math.Max(1, MagnifierSize / zoom);
+
+            if (HasPreviewBitmap)
+            {
+                srcSize = Math.Min(srcSize, Math.Min(previewBitmapSize.Width, previewBitmapSize.Height));
+            }
+
+            int halfSrcSize = srcSize / 2;
+
+            int srcX = imagePoint.X - halfSrcSize;
+            int srcY = imagePoint.Y - halfSrcSize;
+
+            if (HasPreviewBitmap)
+            {
+                srcX = Math.Max(0, Math.Min(previewBitmapSize.Width - srcSize, srcX));
+                srcY = Math.Max(0, Math.Min(previewBitmapSize.Height - srcSize, srcY));
+            }
+
+            return new Rectangle(srcX, srcY, srcSize, srcSize);
+        }
+
         #endregion
 
-        #region Utility routines
+        #region Preview Bitmap
+        private void SetPreviewBitmap(IBitmap<ColorBgra32> bitmap)
+        {
+            this.Bitmap = null;
+
+            DisposeMagnifierDeviceResources();
+            DisposePreviewBitmapResources();
+
+            previewBitmap = bitmap;
+
+            if (previewBitmap != null)
+            {
+                previewBitmapSize = previewBitmap.Size;
+
+                // Direct2D CreateBitmap prefers a D2D-friendly premultiplied BGRA source.
+                previewBitmapSource = this.ImagingFactory.CreateFormatConvertedBitmap(
+                    previewBitmap,
+                    PixelFormats.Pbgra32,
+                    default,
+                    null,
+                    0.0,
+                    default);
+
+                this.Bitmap = previewBitmapSource;
+            }
+            else
+            {
+                previewBitmapSize = default;
+            }
+
+            this.InvalidateBitmap();
+            this.Invalidate();
+        }
+
+        private bool HasPreviewBitmap
+        {
+            get => previewBitmapSource != null
+                && previewBitmapSize.Width > 0
+                && previewBitmapSize.Height > 0;
+        }
+        #endregion
+
+        #region Coordinate Helpers
         private int ClampToWidth(int x)
         {
             return (x < 0) ? 0 : (x > this.ClientSize.Width - 1) ? this.ClientSize.Width - 1 : x;
@@ -885,7 +1046,9 @@ namespace QuadrilateralCorrectionEffect
 
             return new Point(x, y);
         }
+        #endregion
 
+        #region Line Snap
         private Point SnapToNearestLineIfEnabled(Point controlPoint)
         {
             controlPoint = new Point(
@@ -893,9 +1056,9 @@ namespace QuadrilateralCorrectionEffect
                 ClampToHeight(controlPoint.Y));
 
             if (!LineSnapEnabled ||
-                this.Image is not Bitmap bitmap ||
-                bitmap.Width < 3 ||
-                bitmap.Height < 3 ||
+                !HasPreviewBitmap ||
+                previewBitmapSize.Width < 3 ||
+                previewBitmapSize.Height < 3 ||
                 this.ClientSize.Width < 3 ||
                 this.ClientSize.Height < 3)
             {
@@ -912,63 +1075,63 @@ namespace QuadrilateralCorrectionEffect
             int bestStrength = LineSnapMinEdgeStrength;
             int bestDistanceSquared = int.MaxValue;
 
-            int clientWidth = Math.Max(1, this.ClientSize.Width - 1);
-            int clientHeight = Math.Max(1, this.ClientSize.Height - 1);
-
-            for (int dy = -searchRadius; dy <= searchRadius; dy++)
+            using (IBitmapLock<ColorBgra32> bitmapLock = previewBitmap.Lock(
+                new RectInt32(0, 0, previewBitmap.Size),
+                BitmapLockOptions.Read))
             {
-                for (int dx = -searchRadius; dx <= searchRadius; dx++)
+                RegionPtr<ColorBgra32> region = bitmapLock.AsRegionPtr();
+
+                int searchRadiusSquared = searchRadius * searchRadius;
+
+                for (int dy = -searchRadius; dy <= searchRadius; dy++)
                 {
-                    int distanceSquared = dx * dx + dy * dy;
-                    if (distanceSquared > searchRadius * searchRadius)
+                    for (int dx = -searchRadius; dx <= searchRadius; dx++)
                     {
-                        continue;
-                    }
+                        int distanceSquared = dx * dx + dy * dy;
+                        if (distanceSquared > searchRadiusSquared)
+                        {
+                            continue;
+                        }
 
-                    Point candidate = new Point(
-                        ClampToWidth(controlPoint.X + dx),
-                        ClampToHeight(controlPoint.Y + dy));
+                        Point candidate = new Point(
+                            ClampToWidth(controlPoint.X + dx),
+                            ClampToHeight(controlPoint.Y + dy));
 
-                    int imageX = (int)Math.Round((double)candidate.X * (bitmap.Size.Width - 1) / clientWidth);
-                    int imageY = (int)Math.Round((double)candidate.Y * (bitmap.Size.Height - 1) / clientHeight);
+                        Point imagePoint = ClientToImagePoint(candidate);
 
-                    // control point to image point
-                    Point imagePoint = new Point(
-                        Math.Max(0, Math.Min(bitmap.Size.Width - 1, imageX)),
-                        Math.Max(0, Math.Min(bitmap.Size.Height - 1, imageY)));
+                        // Sobel needs a 1-pixel border.
+                        if (imagePoint.X <= 0 ||
+                            imagePoint.Y <= 0 ||
+                            imagePoint.X >= previewBitmapSize.Width - 1 ||
+                            imagePoint.Y >= previewBitmapSize.Height - 1)
+                        {
+                            continue;
+                        }
 
-                    // Sobel needs a 1-pixel border.
-                    if (imagePoint.X <= 0 ||
-                        imagePoint.Y <= 0 ||
-                        imagePoint.X >= bitmap.Width - 1 ||
-                        imagePoint.Y >= bitmap.Height - 1)
-                    {
-                        continue;
-                    }
+                        //get sobel edge strength
+                        int tl = GetLuma(region[imagePoint.X - 1, imagePoint.Y - 1]);
+                        int tc = GetLuma(region[imagePoint.X, imagePoint.Y - 1]);
+                        int tr = GetLuma(region[imagePoint.X + 1, imagePoint.Y - 1]);
 
-                    //get sobel edge strength
-                    int tl = GetLuma(bitmap.GetPixel(imagePoint.X - 1, imagePoint.Y - 1));
-                    int tc = GetLuma(bitmap.GetPixel(imagePoint.X, imagePoint.Y - 1));
-                    int tr = GetLuma(bitmap.GetPixel(imagePoint.X + 1, imagePoint.Y - 1));
+                        int ml = GetLuma(region[imagePoint.X - 1, imagePoint.Y]);
+                        int mr = GetLuma(region[imagePoint.X + 1, imagePoint.Y]);
 
-                    int ml = GetLuma(bitmap.GetPixel(imagePoint.X - 1, imagePoint.Y));
-                    int mr = GetLuma(bitmap.GetPixel(imagePoint.X + 1, imagePoint.Y));
+                        int bl = GetLuma(region[imagePoint.X - 1, imagePoint.Y + 1]);
+                        int bc = GetLuma(region[imagePoint.X, imagePoint.Y + 1]);
+                        int br = GetLuma(region[imagePoint.X + 1, imagePoint.Y + 1]);
 
-                    int bl = GetLuma(bitmap.GetPixel(imagePoint.X - 1, imagePoint.Y + 1));
-                    int bc = GetLuma(bitmap.GetPixel(imagePoint.X, imagePoint.Y + 1));
-                    int br = GetLuma(bitmap.GetPixel(imagePoint.X + 1, imagePoint.Y + 1));
+                        int gx = -tl - (2 * ml) - bl + tr + (2 * mr) + br;
+                        int gy = -tl - (2 * tc) - tr + bl + (2 * bc) + br;
 
-                    int gx = -tl - (2 * ml) - bl + tr + (2 * mr) + br;
-                    int gy = -tl - (2 * tc) - tr + bl + (2 * bc) + br;
+                        int strength = Math.Abs(gx) + Math.Abs(gy);
 
-                    int strength = Math.Abs(gx) + Math.Abs(gy);
-
-                    if (strength > bestStrength ||
-                        (strength == bestStrength && distanceSquared < bestDistanceSquared))
-                    {
-                        bestStrength = strength;
-                        bestDistanceSquared = distanceSquared;
-                        bestPoint = candidate;
+                        if (strength > bestStrength ||
+                            (strength == bestStrength && distanceSquared < bestDistanceSquared))
+                        {
+                            bestStrength = strength;
+                            bestDistanceSquared = distanceSquared;
+                            bestPoint = candidate;
+                        }
                     }
                 }
             }
@@ -976,7 +1139,7 @@ namespace QuadrilateralCorrectionEffect
             return bestPoint;
         }
 
-        private static int GetLuma(Color color)
+        private static int GetLuma(ColorBgra32 color)
         {
             return (int)Math.Round((0.299 * color.R) + (0.587 * color.G) + (0.114 * color.B));
         }
@@ -1003,6 +1166,8 @@ namespace QuadrilateralCorrectionEffect
                 this.X = x;
                 this.Y = y;
             }
+
+            internal Point2Float Point2Float => new Point2Float(this.X, this.Y);
         }
     }
 

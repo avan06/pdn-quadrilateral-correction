@@ -34,6 +34,12 @@
         <Reference Include="PaintDotNet.ObjectModel">
             <HintPath>$(PaintDotNetDir)\PaintDotNet.ObjectModel.dll</HintPath>
         </Reference>
+        <Reference Include="PaintDotNet.Framework">
+            <HintPath>$(PaintDotNetDir)\PaintDotNet.Framework.dll</HintPath>
+        </Reference>
+        <Reference Include="PaintDotNet.Windows.Framework">
+            <HintPath>$(PaintDotNetDir)\PaintDotNet.Windows.Framework.dll</HintPath>
+        </Reference>
     </ItemGroup>
     <!--
     Visual Studio WinForms Designer workaround Start
@@ -67,9 +73,6 @@
         <Reference Include="PointerToolkit">
             <HintPath>$(PaintDotNetDir)\PointerToolkit.dll</HintPath>
         </Reference>
-        <Reference Include="PaintDotNet.Framework">
-            <HintPath>$(PaintDotNetDir)\PaintDotNet.Framework.dll</HintPath>
-        </Reference>
         <Reference Include="PaintDotNet.Fundamentals">
             <HintPath>$(PaintDotNetDir)\PaintDotNet.Fundamentals.dll</HintPath>
         </Reference>
@@ -87,9 +90,6 @@
         </Reference>
         <Reference Include="PaintDotNet.PropertySystem">
             <HintPath>$(PaintDotNetDir)\PaintDotNet.PropertySystem.dll</HintPath>
-        </Reference>
-        <Reference Include="PaintDotNet.Windows.Framework">
-            <HintPath>$(PaintDotNetDir)\PaintDotNet.Windows.Framework.dll</HintPath>
         </Reference>
         <Reference Include="PaintDotNet.Resources">
             <HintPath>$(PaintDotNetDir)\PaintDotNet.Resources.dll</HintPath>
@@ -112,7 +112,6 @@
     </ItemGroup>
     <ItemGroup>
         <EmbeddedResource Include="Icon.png" />
-        <EmbeddedResource Include="Resources\CheckerBoard.png" />
         <EmbeddedResource Include="Resources\HandGrab.cur" />
         <EmbeddedResource Include="Resources\HandOpen.cur" />
     </ItemGroup>
