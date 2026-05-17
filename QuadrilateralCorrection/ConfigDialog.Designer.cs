@@ -61,6 +61,7 @@
             resetAllButton = new System.Windows.Forms.Button();
             checkBoxMoveNearestNub = new System.Windows.Forms.CheckBox();
             checkBoxLineSnap = new System.Windows.Forms.CheckBox();
+            checkBoxAllowNubsOutsideImage = new System.Windows.Forms.CheckBox();
             splitContainerMain = new System.Windows.Forms.SplitContainer();
             rightRootTableLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
             rightTableLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
@@ -417,7 +418,7 @@
             panelDivider.Location = new System.Drawing.Point(3, 6);
             panelDivider.Margin = new System.Windows.Forms.Padding(3, 6, 3, 6);
             panelDivider.Name = "panelDivider";
-            panelDivider.Size = new System.Drawing.Size(1, 573);
+            panelDivider.Size = new System.Drawing.Size(1, 600);
             panelDivider.TabIndex = 25;
             // 
             // resetAllButton
@@ -466,6 +467,21 @@
             checkBoxLineSnap.UseVisualStyleBackColor = true;
             checkBoxLineSnap.CheckedChanged += CheckBoxLineSnap_CheckedChanged;
             // 
+            // checkBoxAllowNubsOutsideImage
+            // 
+            checkBoxAllowNubsOutsideImage.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+            checkBoxAllowNubsOutsideImage.AutoSize = true;
+            rightTableLayoutPanel.SetColumnSpan(checkBoxAllowNubsOutsideImage, 2);
+            checkBoxAllowNubsOutsideImage.Location = new System.Drawing.Point(3, 534);
+            checkBoxAllowNubsOutsideImage.Margin = new System.Windows.Forms.Padding(3, 3, 0, 3);
+            checkBoxAllowNubsOutsideImage.Name = "checkBoxAllowNubsOutsideImage";
+            checkBoxAllowNubsOutsideImage.Size = new System.Drawing.Size(179, 21);
+            checkBoxAllowNubsOutsideImage.TabIndex = 30;
+            checkBoxAllowNubsOutsideImage.Text = "Allow nubs outside image";
+            checkBoxAllowNubsOutsideImage.UseCompatibleTextRendering = true;
+            checkBoxAllowNubsOutsideImage.UseVisualStyleBackColor = true;
+            checkBoxAllowNubsOutsideImage.CheckedChanged += CheckBoxAllowNubsOutsideImage_CheckedChanged;
+            // 
             // splitContainerMain
             // 
             splitContainerMain.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -485,8 +501,8 @@
             splitContainerMain.Panel2.Controls.Add(rightRootTableLayoutPanel);
             splitContainerMain.Panel2.ForeColor = System.Drawing.Color.Transparent;
             splitContainerMain.Panel2.Padding = new System.Windows.Forms.Padding(3);
-            splitContainerMain.Size = new System.Drawing.Size(704, 591);
-            splitContainerMain.SplitterDistance = 510;
+            splitContainerMain.Size = new System.Drawing.Size(704, 618);
+            splitContainerMain.SplitterDistance = 513;
             splitContainerMain.SplitterWidth = 1;
             splitContainerMain.TabIndex = 29;
             // 
@@ -502,7 +518,7 @@
             rightRootTableLayoutPanel.Name = "rightRootTableLayoutPanel";
             rightRootTableLayoutPanel.RowCount = 1;
             rightRootTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            rightRootTableLayoutPanel.Size = new System.Drawing.Size(187, 585);
+            rightRootTableLayoutPanel.Size = new System.Drawing.Size(184, 612);
             rightRootTableLayoutPanel.TabIndex = 15;
             // 
             // rightTableLayoutPanel
@@ -539,12 +555,13 @@
             rightTableLayoutPanel.Controls.Add(checkBoxCenter, 0, 19);
             rightTableLayoutPanel.Controls.Add(checkBoxMoveNearestNub, 0, 20);
             rightTableLayoutPanel.Controls.Add(checkBoxLineSnap, 0, 21);
-            rightTableLayoutPanel.Controls.Add(tableLayoutPanel1, 0, 22);
+            rightTableLayoutPanel.Controls.Add(checkBoxAllowNubsOutsideImage, 0, 22);
+            rightTableLayoutPanel.Controls.Add(tableLayoutPanel1, 0, 23);
             rightTableLayoutPanel.Dock = System.Windows.Forms.DockStyle.Fill;
             rightTableLayoutPanel.Location = new System.Drawing.Point(5, 0);
             rightTableLayoutPanel.Margin = new System.Windows.Forms.Padding(0);
             rightTableLayoutPanel.Name = "rightTableLayoutPanel";
-            rightTableLayoutPanel.RowCount = 23;
+            rightTableLayoutPanel.RowCount = 24;
             rightTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
             rightTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
             rightTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 10F));
@@ -572,7 +589,7 @@
             rightTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
             rightTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
             rightTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            rightTableLayoutPanel.Size = new System.Drawing.Size(182, 585);
+            rightTableLayoutPanel.Size = new System.Drawing.Size(182, 612);
             rightTableLayoutPanel.TabIndex = 15;
             // 
             // tableLayoutPanel1
@@ -584,7 +601,7 @@
             tableLayoutPanel1.Controls.Add(buttonOK, 0, 0);
             tableLayoutPanel1.Controls.Add(buttonCancel, 1, 0);
             tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            tableLayoutPanel1.Location = new System.Drawing.Point(0, 531);
+            tableLayoutPanel1.Location = new System.Drawing.Point(0, 558);
             tableLayoutPanel1.Margin = new System.Windows.Forms.Padding(0);
             tableLayoutPanel1.Name = "tableLayoutPanel1";
             tableLayoutPanel1.Padding = new System.Windows.Forms.Padding(0, 0, 0, 5);
@@ -599,7 +616,7 @@
             AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             CancelButton = buttonCancel;
-            ClientSize = new System.Drawing.Size(704, 591);
+            ClientSize = new System.Drawing.Size(704, 618);
             Controls.Add(splitContainerMain);
             DoubleBuffered = true;
             FormBorderStyle = System.Windows.Forms.FormBorderStyle.Sizable;
@@ -665,6 +682,7 @@
         private System.Windows.Forms.Button resetAllButton;
         private System.Windows.Forms.CheckBox checkBoxMoveNearestNub;
         private System.Windows.Forms.CheckBox checkBoxLineSnap;
+        private System.Windows.Forms.CheckBox checkBoxAllowNubsOutsideImage;
         private System.Windows.Forms.SplitContainer splitContainerMain;
         private System.Windows.Forms.TableLayoutPanel rightTableLayoutPanel;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;

@@ -166,6 +166,11 @@ namespace QuadrilateralCorrectionEffect
         [DefaultValue(120)]
         public int LineSnapMinEdgeStrength { get; set; } = 120;
 
+        [Category("Behavior")]
+        [Description("When enabled, nubs may be dragged outside the image bounds.")]
+        [DefaultValue(false)]
+        public bool AllowNubsOutsideImage { get; set; } = false;
+
         internal QuadrilateralCorrectionEffect.Nub SelectedNub
         {
             get
@@ -765,6 +770,10 @@ namespace QuadrilateralCorrectionEffect
                 return;
 
             Point nubClientPoint = activeNub.Location;
+
+            if (nubClientPoint.X < 0 || nubClientPoint.Y < 0 || nubClientPoint.X >= this.ClientSize.Width || nubClientPoint.Y >= this.ClientSize.Height)
+                return;
+
             Point imagePoint = ClientToImagePoint(nubClientPoint);
 
             Rectangle srcRect = GetMagnifierSourceRectangle(imagePoint);
@@ -1014,11 +1023,15 @@ namespace QuadrilateralCorrectionEffect
         #region Coordinate Helpers
         private int ClampToWidth(int x)
         {
+            if (AllowNubsOutsideImage)
+                return x;
             return (x < 0) ? 0 : (x > this.ClientSize.Width - 1) ? this.ClientSize.Width - 1 : x;
         }
 
         private int ClampToHeight(int y)
         {
+            if (AllowNubsOutsideImage)
+                return y;
             return (y < 0) ? 0 : (y > this.ClientSize.Height - 1) ? this.ClientSize.Height - 1 : y;
         }
 
@@ -1060,9 +1073,20 @@ namespace QuadrilateralCorrectionEffect
         #region Line Snap
         private Point SnapToNearestLineIfEnabled(Point controlPoint)
         {
-            controlPoint = new Point(
-                ClampToWidth(controlPoint.X),
-                ClampToHeight(controlPoint.Y));
+            if (AllowNubsOutsideImage)
+            {
+                if (controlPoint.X < 0 || controlPoint.Y < 0 || controlPoint.X >= this.ClientSize.Width || controlPoint.Y >= this.ClientSize.Height)
+                {
+                    // Outside image: no image pixels to snap against.
+                    return controlPoint;
+                }
+            }
+            else
+            {
+                controlPoint = new Point(
+                    ClampToWidth(controlPoint.X),
+                    ClampToHeight(controlPoint.Y));
+            }
 
             if (!LineSnapEnabled ||
                 !HasPreviewBitmap ||
@@ -1102,9 +1126,11 @@ namespace QuadrilateralCorrectionEffect
                             continue;
                         }
 
-                        Point candidate = new Point(
-                            ClampToWidth(controlPoint.X + dx),
-                            ClampToHeight(controlPoint.Y + dy));
+                        Point candidate = AllowNubsOutsideImage
+                            ? new Point(controlPoint.X + dx, controlPoint.Y + dy)
+                            : new Point(
+                                ClampToWidth(controlPoint.X + dx),
+                                ClampToHeight(controlPoint.Y + dy));
 
                         Point imagePoint = ClientToImagePoint(candidate);
 

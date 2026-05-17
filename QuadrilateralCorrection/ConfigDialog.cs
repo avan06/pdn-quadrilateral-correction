@@ -23,6 +23,7 @@ namespace QuadrilateralCorrectionEffect
             this.UseAppThemeColors = true;
 
             quadControl11.LineSnapEnabled = checkBoxLineSnap.Checked;
+            quadControl11.AllowNubsOutsideImage = checkBoxAllowNubsOutsideImage.Checked;
 
             ApplyThemeColorsToNumericUpDowns(this);
         }
@@ -61,14 +62,7 @@ namespace QuadrilateralCorrectionEffect
             // Read global information from this.Environment
             selection = new Rectangle(this.Environment.Selection.RenderBounds.X, this.Environment.Selection.RenderBounds.Y, this.Environment.Selection.RenderBounds.Width, this.Environment.Selection.RenderBounds.Height);
 
-            numericUpDownTopLeftX.Maximum = selection.Width - 1;
-            numericUpDownTopLeftY.Maximum = selection.Height - 1;
-            numericUpDownTopRightX.Maximum = selection.Width - 1;
-            numericUpDownTopRightY.Maximum = selection.Height - 1;
-            numericUpDownBottomRightX.Maximum = selection.Width - 1;
-            numericUpDownBottomRightY.Maximum = selection.Height - 1;
-            numericUpDownBottomLeftX.Maximum = selection.Width - 1;
-            numericUpDownBottomLeftY.Maximum = selection.Height - 1;
+            ApplyNubNumericRanges(checkBoxAllowNubsOutsideImage.Checked);
 
             numericUpDownWidth.Maximum = selection.Width;
             numericUpDownHeight.Maximum = selection.Height;
@@ -136,6 +130,42 @@ namespace QuadrilateralCorrectionEffect
 
             quadControl11.Visible = true;
             quadControl11.Invalidate();
+        }
+
+        private void ApplyNubNumericRanges(bool allowOutside)
+        {
+            decimal minX = allowOutside ? -(selection.Width - 1) : 0;
+            decimal minY = allowOutside ? -(selection.Height - 1) : 0;
+            // When AllowNubsOutsideImage is enabled, NumericUpDown allows values up to 2 times beyond the original image bounds.
+            decimal maxX = allowOutside ? (selection.Width - 1) * 2 : selection.Width - 1;
+            decimal maxY = allowOutside ? (selection.Height - 1) * 2 : selection.Height - 1;
+
+            SetNumericRange(numericUpDownTopLeftX, minX, maxX);
+            SetNumericRange(numericUpDownTopRightX, minX, maxX);
+            SetNumericRange(numericUpDownBottomRightX, minX, maxX);
+            SetNumericRange(numericUpDownBottomLeftX, minX, maxX);
+
+            SetNumericRange(numericUpDownTopLeftY, minY, maxY);
+            SetNumericRange(numericUpDownTopRightY, minY, maxY);
+            SetNumericRange(numericUpDownBottomRightY, minY, maxY);
+            SetNumericRange(numericUpDownBottomLeftY, minY, maxY);
+        }
+
+        private static void SetNumericRange(NumericUpDown numericUpDown, decimal minimum, decimal maximum)
+        {
+            if (numericUpDown.Maximum < maximum)
+                numericUpDown.Maximum = maximum;
+
+            if (numericUpDown.Minimum > minimum)
+                numericUpDown.Minimum = minimum;
+
+            if (numericUpDown.Value < minimum)
+                numericUpDown.Value = minimum;
+            else if (numericUpDown.Value > maximum)
+                numericUpDown.Value = maximum;
+
+            numericUpDown.Minimum = minimum;
+            numericUpDown.Maximum = maximum;
         }
 
         #region Values-Changed events
@@ -324,6 +354,23 @@ namespace QuadrilateralCorrectionEffect
         {
             quadControl11.LineSnapEnabled = checkBoxLineSnap.Checked;
         }
+
+        private void CheckBoxAllowNubsOutsideImage_CheckedChanged(object sender, EventArgs e)
+        {
+            bool allowOutside = checkBoxAllowNubsOutsideImage.Checked;
+
+            quadControl11.AllowNubsOutsideImage = allowOutside;
+            ApplyNubNumericRanges(allowOutside);
+
+            quadControl11.NubTL = ScalePointToUi(numericUpDownTopLeftX.Value, numericUpDownTopLeftY.Value);
+            quadControl11.NubTR = ScalePointToUi(numericUpDownTopRightX.Value, numericUpDownTopRightY.Value);
+            quadControl11.NubBR = ScalePointToUi(numericUpDownBottomRightX.Value, numericUpDownBottomRightY.Value);
+            quadControl11.NubBL = ScalePointToUi(numericUpDownBottomLeftX.Value, numericUpDownBottomLeftY.Value);
+
+            quadControl11.Invalidate();
+
+            UpdateTokenFromDialog();
+        }
         #endregion
 
         private void numericUpDown_Enter(object sender, EventArgs e)
@@ -348,6 +395,10 @@ namespace QuadrilateralCorrectionEffect
             {
                 Initializers();
                 ApplyQuadControlImageBounds();
+
+                checkBoxAllowNubsOutsideImage.Checked = effectTokenCopy.AllowNubsOutsideImage;
+                quadControl11.AllowNubsOutsideImage = effectTokenCopy.AllowNubsOutsideImage;
+                ApplyNubNumericRanges(effectTokenCopy.AllowNubsOutsideImage);
 
                 numericUpDownTopLeftX.Value = Clamp(effectTokenCopy.TopLeft.X, numericUpDownTopLeftX.Minimum, numericUpDownTopLeftX.Maximum);
                 numericUpDownTopLeftY.Value = Clamp(effectTokenCopy.TopLeft.Y, numericUpDownTopLeftY.Minimum, numericUpDownTopLeftY.Maximum);
@@ -403,6 +454,7 @@ namespace QuadrilateralCorrectionEffect
             writeValuesHere.CropOutsideMode = comboBoxCropMode.SelectedIndex >= 0
                 ? (CropOutsideMode)comboBoxCropMode.SelectedIndex : CropOutsideMode.Crop;
             writeValuesHere.Center = checkBoxCenter.Checked;
+            writeValuesHere.AllowNubsOutsideImage = checkBoxAllowNubsOutsideImage.Checked;
         }
         #endregion
 

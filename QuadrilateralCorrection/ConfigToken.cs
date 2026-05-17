@@ -34,6 +34,7 @@ namespace QuadrilateralCorrectionEffect
             Center = true;
             ResamplingMode = ResamplingMode.Bilinear;
             CropOutsideMode = CropOutsideMode.Crop; // Remove content outside the quadrilateral by default
+            AllowNubsOutsideImage = false;
         }
 
         private QuadrilateralCorrectionConfigToken(QuadrilateralCorrectionConfigToken copyMe)
@@ -48,6 +49,7 @@ namespace QuadrilateralCorrectionEffect
             Center = copyMe.Center;
             ResamplingMode = copyMe.ResamplingMode;
             CropOutsideMode = copyMe.CropOutsideMode;
+            AllowNubsOutsideImage = copyMe.AllowNubsOutsideImage;
         }
 
         public override object Clone()
@@ -65,5 +67,6 @@ namespace QuadrilateralCorrectionEffect
         internal ResamplingMode ResamplingMode { get; set; }
         internal CropOutsideMode CropOutsideMode { get; set; }
         internal bool Center { get; set; }
+        internal bool AllowNubsOutsideImage { get; set; }
     }
 }
