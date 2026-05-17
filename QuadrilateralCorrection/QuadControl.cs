@@ -545,6 +545,28 @@ namespace QuadrilateralCorrectionEffect
         #region Nub Helpers
         private void SelectNub(Nub nub)
         {
+            Nub targetNub = null;
+
+            if (nub.Location == nubTL.Location)
+            {
+                targetNub = nubTL;
+            }
+            else if (nub.Location == nubTR.Location)
+            {
+                targetNub = nubTR;
+            }
+            else if (nub.Location == nubBR.Location)
+            {
+                targetNub = nubBR;
+            }
+            else if (nub.Location == nubBL.Location)
+            {
+                targetNub = nubBL;
+            }
+
+            bool wasSelected = targetNub?.Selected ?? false;
+            Point targetLocation = targetNub?.Location ?? nub.Location;
+
             nubTL.Selected = false;
             nubTR.Selected = false;
             nubBR.Selected = false;
@@ -560,30 +582,17 @@ namespace QuadrilateralCorrectionEffect
             nubBR.Hovered = false;
             nubBL.Hovered = false;
 
-            if (nub.Location == nubTL.Location)
+            if (targetNub != null)
             {
-                nubTL.Selected = true;
-                nubTL.Hovered = true;
-            }
-            else if (nub.Location == nubTR.Location)
-            {
-                nubTR.Selected = true;
-                nubTR.Hovered = true;
-            }
-            else if (nub.Location == nubBR.Location)
-            {
-                nubBR.Selected = true;
-                nubBR.Hovered = true;
-            }
-            else if (nub.Location == nubBL.Location)
-            {
-                nubBL.Selected = true;
-                nubBL.Hovered = true;
+                targetNub.Selected = !wasSelected;
+                targetNub.Hovered = true;
+
+                magnifierMouseLocation = targetLocation;
             }
 
-            magnifierMouseLocation = nub.Location;
-
-            this.Cursor = handOpen;
+            this.Cursor = targetNub != null && targetNub.Selected
+                ? handOpen
+                : Cursors.Default;
         }
 
         private void GrabNub(Nub nub, Point mouseLocation)
